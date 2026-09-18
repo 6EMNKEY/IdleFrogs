@@ -44,9 +44,10 @@ namespace IdleFrogs.Game
             }
             transform.position = posicioObjectiu;
         }
-        private IEnumerator BuidarMosquesALaCapsa()
+        private IEnumerator BuidarMosquesALaCapsa(double quantitat)
         {
-
+            _pantaPare.AfegirMosquesALaCapsa(quantitat);
+            yield return null;
         }
 
         private void OnMouseDown()
@@ -70,6 +71,7 @@ namespace IdleFrogs.Game
             // 3. Buidar
             estatActual = EstatGranota.Buidant;
             yield return new WaitForSeconds(_config.tempsBuidar);
+            yield return BuidarMosquesALaCapsa(_doblersPerPle);
             // 4. Tornar a nenufar 
             estatActual = EstatGranota.MoventseAlNenufar;
             yield return MouresALaPosicio(_posicioInicial);
