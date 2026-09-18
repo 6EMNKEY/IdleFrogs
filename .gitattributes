@@ -1,0 +1,52 @@
+# Normalize line endings; let git decide what is text.
+* text=auto
+
+# Unity serializes scenes/prefabs/assets as YAML (this project is on
+# Force Text), so treat them as text to get readable diffs.
+#
+# merge=unityyamlmerge routes conflicts to Unity's own YAML merge tool.
+# It only works once you register it in ~/.gitconfig — see README.
+*.unity           text merge=unityyamlmerge eol=lf
+*.prefab          text merge=unityyamlmerge eol=lf
+*.asset           text merge=unityyamlmerge eol=lf
+*.mat             text merge=unityyamlmerge eol=lf
+*.anim            text merge=unityyamlmerge eol=lf
+*.controller      text merge=unityyamlmerge eol=lf
+*.overrideController text merge=unityyamlmerge eol=lf
+*.physicMaterial  text merge=unityyamlmerge eol=lf
+*.physicsMaterial2D text merge=unityyamlmerge eol=lf
+*.meta            text eol=lf
+*.cs              text diff=csharp eol=lf
+*.shader          text eol=lf
+*.json            text eol=lf
+*.md              text eol=lf
+
+# Binary — never try to diff or merge these.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.psd  binary
+*.tga  binary
+*.fbx  binary
+*.obj  binary
+*.blend binary
+*.wav  binary
+*.mp3  binary
+*.ogg  binary
+*.ttf  binary
+*.otf  binary
+*.unitypackage binary
+*.aif  binary
+
+# ---------------------------------------------------------------
+# Git LFS — not enabled. Assets/ is ~9 MB (12 small PNGs), well under
+# any threshold where LFS pays for itself. If the art grows into large
+# PSDs, FBX or audio, install git-lfs and uncomment:
+#
+# *.psd  filter=lfs diff=lfs merge=lfs -text
+# *.fbx  filter=lfs diff=lfs merge=lfs -text
+# *.wav  filter=lfs diff=lfs merge=lfs -text
+#
+# Do it before committing the big files — converting history later is painful.
+# ---------------------------------------------------------------

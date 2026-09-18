@@ -1,0 +1,72 @@
+# ---------------------------------------------------------------
+# Unity 6 (6000.x) — IdleFrogs
+# Anything Unity can regenerate from Assets/ + ProjectSettings/ + Packages/
+# does not belong in git.
+# ---------------------------------------------------------------
+
+# Generated folders. Library/ alone is ~2.3 GB here.
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# .meta files must be kept for everything under Assets/ — they carry the
+# GUIDs that scenes and prefabs use to find each other. Losing one breaks
+# every reference to that asset.
+!/[Aa]ssets/**/*.meta
+
+# IDE / editor
+.vs/
+.vscode/
+.idea/
+.gradle/
+.consulo/
+[Aa]ssets/Plugins/Editor/JetBrains*
+
+# Auto-generated solution and project files — Unity rewrites these on every
+# script change, so committing them means permanent phantom diffs.
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+ExportedObj/
+
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crash reports
+sysinfo.txt
+crashlytics-build.properties
+
+# Build artefacts
+*.apk
+*.aab
+*.ipa
+*.app
+*.unitypackage
+
+# Addressables
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# OS noise
+.DS_Store
+Thumbs.db
