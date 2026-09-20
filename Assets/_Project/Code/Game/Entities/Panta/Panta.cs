@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace IdleFrogs.Game
 {
@@ -10,7 +11,7 @@ namespace IdleFrogs.Game
 
         [Header("Posicions")]
         [SerializeField] private Transform pilaDeMosques;
-        [SerializeField] private Transform capsaMosques;
+        [SerializeField] public Transform capsaMosques;
         [SerializeField] private Transform[] nenufars = new Transform[6];
 
         [Header("Referencies")]
@@ -43,15 +44,14 @@ namespace IdleFrogs.Game
             Debug.Log($"S'han posat {quantitat} doblers a la capsa");
         }
 
-        public void RecollirMosquesDeLaCapsa()
+        public double RecollirMosquesDeLaCapsa(double quantitat)
         {
-            if (doblersALaCapsa <= 0) return;
-            if (CurrencyManager.Instancia != null)
-            {
-                CurrencyManager.Instancia.AfegirDoblers(doblersALaCapsa);
-                Debug.Log($"S'han mogut {doblersALaCapsa} doblers al compte");
-                doblersALaCapsa = 0;
-            }
+            if (doblersALaCapsa <= 0) return 0;
+            double doblersRecollits = Math.Min(doblersALaCapsa, quantitat);
+            Debug.Log($"S'han mogut {doblersRecollits} doblers al tren");
+            doblersALaCapsa = doblersALaCapsa - doblersRecollits;
+            return doblersRecollits;
+
         }
 
     }
