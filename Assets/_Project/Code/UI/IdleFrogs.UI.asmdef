@@ -1,7 +1,7 @@
 {
     "name": "IdleFrogs.UI",
     "rootNamespace": "IdleFrogs.UI",
-    "references": ["IdleFrogs.Core", "IdleFrogs.Game", "UnityEngine.UI", "Unity.TextMeshPro", "Unity.InputSystem"],
+    "references": ["IdleFrogs.Game", "UnityEngine.UI", "Unity.TextMeshPro", "Unity.InputSystem"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

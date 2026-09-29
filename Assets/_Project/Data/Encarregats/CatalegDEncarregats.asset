@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3ae4bc282155f1989020f0abca9e2bf, type: 3}
+  m_Name: CatalegDEncarregats
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.CatalegDEncarregats
+  encarregats:
+  - {fileID: 11400000, guid: 1749e1dfefb973f979d4ba6223ae8acb, type: 2}
+  - {fileID: 11400000, guid: b46aa791d68dee499b101e8916127c34, type: 2}
+  - {fileID: 11400000, guid: 08cb347c093bd0c68badd76d8332db8b, type: 2}
+  - {fileID: 11400000, guid: 607500d10b38990a1873205ee2499be0, type: 2}
+  - {fileID: 11400000, guid: ee233cb2d0e3a9e89849c4010488f809, type: 2}
+  - {fileID: 11400000, guid: 0734f7d3e9217fd29b1f7cc4e446df9e, type: 2}
+  - {fileID: 11400000, guid: 425c7a37ad6a2373c9cc7b1054d5a0b7, type: 2}
+  - {fileID: 11400000, guid: cedf8b4cf73e156ec8c08fd08431d506, type: 2}
+  - {fileID: 11400000, guid: cff1cf9af3c9aa8a9bbd7370a017cdd4, type: 2}
+  - {fileID: 11400000, guid: f4c7a9a5f9ab485f5b0cb2de2cfb319d, type: 2}
+  - {fileID: 11400000, guid: 3463354033dd556d8a10d3b55ba5bb25, type: 2}
+  - {fileID: 11400000, guid: ba8709d4d5a35cdcabba8f547dad4f7f, type: 2}
+  - {fileID: 11400000, guid: 5917cf4f7fd40554bbd78e745186ed28, type: 2}
+  - {fileID: 11400000, guid: 5bb158865e87c47bfa25462375fa4d43, type: 2}
+  - {fileID: 11400000, guid: 0356d87c71c64036b9f912c5bd72663c, type: 2}
+  - {fileID: 11400000, guid: c8929d8b1917ca804b302d0c140280cc, type: 2}
+  - {fileID: 11400000, guid: 76f13b992dd290e08ae85558ed01c7b9, type: 2}
+  - {fileID: 11400000, guid: ad1792c1647d560e3b8686b02e430755, type: 2}
+  - {fileID: 11400000, guid: 3e83b787517afed33a76a06bead237a8, type: 2}
+  - {fileID: 11400000, guid: 5ca0cd8c886064315916d5d5793ef26c, type: 2}
+  - {fileID: 11400000, guid: 6cc030e7bce296d7e873d4885a341ece, type: 2}
+  - {fileID: 11400000, guid: a76e38666f2621c8899e65675421f850, type: 2}
+  - {fileID: 11400000, guid: 5416ab0ba1ce78a0fabfd525c3e5b3f3, type: 2}
+  - {fileID: 11400000, guid: 5341b2f7252e07c6f83b609a33860028, type: 2}
+  - {fileID: 11400000, guid: 19f3fe4936003f224b5e9a56ae34477f, type: 2}
+  - {fileID: 11400000, guid: f81fcf303b11d4e85a85a4e9705888d5, type: 2}
+  - {fileID: 11400000, guid: 990b6f297363a25858cd667d64816566, type: 2}
+  - {fileID: 11400000, guid: 2d05a1bd14bd1dc10a7bc68b9efbb1f1, type: 2}
+  - {fileID: 11400000, guid: 1afbc5e2405c0cd3ba4578cc17440531, type: 2}
+  - {fileID: 11400000, guid: 8127e3710164d3a02af29f6d984af0bd, type: 2}
+  - {fileID: 11400000, guid: c16f5b3324cc71c4ab2fd7ec4b3b754b, type: 2}
+  - {fileID: 11400000, guid: 20656598d3223bb9b9cdd9df4845a27a, type: 2}
+  - {fileID: 11400000, guid: dccb9170de0d0131dbc31d26cdd3010d, type: 2}
+  - {fileID: 11400000, guid: cbd5ca2f07057febe87ed74429c3f5e1, type: 2}
+  - {fileID: 11400000, guid: 6a48e41b12293698bb4310ca4094485c, type: 2}
+  - {fileID: 11400000, guid: d17b521fd5d4a3374b8c52fdfac91cc2, type: 2}
+  - {fileID: 11400000, guid: c5d78d8aa129ec5488454e84ab751ccb, type: 2}
+  - {fileID: 11400000, guid: 75f2a9625bb7eaaed9abb87e568f8486, type: 2}
+  - {fileID: 11400000, guid: 378477e61b7d14dd4a43cce96494aad0, type: 2}
+  - {fileID: 11400000, guid: 05c5a161fef3e0543b045330264e672c, type: 2}
+  - {fileID: 11400000, guid: 150dff931623637baa3339ff0407005e, type: 2}
+  - {fileID: 11400000, guid: bd80cfe0699383ba89b184aa0fb8a338, type: 2}
+  - {fileID: 11400000, guid: 69fe92f336b8b1843afde9a41f90ce7d, type: 2}
+  - {fileID: 11400000, guid: 376c74071b63efd8ba1e53c47ef707d7, type: 2}
+  pesos:
+  - raresa: 0
+    pes: 80
+  - raresa: 1
+    pes: 15
+  - raresa: 2
+    pes: 4.8
+  - raresa: 3
+    pes: 0.2
+  preuBase: 100
+  creixementDePreu: 4

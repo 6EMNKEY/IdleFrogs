@@ -11,8 +11,20 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e1902568c7e24ea7a7eefb35ef4949c, type: 3}
   m_Name: TestingTrenConfig
-  m_EditorClassIdentifier: Assembly-CSharp::TrenConfigSO
-  velocitatDeMoviment: 3
-  tempsDeCarrega: 0.5
-  tempsDeDescarrega: 1
-  capacitat: 50
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.TrenConfigSO
+  ritmeDeCarregaBase: 20
+  ritmeDeDescarregaBase: 40
+  creixementDeRitme: 1.33
+  velocitatBase: 3
+  creixementDeVelocitat: 1.01
+  velocitatMaxima: 30
+  capacitatBase: 50
+  creixementDeCapacitat: 1.33
+  fites:
+  - nivell: 10
+    multiplicador: 2.66
+  - nivell: 40
+    multiplicador: 1.21
+  costBase: 200
+  creixementDeCost: 1.2
+  nivellMaxim: 2000

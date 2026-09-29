@@ -11,8 +11,29 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 58a70c215e1ad20eeae84f2ce88998fd, type: 3}
   m_Name: TestingPantaConfig
-  m_EditorClassIdentifier: IdleFrogs.Game::PantaConfigSO
-  velocitatDeMoviment: 1
-  tempsFinsPle: 3
-  tempsBuidar: 3
-  doblersPerPle: 10
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PantaConfigSO
+  velocitatDeMoviment: 2
+  tempsBuidar: 0.2
+  velocitatDeRecoleccioBase: 5
+  creixementDeVelocitatDeRecoleccio: 1.1
+  capacitatBase: 20
+  creixementDeCapacitat: 1.1
+  fites:
+  - nivell: 25
+    multiplicador: 2.1
+  - nivell: 50
+    multiplicador: 2.1
+  costBase: 100
+  creixementDeCost: 1.2
+  preusDeCompra:
+  - 10
+  - 1000
+  - 30000
+  factorDePreuDeCompra: 20
+  multiplicadorDelPrimerSalt: 50
+  multiplicadorDeCadaSalt: 10
+  granotesInicials: 1
+  nivellsDeGranotaExtra:
+  - 10
+  - 50
+  nivellMaxim: 800

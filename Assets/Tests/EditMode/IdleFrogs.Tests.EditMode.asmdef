@@ -1,7 +1,7 @@
 {
     "name": "IdleFrogs.Tests.EditMode",
     "rootNamespace": "IdleFrogs.Tests.EditMode",
-    "references": ["IdleFrogs.Core", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
+    "references": ["IdleFrogs.Game", "UnityEngine.TestRunner", "UnityEditor.TestRunner"],
     "includePlatforms": ["Editor"],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

@@ -10,7 +10,7 @@ namespace IdleFrogs.Game
         public double doblersActuals { get; private set; }
         public event Action<double> EnCanviDeDoblers;
 
-        //Asegurar que sigui Singleton 
+        //Asegurar que sigui Singleton
         void Awake()
         {
             if (Instancia != null && Instancia != this)
@@ -36,6 +36,14 @@ namespace IdleFrogs.Game
             doblersActuals -= quantitat;
             EnCanviDeDoblers?.Invoke(doblersActuals);
             return true;
+        }
+
+        // Per restaurar una partida guardada: AfegirDoblers acumula i
+        // rebutja valors <= 0, així que no serveix per posar un valor exacte.
+        public void EstablirDoblers(double quantitat)
+        {
+            doblersActuals = quantitat < 0 ? 0 : quantitat;
+            EnCanviDeDoblers?.Invoke(doblersActuals);
         }
     }
 }

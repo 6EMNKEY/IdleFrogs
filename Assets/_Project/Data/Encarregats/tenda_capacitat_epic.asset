@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a70407bb9170b43a006da607731a5e, type: 3}
+  m_Name: tenda_capacitat_epic
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.EncarregatSO
+  id: tenda_capacitat_epic
+  nomVisible: Cisteller Epic
+  retrat: {fileID: 0}
+  lloc: 2
+  raresa: 2
+  efecte: 2
+  magnitud: 5
+  magnitudDeLHabilitat: 5
+  segonsDeDuracio: 180
+  segonsDeRecarrega: 900

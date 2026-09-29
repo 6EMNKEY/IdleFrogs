@@ -1,7 +1,7 @@
 {
     "name": "IdleFrogs.Platform",
     "rootNamespace": "IdleFrogs.Platform",
-    "references": ["IdleFrogs.Core"],
+    "references": ["IdleFrogs.Game"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

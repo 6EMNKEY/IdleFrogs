@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8a70407bb9170b43a006da607731a5e, type: 3}
+  m_Name: tenda_velocitatdemoviment_llegendari
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.EncarregatSO
+  id: tenda_velocitatdemoviment_llegendari
+  nomVisible: Corredor Llegendari
+  retrat: {fileID: 0}
+  lloc: 2
+  raresa: 3
+  efecte: 0
+  magnitud: 7
+  magnitudDeLHabilitat: 8
+  segonsDeDuracio: 600
+  segonsDeRecarrega: 3000

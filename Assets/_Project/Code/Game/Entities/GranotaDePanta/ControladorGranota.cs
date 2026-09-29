@@ -1,30 +1,26 @@
 using UnityEngine;
 using System.Collections;
 
-public enum EstatGranota { Idle, MoventseAlNenufar, Recolectant, MoventseACaixa, Buidant }
-
 namespace IdleFrogs.Game
 {
+    public enum EstatGranota { Idle, MoventseAlNenufar, Recolectant, MoventseACaixa, Buidant }
+
     public class ControladorGranota : MonoBehaviour
     {
         [Header("Estat")]
         public EstatGranota estatActual = EstatGranota.Idle;
 
         private Panta _pantaPare;
-        private PantaConfigSO _config;
         private Vector3 _posicioInicial;
         private Vector3 _posicioPilaDeMosques;
         private Vector3 _posicioCapsa;
-        private double _doblersPerPle;
 
-        public void Inicialitzar(Panta panta, PantaConfigSO config, Vector3 posicioInicial, Vector3 pilaDeMosques, Vector3 capsa)
+        public void Inicialitzar(Panta panta, Vector3 posicioInicial, Vector3 pilaDeMosques, Vector3 capsa)
         {
             _pantaPare = panta;
-            _config = config;
             _posicioInicial = posicioInicial;
             _posicioPilaDeMosques = pilaDeMosques;
             _posicioCapsa = capsa;
-            _doblersPerPle = config.doblersPerPle;
 
             transform.position = _posicioInicial;
             estatActual = EstatGranota.Idle;
@@ -37,7 +33,7 @@ namespace IdleFrogs.Game
                 transform.position = Vector3.MoveTowards(
                     transform.position,
                     posicioObjectiu,
-                    _config.velocitatDeMoviment * Time.deltaTime
+                    _pantaPare.VelocitatDeMoviment * Time.deltaTime
                 );
                 yield return null;
 
@@ -50,29 +46,36 @@ namespace IdleFrogs.Game
             yield return null;
         }
 
-        private void OnMouseDown()
+        private void OnMouseDown() => IntentarEngegar();
+
+        // La crida el dit i, quan hi ha encarregat, també el Panta cada frame.
+        public bool IntentarEngegar()
         {
-            if (estatActual == EstatGranota.Idle)
-            {
-                StartCoroutine(CapturarMosques());
-            }
+            if (_pantaPare == null) return false;
+            if (estatActual != EstatGranota.Idle) return false;
+
+            StartCoroutine(CapturarMosques());
+            return true;
         }
 
         private IEnumerator CapturarMosques()
         {
-            // 1. Recolectar Mosca 
+            // 1. Recolectar Mosca — amb terra dur: un encarregat Llegendari
+            //    divideix el temps per 7 i sense això la granota parpellejaria.
             estatActual = EstatGranota.Recolectant;
-            yield return new WaitForSeconds(_config.tempsFinsPle);
+            yield return new WaitForSeconds(Mathf.Max(0.02f, _pantaPare.TempsFinsPle));
 
-            // 2. Moures cap a la capsa 
+            // 2. Moures cap a la capsa
             estatActual = EstatGranota.MoventseACaixa;
             yield return MouresALaPosicio(_posicioCapsa);
 
-            // 3. Buidar
+            // 3. Buidar — es llegeix ara, no a Inicialitzar, perquè el
+            //    pantà pot haver pujat de nivell mentre la granota corria
             estatActual = EstatGranota.Buidant;
-            yield return new WaitForSeconds(_config.tempsBuidar);
-            yield return BuidarMosquesALaCapsa(_doblersPerPle);
-            // 4. Tornar a nenufar 
+            yield return new WaitForSeconds(Mathf.Max(0.02f, _pantaPare.TempsBuidar));
+            yield return BuidarMosquesALaCapsa(_pantaPare.CapacitatPerGranota);
+
+            // 4. Tornar a nenufar
             estatActual = EstatGranota.MoventseAlNenufar;
             yield return MouresALaPosicio(_posicioInicial);
             estatActual = EstatGranota.Idle;
