@@ -10,6 +10,11 @@ namespace IdleFrogs.Game
         public double doblersActuals { get; private set; }
         public event Action<double> EnCanviDeDoblers;
 
+        // La moneda premium. Ara només n'entren, de les fites del panell de
+        // millora; enters perquè no s'escalen com els doblers.
+        public int gemesActuals { get; private set; }
+        public event Action<int> EnCanviDeGemes;
+
         //Asegurar que sigui Singleton
         void Awake()
         {
@@ -44,6 +49,19 @@ namespace IdleFrogs.Game
         {
             doblersActuals = quantitat < 0 ? 0 : quantitat;
             EnCanviDeDoblers?.Invoke(doblersActuals);
+        }
+
+        public void AfegirGemes(int quantitat)
+        {
+            if (quantitat <= 0) return;
+            gemesActuals += quantitat;
+            EnCanviDeGemes?.Invoke(gemesActuals);
+        }
+
+        public void EstablirGemes(int quantitat)
+        {
+            gemesActuals = quantitat < 0 ? 0 : quantitat;
+            EnCanviDeGemes?.Invoke(gemesActuals);
         }
     }
 }

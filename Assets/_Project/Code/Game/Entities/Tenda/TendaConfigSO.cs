@@ -20,8 +20,7 @@ namespace IdleFrogs.Game
         public float creixementDeVelocitat = 1.01f;
         public float velocitatMaxima = 20f;
 
-        // IMT: al 20 un transportista més i ×1.3; al 50 un ×1.2.
-        // Al nivell 10 IMT hi posa un transportista, però aquí no n'hi ha.
+        // Al 20 un transportista més i ×1.3; al 50 un ×1.2.
         [Header("Fites — multipliquen càrrega i velocitat alhora")]
         public FitaDeMultiplicador[] fites =
         {

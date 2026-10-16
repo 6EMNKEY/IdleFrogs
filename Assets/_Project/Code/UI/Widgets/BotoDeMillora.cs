@@ -4,13 +4,13 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    // Va al sprite del botó, amb un Collider2D. Sense Canvas ni EventSystem,
-    // igual que ControladorGranota.
+    // Va al sprite del botó, amb un Collider2D. El toc li arriba del
+    // DetectorDeTocs, igual que a les granotes.
     //
     // Dins d'un prefab es busca la unitat sol, perquè un prefab no pot
     // referenciar objectes d'escena. Però el botó del tren viu a sobre de
     // l'estació, que no és el tren: en aquest cas s'omple el camp a mà.
-    public class BotoDeMillora : MonoBehaviour
+    public class BotoDeMillora : MonoBehaviour, IEsPotTocar
     {
         [Tooltip("Buit dins d'un prefab (es busca sol pujant per la jerarquia). " +
                  "Omple'l quan el botó no penja de la unitat que millora.")]
@@ -42,7 +42,7 @@ namespace IdleFrogs.UI
             if (unitat != null) unitat.EnCanviDeNivell -= Refrescar;
         }
 
-        private void OnMouseDown()
+        public void EnTocar()
         {
             if (!enabled) return;
             if (PanellDeMillora.Instancia != null)

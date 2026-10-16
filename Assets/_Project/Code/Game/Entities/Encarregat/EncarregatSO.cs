@@ -20,7 +20,7 @@ namespace IdleFrogs.Game
         public Raresa raresa = Raresa.Comu;
 
         [Header("Efecte passiu — sempre actiu mentre està assignat")]
-        [Tooltip("Un de sol, com a IMT. Dos efectes al mateix encarregat multipliquen massa.")]
+        [Tooltip("Un de sol. Dos efectes al mateix encarregat multipliquen massa.")]
         public TipusDEfecte efecte = TipusDEfecte.VelocitatDeMoviment;
 
         [Tooltip("Multiplicador (3 = ×3). Per a ReduccioDeCost és la fracció que es " +
@@ -30,9 +30,9 @@ namespace IdleFrogs.Game
         [Header("Habilitat activa")]
         [Tooltip("Multiplicador extra mentre l'habilitat està encesa")]
         public double magnitudDeLHabilitat = 3;
-        [Tooltip("IMT: 1 min Junior, 3 min Senior, 10 min Executive")]
+        [Tooltip("Com més rar, més llarga")]
         public float segonsDeDuracio = 60;
-        [Tooltip("IMT: 5 min Junior, 15 min Senior, 50 min Executive (≈20% d'ús)")]
+        [Tooltip("Compta des de l'activació. Amb 5 vegades la durada, l'habilitat està encesa un 20% del temps")]
         public float segonsDeRecarrega = 300;
 
         public bool EsReduccioDeCost => efecte == TipusDEfecte.ReduccioDeCost;
@@ -48,14 +48,39 @@ namespace IdleFrogs.Game
             _ => string.Empty
         };
 
-        public string DescripcioDeLHabilitat =>
-            $"×{FormatadorDeNombres.Decimals(magnitudDeLHabilitat, 1)} durant " +
-            $"{FormatadorDeNombres.Temps(segonsDeDuracio)}";
+        // L'habilitat multiplica l'efecte passiu pel seu factor mentre dura.
+        // Per a la rebaixa de cost el que compta és el total, amb el mateix
+        // topall del 95% que aplica el gestor.
+        private string ValorDeLHabilitat => EsReduccioDeCost
+            ? $"-{FormatadorDeNombres.Factor(System.Math.Min(0.95, magnitud * magnitudDeLHabilitat) * 100)}%"
+            : $"{FormatadorDeNombres.Factor(magnitudDeLHabilitat)}x";
+
+        // "5x Velocitat de recol·lecció" — la targeta de l'encarregat assignat.
+        public string DescripcioDeLHabilitat => $"{ValorDeLHabilitat} {NomDeLEix(false)}";
+
+        // "5x Vel" — les cartes petites de la llista.
+        public string DescripcioCurtaDeLHabilitat => $"{ValorDeLHabilitat} {NomDeLEix(true)}";
+
+        // "3m"
+        public string DuracioCurta => FormatadorDeNombres.TempsCurt(segonsDeDuracio);
+
+        // El mateix efecte vol dir coses diferents a cada tram: treballar, al
+        // pantà, és recollir; al tren i a la tenda, carregar.
+        private string NomDeLEix(bool curt) => efecte switch
+        {
+            TipusDEfecte.VelocitatDeMoviment => curt ? "Vel" : "Velocitat",
+            TipusDEfecte.VelocitatDeTreball when lloc == TipusDeLloc.Panta =>
+                curt ? "Recol" : "Velocitat de recol·lecció",
+            TipusDEfecte.VelocitatDeTreball => curt ? "Càrrega" : "Velocitat de càrrega",
+            TipusDEfecte.Capacitat => curt ? "Cap" : "Capacitat",
+            TipusDEfecte.ReduccioDeCost => curt ? "cost" : "Cost de millora",
+            _ => string.Empty
+        };
 
         private void OnValidate()
         {
-            // El pantà no té cap eix de capacitat (a IMT la taula del Mine
-            // Shaft tampoc en té), així que aquesta combinació no faria res.
+            // El pantà no té cap eix de capacitat que l'encarregat pugui
+            // multiplicar, així que aquesta combinació no faria res.
             if (lloc == TipusDeLloc.Panta && efecte == TipusDEfecte.Capacitat)
                 Debug.LogWarning($"{name}: un encarregat de pantà amb efecte Capacitat no fa res.", this);
 

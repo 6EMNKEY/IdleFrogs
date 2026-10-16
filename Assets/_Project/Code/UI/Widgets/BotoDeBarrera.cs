@@ -6,7 +6,7 @@ namespace IdleFrogs.UI
 {
     // La roca. Tocar-la engega el temporitzador; a partir d'aquí corre sola
     // i el text va comptant enrere. No es paga amb doblers: es paga amb temps.
-    public class BotoDeBarrera : MonoBehaviour
+    public class BotoDeBarrera : MonoBehaviour, IEsPotTocar
     {
         private Barrera _barrera;
         private TMP_Text _text;
@@ -43,7 +43,7 @@ namespace IdleFrogs.UI
 
         // Un toc engega el temporitzador; si ja corre i tens els doblers,
         // el segon toc la trenca pagant.
-        private void OnMouseDown()
+        public void EnTocar()
         {
             if (!enabled || _barrera == null) return;
 

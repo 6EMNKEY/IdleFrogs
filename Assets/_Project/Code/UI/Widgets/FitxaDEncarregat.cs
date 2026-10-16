@@ -5,106 +5,62 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    // Una fila de la llista d'encarregats. Prefab petit que el panell
-    // instancia tantes vegades com en tinguis d'aquell tipus.
+    // Una carta petita de la llista d'encarregats no assignats. Prefab que
+    // el panell instancia tantes vegades com en tinguis d'aquell tipus.
+    // Tocar-la la selecciona; el botó vermell la ven.
     public class FitxaDEncarregat : MonoBehaviour
     {
-        [SerializeField] private Image retrat;
-        [SerializeField] private Image marcDeRaresa;
-        [SerializeField] private TMP_Text nom;
-        [SerializeField] private TMP_Text efecte;
-        [SerializeField] private TMP_Text estat;
+        [Tooltip("El botó de tota la carta: tocar-la la selecciona")]
+        [SerializeField] private Button botoSeleccionar;
+        [Tooltip("El marc groc. S'encén quan la carta està seleccionada")]
+        [SerializeField] private GameObject marcDeSeleccio;
 
-        [SerializeField] private Button botoAssignar;
-        [SerializeField] private TMP_Text textBotoAssignar;
-        [SerializeField] private Button botoHabilitat;
-        [SerializeField] private TMP_Text textBotoHabilitat;
+        [Header("Contingut")]
+        [Tooltip("El quadrat de darrere del retrat: es pinta del color de la raresa")]
+        [SerializeField] private Image fonsDelRetrat;
+        [SerializeField] private Image retrat;
+        [Tooltip("\"3m\"")]
+        [SerializeField] private TMP_Text duracio;
+        [Tooltip("\"5x Vel\"")]
+        [SerializeField] private TMP_Text efecte;
+
+        [Header("Vendre")]
+        [SerializeField] private Button botoVendre;
 
         private EncarregatPosseit _encarregat;
-        private Ranura _ranura;
-        private System.Action _refrescarPanell;
+        private System.Action<EncarregatPosseit> _enSeleccionar;
+        private System.Action<EncarregatPosseit> _enVendre;
+
+        public EncarregatPosseit Encarregat => _encarregat;
 
         private void Awake()
         {
-            if (botoAssignar != null) botoAssignar.onClick.AddListener(AlternarAssignacio);
-            if (botoHabilitat != null) botoHabilitat.onClick.AddListener(ActivarHabilitat);
+            if (botoSeleccionar != null)
+                botoSeleccionar.onClick.AddListener(() => _enSeleccionar?.Invoke(_encarregat));
+            if (botoVendre != null)
+                botoVendre.onClick.AddListener(() => _enVendre?.Invoke(_encarregat));
         }
 
-        public void Omplir(EncarregatPosseit encarregat, Ranura ranura, System.Action refrescarPanell)
+        public void Omplir(EncarregatPosseit encarregat, bool seleccionada,
+                           System.Action<EncarregatPosseit> enSeleccionar,
+                           System.Action<EncarregatPosseit> enVendre)
         {
             _encarregat = encarregat;
-            _ranura = ranura;
-            _refrescarPanell = refrescarPanell;
-            Refrescar();
-        }
+            _enSeleccionar = enSeleccionar;
+            _enVendre = enVendre;
 
-        public void Refrescar()
-        {
-            if (_encarregat == null || _encarregat.definicio == null) return;
-            EncarregatSO d = _encarregat.definicio;
+            if (marcDeSeleccio != null) marcDeSeleccio.SetActive(seleccionada);
+            if (encarregat == null || encarregat.definicio == null) return;
 
-            if (retrat != null && d.retrat != null) retrat.sprite = d.retrat;
-            if (marcDeRaresa != null) marcDeRaresa.color = ColorsDeRaresa.Per(d.raresa);
-            if (nom != null) nom.text = $"{d.nomVisible}";
-            if (efecte != null) efecte.text = d.DescripcioDeLEfecte;
-
-            bool aquestaRanura = _encarregat.assignat && _encarregat.ranura.Equals(_ranura);
-
-            if (estat != null)
+            EncarregatSO d = encarregat.definicio;
+            if (fonsDelRetrat != null) fonsDelRetrat.color = ColorsDeRaresa.Per(d.raresa);
+            if (retrat != null)
             {
-                if (aquestaRanura) estat.text = "Aquí";
-                else if (_encarregat.assignat) estat.text = $"A {_encarregat.ranura}";
-                else estat.text = "Lliure";
+                retrat.sprite = d.retrat;
+                retrat.enabled = d.retrat != null;
             }
-
-            // Tres casos: el que ja hi és, el que està en una altra ranura
-            // (es mou) i el que no fa res.
-            if (textBotoAssignar != null)
-                textBotoAssignar.text = aquestaRanura ? "Treure"
-                                      : _encarregat.assignat ? "Moure aquí"
-                                      : "Assignar";
-
-            RefrescarHabilitat(aquestaRanura);
-        }
-
-        private void RefrescarHabilitat(bool aquestaRanura)
-        {
-            if (botoHabilitat == null) return;
-
-            // Només té sentit engegar-la si l'encarregat està treballant.
-            botoHabilitat.gameObject.SetActive(_encarregat.assignat);
-            if (!_encarregat.assignat) return;
-
-            bool activa = _encarregat.HabilitatActiva;
-            bool llesta = _encarregat.HabilitatLlesta;
-
-            botoHabilitat.interactable = llesta;
-            if (textBotoHabilitat == null) return;
-
-            if (activa)
-                textBotoHabilitat.text = $"Actiu · {_encarregat.definicio.DescripcioDeLHabilitat}";
-            else if (llesta)
-                textBotoHabilitat.text = $"Activar · {_encarregat.definicio.DescripcioDeLHabilitat}";
-            else
-                textBotoHabilitat.text = FormatadorDeNombres.Temps(_encarregat.SegonsFinsLlesta);
-        }
-
-        private void AlternarAssignacio()
-        {
-            if (_encarregat == null || GestorDEncarregats.Instancia == null) return;
-
-            bool aquestaRanura = _encarregat.assignat && _encarregat.ranura.Equals(_ranura);
-            if (aquestaRanura) GestorDEncarregats.Instancia.Desassignar(_encarregat);
-            else GestorDEncarregats.Instancia.Assignar(_encarregat, _ranura);
-
-            _refrescarPanell?.Invoke();
-        }
-
-        private void ActivarHabilitat()
-        {
-            if (_encarregat == null || GestorDEncarregats.Instancia == null) return;
-            GestorDEncarregats.Instancia.ActivarHabilitat(_encarregat);
-            _refrescarPanell?.Invoke();
+            if (duracio != null) duracio.text = d.DuracioCurta;
+            if (efecte != null) efecte.text = d.DescripcioCurtaDeLHabilitat;
         }
     }
 }

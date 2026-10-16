@@ -5,7 +5,7 @@ namespace IdleFrogs.Game
 {
     public enum EstatGranota { Idle, MoventseAlNenufar, Recolectant, MoventseACaixa, Buidant }
 
-    public class ControladorGranota : MonoBehaviour
+    public class ControladorGranota : MonoBehaviour, IEsPotTocar
     {
         [Header("Estat")]
         public EstatGranota estatActual = EstatGranota.Idle;
@@ -46,7 +46,7 @@ namespace IdleFrogs.Game
             yield return null;
         }
 
-        private void OnMouseDown() => IntentarEngegar();
+        public void EnTocar() => IntentarEngegar();
 
         // La crida el dit i, quan hi ha encarregat, també el Panta cada frame.
         public bool IntentarEngegar()

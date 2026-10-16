@@ -37,6 +37,6 @@ namespace IdleFrogs.UI
 
         // Sense denominador: el magatzem no té tope.
         private void Refrescar(double quantitat) =>
-            _text.text = FormatadorDeNombres.Doblers(quantitat);
+            _text.text = FormatadorDeNombres.Doblers(quantitat) + Icones.Moneda;
     }
 }

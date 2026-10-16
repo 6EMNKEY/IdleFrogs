@@ -6,9 +6,16 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    // Un sol panell per a totes les unitats millorables: pantà, tren i,
-    // quan hi sigui, estació. No sap què està ensenyant — li demana les
-    // files a la unitat i les pinta.
+    [System.Serializable]
+    public class IconaDEstadistica
+    {
+        public TipusDEstadistica tipus;
+        public Sprite icona;
+    }
+
+    // Un sol panell per a totes les unitats millorables: pantà, tren i
+    // tenda. No sap què està ensenyant — li demana a la unitat el resum,
+    // les fites i les estadístiques i les pinta.
     //
     // Els botons dels prefabs hi arriben per la instància: no poden guardar
     // una referència perquè som un objecte d'escena i ells són prefabs.
@@ -16,26 +23,65 @@ namespace IdleFrogs.UI
     {
         public static PanellDeMillora Instancia { get; private set; }
 
+        // La guia inicial ho fa servir per saber que ja has obert el panell.
+        public bool EstaObert => arrel != null && arrel.activeSelf;
+
         [Header("Arrel del panell (el que s'amaga i es mostra)")]
         [SerializeField] private GameObject arrel;
 
         [Header("Capçalera")]
-        [SerializeField] private TMP_Text titol;
         [SerializeField] private Button botoTancar;
 
-        [Header("Files")]
+        [Header("Targeta")]
+        [SerializeField] private Image retrat;
+        [Tooltip("\"Pantà 1\"")]
+        [SerializeField] private TMP_Text nom;
+        [Tooltip("\"Level 500/800\"")]
+        [SerializeField] private TMP_Text textNivell;
+        [Tooltip("\"Boost at lvl 600\"")]
+        [SerializeField] private TMP_Text textSeguentBoost;
+        [Tooltip("\"Producció total: 100k\"")]
+        [SerializeField] private TMP_Text textResum;
+
+        [Header("Barra fins al següent boost")]
+        [Tooltip("Una Image amb Image Type = Filled, Fill Method = Horizontal")]
+        [SerializeField] private Image barraDeBoost;
+        [Tooltip("\"+20\" i la gema")]
+        [SerializeField] private TMP_Text textRecompensa;
+
+        [Header("Estadístiques")]
+        [Tooltip("El text del separador: el posa cada unitat (Titol De Les Estadistiques)")]
+        [SerializeField] private TMP_Text textDelSeparador;
         [SerializeField] private RectTransform contenidorDeFiles;
         [SerializeField] private FilaDEstadistica prefabDeFila;
+        [Tooltip("La icona de cada caixa. Les que no hi siguin surten sense icona")]
+        [SerializeField] private IconaDEstadistica[] icones;
 
         [Header("Peu")]
-        [SerializeField] private TMP_Text textDoblers;
-        [SerializeField] private TMP_Text textBotoMillorar;
-        [SerializeField] private Button botoMillorar;
+        [Tooltip("Cada botó porta el seu quadrat com a Image pròpia: només es veu la del triat")]
         [SerializeField] private Button botoX1, botoX10, botoX50, botoMax;
+        [Tooltip("\"Cash : 65B\" i la moneda")]
+        [SerializeField] private TMP_Text textDoblers;
+        [SerializeField] private Button botoMillorar;
+        [Tooltip("El cost i la moneda. \"UPGRADE\" és un text fix a part")]
+        [SerializeField] private TMP_Text textCostDeMillora;
+
+        [Header("Botó d'upgrade sense diners")]
+        [Tooltip("Es multiplica pel sprite del botó, com el Disabled Color del Button " +
+                 "(que el panell sobreescriu amb aquest). Deixa A a 1: amb menys es torna transparent")]
+        [SerializeField] private Color colorSenseDiners = new Color(0.44f, 0.44f, 0.44f, 1f);
+        [Tooltip("Només per provar en Play: apaga el botó encara que tinguis diners, " +
+                 "per veure el color mentre el canvies")]
+        [SerializeField] private bool provarSenseDiners;
 
         private UnitatMillorable _unitat;
-        private int _quantitat = 1;
-        private bool _maxim;
+        // Quin dels quatre està triat: 0 = x1, 1 = x10, 2 = x50, 3 = max.
+        // Es recorda entre sessions: és una preferència de qui juga, no
+        // part de la partida, i per això va a PlayerPrefs i no al guardat.
+        private const string ClauDeLaQuantitat = "IdleFrogs.QuantitatDeMillora";
+        private static readonly int[] Quantitats = { 1, 10, 50, 1 };
+        private const int IndexMaxim = 3;
+        private int _triat;
 
         private readonly List<FilaEstadistica> _dades = new List<FilaEstadistica>();
         private readonly List<FilaDEstadistica> _files = new List<FilaDEstadistica>();
@@ -51,11 +97,15 @@ namespace IdleFrogs.UI
 
             if (botoTancar != null) botoTancar.onClick.AddListener(Tancar);
             if (botoMillorar != null) botoMillorar.onClick.AddListener(Millorar);
-            if (botoX1 != null) botoX1.onClick.AddListener(() => Triar(1, false));
-            if (botoX10 != null) botoX10.onClick.AddListener(() => Triar(10, false));
-            if (botoX50 != null) botoX50.onClick.AddListener(() => Triar(50, false));
-            if (botoMax != null) botoMax.onClick.AddListener(() => Triar(1, true));
+            AplicarColorSenseDiners();
+            if (botoX1 != null) botoX1.onClick.AddListener(() => Triar(0));
+            if (botoX10 != null) botoX10.onClick.AddListener(() => Triar(1));
+            if (botoX50 != null) botoX50.onClick.AddListener(() => Triar(2));
+            if (botoMax != null) botoMax.onClick.AddListener(() => Triar(IndexMaxim));
 
+            // La primera vegada no hi ha res guardat i comença a x1.
+            _triat = Mathf.Clamp(PlayerPrefs.GetInt(ClauDeLaQuantitat, 0), 0, IndexMaxim);
+            PintarSeleccio();
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -96,17 +146,37 @@ namespace IdleFrogs.UI
                 CurrencyManager.Instancia.EnCanviDeDoblers -= RefrescarPerDoblers;
         }
 
-        private void Triar(int quantitat, bool maxim)
+        private void Triar(int index)
         {
-            _quantitat = quantitat;
-            _maxim = maxim;
+            _triat = index;
+            PlayerPrefs.SetInt(ClauDeLaQuantitat, index);
+            PintarSeleccio();
             Refrescar();
+        }
+
+        // Només s'amaga el quadrat (la Image del botó), no el text "x10".
+        // Amb alfa 0 i no amb enabled = false: si s'apagués la Image, el
+        // botó deixaria de rebre tocs i no el podries tornar a triar.
+        private void PintarSeleccio()
+        {
+            Mostrar(botoX1, _triat == 0);
+            Mostrar(botoX10, _triat == 1);
+            Mostrar(botoX50, _triat == 2);
+            Mostrar(botoMax, _triat == IndexMaxim);
+        }
+
+        private static void Mostrar(Button boto, bool visible)
+        {
+            if (boto == null || boto.image == null) return;
+            Color c = boto.image.color;
+            c.a = visible ? 1f : 0f;
+            boto.image.color = c;
         }
 
         private int QuantitatActual()
         {
             if (_unitat == null) return 0;
-            return _maxim ? Mathf.Max(1, _unitat.MillorsQuePucPagar()) : _quantitat;
+            return _triat == IndexMaxim ? Mathf.Max(1, _unitat.MillorsQuePucPagar()) : Quantitats[_triat];
         }
 
         private void RefrescarPerDoblers(double _) => Refrescar();
@@ -119,22 +189,69 @@ namespace IdleFrogs.UI
             int k = QuantitatActual();
             int desti = Mathf.Min(ara + k, _unitat.NivellMaxim);
 
-            if (titol != null) titol.text = $"{_unitat.NomVisible} — Nivell {ara}";
+            PintarTargeta(ara, desti);
 
+            if (textDelSeparador != null) textDelSeparador.text = _unitat.TitolDeLesEstadistiques;
             _dades.Clear();
             _unitat.OmplirFiles(_dades, desti);
             PintarFiles();
 
             double cost = _unitat.CostDeMillora(k);
             double doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0;
+            bool alMaxim = ara >= _unitat.NivellMaxim;
 
-            if (textDoblers != null) textDoblers.text = FormatadorDeNombres.Doblers(doblers);
-            if (textBotoMillorar != null)
-                textBotoMillorar.text = $"Millorar x{k}\n{FormatadorDeNombres.Doblers(cost)}";
-            if (botoMillorar != null) botoMillorar.interactable = k > 0 && doblers >= cost;
+            if (textDoblers != null)
+                textDoblers.text = $"Cash : {FormatadorDeNombres.Doblers(doblers)}{Icones.Moneda}";
+            if (textCostDeMillora != null)
+                textCostDeMillora.text = alMaxim ? "MAX" : FormatadorDeNombres.Doblers(cost) + Icones.Moneda;
+            // No interactuable = el Disabled Color del botó: és el que el fa més fosc.
+            if (botoMillorar != null)
+                botoMillorar.interactable = !provarSenseDiners && !alMaxim && k > 0 && doblers >= cost;
         }
 
-        // Reaprofitem les files que ja hi ha i només en creem quan en falten:
+        private void AplicarColorSenseDiners()
+        {
+            if (botoMillorar == null) return;
+            ColorBlock colors = botoMillorar.colors;
+            colors.disabledColor = colorSenseDiners;
+            botoMillorar.colors = colors;
+        }
+
+        // Canviar el color o la casella a l'inspector es veu a l'acte, també
+        // amb el joc en marxa: així es pot triar mirant el botó.
+        private void OnValidate()
+        {
+            AplicarColorSenseDiners();
+            if (Application.isPlaying) Refrescar();
+        }
+
+        private void PintarTargeta(int ara, int desti)
+        {
+            if (retrat != null)
+            {
+                retrat.sprite = _unitat.RetratDelPanell;
+                retrat.enabled = retrat.sprite != null;
+            }
+            if (nom != null) nom.text = _unitat.NomVisible;
+            if (textNivell != null) textNivell.text = $"Level {ara}/{_unitat.NivellMaxim}";
+
+            FilaEstadistica resum = _unitat.Resum(desti);
+            if (textResum != null)
+                textResum.text = prefabDeFila != null
+                    ? $"{resum.nom}: {prefabDeFila.Valor(resum)}"
+                    : $"{resum.nom}: {resum.valor}";
+
+            FitaDeMultiplicador[] fites = _unitat.FitesDeMillora;
+            FitaDeMultiplicador seguent = Fites.Seguent(fites, ara);
+
+            if (textSeguentBoost != null)
+                textSeguentBoost.text = seguent != null ? $"Boost at lvl {seguent.nivell}" : "All boosts reached";
+            if (barraDeBoost != null) barraDeBoost.fillAmount = Fites.Progres(fites, ara);
+            if (textRecompensa != null)
+                textRecompensa.text = seguent != null && seguent.gemes > 0 ? $"+{seguent.gemes}{Icones.Gema}" : string.Empty;
+        }
+
+        // Reaprofitem les caixes que ja hi ha i només en creem quan en falten:
         // el panell s'obre i es refresca constantment.
         private void PintarFiles()
         {
@@ -147,8 +264,16 @@ namespace IdleFrogs.UI
             {
                 bool cal = i < _dades.Count;
                 _files[i].gameObject.SetActive(cal);
-                if (cal) _files[i].Omplir(_dades[i]);
+                if (cal) _files[i].Omplir(_dades[i], IconaPer(_dades[i].tipus));
             }
+        }
+
+        private Sprite IconaPer(TipusDEstadistica tipus)
+        {
+            if (icones == null) return null;
+            foreach (IconaDEstadistica i in icones)
+                if (i != null && i.tipus == tipus) return i.icona;
+            return null;
         }
 
         private void Millorar()

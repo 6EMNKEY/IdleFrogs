@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: e4dfbee84588afb498a9982dee20b056
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - fons: {instanceID: 0}
+  - capsa: {instanceID: 0}
+  - nenufar: {instanceID: 0}
+  - granota: {fileID: 3130673264700469227, guid: f2229975ebd5976f2a23873380ced102, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

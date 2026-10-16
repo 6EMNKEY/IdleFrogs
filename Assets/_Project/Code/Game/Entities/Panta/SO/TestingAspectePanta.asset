@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4dfbee84588afb498a9982dee20b056, type: 3}
   m_Name: TestingAspectePanta
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.AspectePantaSO
-  fons: {fileID: 21300000, guid: 1099a9174a01a2a33b39abf7274e2fe6, type: 3}
-  capsa: {fileID: 7499154508442906066, guid: 85d94a51e3527bc748a1e46ea38abfca, type: 3}
-  nenufar: {fileID: -7905340146429761662, guid: 34a295313b2918ec2b19f5f75f561b0d, type: 3}
-  granota: {fileID: 2820143329777312509, guid: fa7d9c99c13313ca587f75ff70e7aa6b, type: 3}
+  fons: {fileID: 1771050413662363984, guid: b9e78579f0ccb034c965cbd1c4124d64, type: 3}
+  capsa: {fileID: -114935848254530312, guid: 6970e457f41f6c1999f2d4429116913a, type: 3}
+  nenufar: {fileID: 7239522848959938206, guid: 493818a6b1f0a7b58868b64a8b33dde5, type: 3}
+  granota: {fileID: 3130673264700469227, guid: f2229975ebd5976f2a23873380ced102, type: 3}
   tintDelFons: {r: 1, g: 1, b: 1, a: 1}

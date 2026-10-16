@@ -27,7 +27,7 @@ namespace IdleFrogs.Game
         public double capacitatBase = 50;
         public double creixementDeCapacitat = 1.33;
 
-        // IMT: ×2.66 al nivell 10 i ×1.21 al 40, a capacitat i velocitat de càrrega.
+        // ×2.66 al nivell 10 i ×1.21 al 40, a capacitat i velocitat de càrrega.
         [Header("Fites — multipliquen capacitat i ritme alhora")]
         public FitaDeMultiplicador[] fites =
         {
@@ -39,10 +39,9 @@ namespace IdleFrogs.Game
         public double costBase = 200;
         public double creixementDeCost = 1.2;
 
-        // Molt per sobre del tope 800 dels pantans: el teardown parla de
-        // millores d'ascensor "massa cares" pel nivell 1400. Però amb
-        // creixement 1.33 la capacitat es passa de rang cap al 2470, així
-        // que 2000 és el màxim rodó que hi cap amb marge.
+        // Molt per sobre del tope 800 dels pantans. Amb creixement 1.33 la
+        // capacitat es passa de rang cap al 2470, així que 2000 és el màxim
+        // rodó que hi cap amb marge.
         [Header("Límit")]
         public int nivellMaxim = 2000;
 

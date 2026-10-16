@@ -31,7 +31,8 @@ namespace IdleFrogs.Game
             if (!File.Exists(Ruta)) return null;
             try
             {
-                return JsonUtility.FromJson<DadesDePartida>(File.ReadAllText(Ruta));
+                // Les partides velles (d'una sola zona) es converteixen aquí.
+                return MigracioDePartida.Llegir(File.ReadAllText(Ruta));
             }
             catch (System.Exception e)
             {
@@ -43,6 +44,8 @@ namespace IdleFrogs.Game
         public static void Esborrar()
         {
             if (File.Exists(Ruta)) File.Delete(Ruta);
+            // Un .tmp que hagi quedat d'un guardat a mitges no ha de sobreviure.
+            if (File.Exists(Ruta + ".tmp")) File.Delete(Ruta + ".tmp");
         }
     }
 }

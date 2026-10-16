@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace IdleFrogs.Game
 {
@@ -21,14 +22,54 @@ namespace IdleFrogs.Game
         [Header("Guardat")]
         [SerializeField] private float segonsEntreAutoGuardats = 30f;
 
+        [Header("Zona")]
+        [Tooltip("Quina zona és aquesta escena. La primera és la 0. Cada zona guarda els seus pantans, tren, tenda i encarregats.")]
+        [SerializeField] private int zona = 0;
+
+        [Header("Partida nova")]
+        [Tooltip("Just el que costa el primer pantà: l'únic que pots fer és comprar-lo.")]
+        [SerializeField] private double doblersInicials = 10;
+
+        // El tope no és garreperia: és el que fa que valgui la pena tornar
+        // aviat. Sense tope, tornar al cap d'una setmana donaria el mateix
+        // que tornar cada dues hores.
+        [Header("Progrés offline")]
+        [SerializeField] private float horesMaximesOffline = 2f;
+        [Tooltip("Per sota d'això no s'ensenya el panell de 'mentre no hi eres'")]
+        [SerializeField] private float segonsMinimsPerAvisar = 60f;
+
         // Events per a que altres managers es suscriguin
 
         public event Action EnTickDeJoc;
         public event Action EnTickDeSegon;
 
+        // El panell de progrés offline pot fer el seu Start abans o després
+        // del nostre: per això el resultat es queda pendent fins que algú
+        // el recull, i a més s'avisa per l'event.
+        public event Action<ResultatOffline> EnProgresOffline;
+        private ResultatOffline? _resultatPendent;
+
+        // Quan és true, tot el que depèn de la partida carregada ja és a lloc.
+        public bool PartidaCarregada { get; private set; }
+
+        // La guia inicial viu a la UI, que no podem referenciar; el seu
+        // progrés sí que el guardem nosaltres.
+        public int PasDeLaGuia { get; set; }
+
         private float _temporitzadorTick;
         private float _temporitzadorSegon;
         private float _comptadorDAutoGuardat;
+
+        private bool _reiniciant;
+
+        // Tot el que hi ha guardat, amb totes les zones. Es manté en memòria
+        // perquè en guardar només se substitueixi la zona d'aquesta escena.
+        private DadesDePartida _dades;
+
+        public int Zona => zona;
+        private DateTime _marcaCarregada = DateTime.MinValue;
+        private DateTime _momentDePausa;
+        private bool _enPausa;
 
 
         private void Awake()
@@ -59,12 +100,23 @@ namespace IdleFrogs.Game
             if (tenda != null) tenda.InicialitzarTenda();
             else Debug.LogError("GameManager: falta la referència a Tenda");
 
-            // Al final: les unitats ja existeixen i els nivells ja s'han
-            // carregat, així que aquí és on els bonus i l'automatisme
-            // arriben als trams que toca.
+            // Les unitats ja existeixen i els nivells ja s'han carregat, així
+            // que aquí és on els bonus i l'automatisme arriben als trams.
             if (GestorDEncarregats.Instancia != null)
                 GestorDEncarregats.Instancia.RegistrarUnitats(llistaDePantans, tren, tenda);
 
+            // L'últim: necessita saber quins trams van sols, i això ho
+            // acaba de decidir RegistrarUnitats.
+            if (_marcaCarregada != DateTime.MinValue)
+                AplicarProgresOffline(_marcaCarregada);
+
+            PartidaCarregada = true;
+
+            // Guardem ja: si l'app es tanqués abans del primer autoguardat, la
+            // partida guardada encara tindria la marca de temps vella, i el
+            // proper cop es tornaria a donar el mateix offline (i a cobrar la
+            // càrrega de la granota transportista) per segona vegada.
+            SaveGameData();
             Debug.Log("GameManager: Inicialització completa");
         }
 
@@ -100,16 +152,87 @@ namespace IdleFrogs.Game
 
         }
 
-        #region Application Lifecycle & Saving
+        #region Progrés offline
 
+        // Al mòbil el joc no sempre es tanca: sovint només passa a segon pla
+        // i en tornar continua on era. Les corrutines no han avançat (Unity
+        // estava suspès), així que aquest temps també s'ha de donar com a
+        // offline, igual que si l'haguessis tancat del tot.
         private void OnApplicationPause(bool pauseStatus)
         {
-            // On mobile, app pausing happens when switching apps or locking the screen
             if (pauseStatus)
             {
                 SaveGameData();
+                _momentDePausa = DateTime.UtcNow;
+                _enPausa = true;
+            }
+            else if (_enPausa)
+            {
+                _enPausa = false;
+                if (!PartidaCarregada) return;
+                AplicarProgresOffline(_momentDePausa);
+                SaveGameData();   // mateix motiu que al final de Start
             }
         }
+
+        public ResultatOffline? ConsumirResultatOffline()
+        {
+            ResultatOffline? r = _resultatPendent;
+            _resultatPendent = null;
+            return r;
+        }
+
+        private void AplicarProgresOffline(DateTime desDe)
+        {
+            if (llistaDePantans == null) return;
+
+            double segons = (DateTime.UtcNow - desDe).TotalSeconds;
+            if (segons <= 1) return;
+
+            int n = llistaDePantans.Quantitat;
+            var produccio = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                Panta p = llistaDePantans.Obtenir(i);
+                if (p != null && p.EstaComprat && p.EstaAutomatitzada)
+                    produccio[i] = p.ProduccioReal;
+            }
+
+            double[] capses = llistaDePantans.ObtenirCapses();
+            double cabalTren = tren != null && tren.EstaAutomatitzada ? tren.CabalReal : 0;
+            double cabalTenda = tenda != null && tenda.EstaAutomatitzada ? tenda.CabalReal : 0;
+            double estacioAra = estacio != null ? estacio.DoblersEmmagatzemats : 0;
+
+            ResultatOffline r = ProgresOffline.Calcular(
+                segons, horesMaximesOffline * 3600.0,
+                produccio, capses, cabalTren, estacioAra, cabalTenda,
+                out double estacioDespres);
+
+            if (!r.HiHaAlgunGuany) return;
+
+            llistaDePantans.AplicarCapses(capses);
+
+            // Sense estació el tren hauria anat directe a la cartera: és el
+            // mateix fallback que fa el tren de debò.
+            if (estacio != null) estacio.AplicarDoblers(estacioDespres);
+            else if (CurrencyManager.Instancia != null) CurrencyManager.Instancia.AfegirDoblers(estacioDespres - estacioAra);
+
+            if (CurrencyManager.Instancia != null) CurrencyManager.Instancia.AfegirDoblers(r.venut);
+
+            Debug.Log($"GameManager: offline {FormatadorDeNombres.Temps(r.segonsComptats)} → " +
+                      $"produït {FormatadorDeNombres.Doblers(r.produitAlsPantans)}, " +
+                      $"venut {FormatadorDeNombres.Doblers(r.venut)}");
+
+            // Els doblers ja s'han donat. El panell només ho explica, així que
+            // si el jugador mata l'app abans de veure'l no perd res.
+            if (r.segonsFora < segonsMinimsPerAvisar) return;
+            _resultatPendent = r;
+            EnProgresOffline?.Invoke(r);
+        }
+
+        #endregion
+
+        #region Application Lifecycle & Saving
 
         private void OnApplicationQuit()
         {
@@ -118,70 +241,159 @@ namespace IdleFrogs.Game
 
         private void CarregarPartida()
         {
-            DadesDePartida dades = ServeiDeGuardat.Carregar();
-            if (dades == null)
+            _dades = ServeiDeGuardat.Carregar();
+            if (_dades == null)
             {
-                Debug.Log("GameManager: partida nova");
+                _dades = new DadesDePartida();
+                IniciarPartidaNova();
+                IniciarZonaNova();
                 return;
             }
 
+            // Globals
             if (CurrencyManager.Instancia != null)
-                CurrencyManager.Instancia.EstablirDoblers(dades.doblers);
+                CurrencyManager.Instancia.EstablirDoblers(_dades.doblers);
+            if (CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.EstablirGemes(_dades.gemes);
+            PasDeLaGuia = _dades.pasDeLaGuia;
 
+            // La zona d'aquesta escena. Si encara no s'hi ha jugat mai, comença
+            // de zero encara que la partida en tingui d'altres.
+            if (_dades.TeZona(zona))
+            {
+                AplicarZona(_dades.zones[zona]);
+
+                // Només hi ha offline a donar si la zona ja existia: una zona
+                // nova no té encarregats que hagin treballat.
+                if (_dades.marcaDeTempsUtc != 0)
+                    _marcaCarregada = DateTime.FromBinary(_dades.marcaDeTempsUtc);
+            }
+            else
+            {
+                IniciarZonaNova();
+            }
+
+            Debug.Log($"GameManager: partida carregada (zona {zona})");
+        }
+
+        private void AplicarZona(ZonaGuardada z)
+        {
             if (llistaDePantans != null)
             {
                 // Les barreres primer: decideixen quins pantans es poden
                 // comprar, i ActualitzarEstats() ho llegeix després.
-                llistaDePantans.AplicarBarreres(dades.barreres);
-                llistaDePantans.AplicarNivells(dades.nivellsDePanta);
-                llistaDePantans.AplicarCapses(dades.capsesDePanta);
+                llistaDePantans.AplicarBarreres(z.barreres);
+                llistaDePantans.AplicarNivells(z.nivellsDePanta);
+                llistaDePantans.AplicarCapses(z.capsesDePanta);
             }
 
             if (tren != null)
             {
-                tren.AplicarNivell(dades.nivellDeTren);
-                tren.AplicarCarrega(dades.carregaDeTren);
+                tren.AplicarNivell(z.nivellDeTren);
+                tren.AplicarCarrega(z.carregaDeTren);
             }
 
-            if (estacio != null) estacio.AplicarDoblers(dades.doblersALEstacio);
+            if (estacio != null) estacio.AplicarDoblers(z.doblersALEstacio);
 
             // Abans que res que en depengui: les assignacions decideixen
             // quins trams van sols.
             if (GestorDEncarregats.Instancia != null)
-                GestorDEncarregats.Instancia.Carregar(dades.encarregats, dades.encarregatsComprats);
+                GestorDEncarregats.Instancia.Carregar(z.encarregats, z.encarregatsCompratsPerTipus);
 
-            if (tenda != null) tenda.AplicarNivell(dades.nivellDeTenda);
+            if (tenda != null) tenda.AplicarNivell(z.nivellDeTenda);
 
             // El que la granota duia a mitja entrega es cobra directament:
             // anava cap a la cartera igualment i així no es perd res ni cal
             // recrear-li l'estat de la corrutina.
-            if (dades.carregaDelTransportista > 0 && CurrencyManager.Instancia != null)
-                CurrencyManager.Instancia.AfegirDoblers(dades.carregaDelTransportista);
+            if (z.carregaDelTransportista > 0 && CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.AfegirDoblers(z.carregaDelTransportista);
+        }
 
-            Debug.Log("GameManager: partida carregada");
+        // Globals d'una partida que comença de zero.
+        private void IniciarPartidaNova()
+        {
+            if (CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.EstablirDoblers(doblersInicials);
+            if (CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.EstablirGemes(0);
+            PasDeLaGuia = 0;
+            Debug.Log("GameManager: partida nova");
+        }
+
+        // Una zona nova no pot dependre de com estigui el prefab: si el pantà
+        // té nivell 1 a l'inspector, naixerien tots comprats. Ho posem a zero
+        // aquí i el prefab deixa d'importar.
+        private void IniciarZonaNova()
+        {
+            if (llistaDePantans != null)
+                llistaDePantans.AplicarNivells(new int[llistaDePantans.Quantitat]);
         }
 
         public void SaveGameData()
         {
-            if (llistaDePantans == null) return;
+            // Mentre es reinicia no s'ha de tornar a escriure la partida vella.
+            if (_reiniciant || llistaDePantans == null) return;
+            if (_dades == null) _dades = new DadesDePartida();
 
-            ServeiDeGuardat.Guardar(new DadesDePartida
+            // Es reescriu només la zona d'aquesta escena: les altres es
+            // queden tal com es van carregar.
+            _dades.versio = DadesDePartida.VersioActual;
+            _dades.marcaDeTempsUtc = DateTime.UtcNow.ToBinary();
+            _dades.doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0;
+            _dades.gemes = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0;
+            _dades.pasDeLaGuia = PasDeLaGuia;
+            _dades.zonaActual = zona;
+
+            ZonaGuardada z = _dades.Zona(zona);
+            z.nivellsDePanta = llistaDePantans.ObtenirNivells();
+            z.capsesDePanta = llistaDePantans.ObtenirCapses();
+            z.barreres = llistaDePantans.ObtenirBarreres();
+            z.nivellDeTren = tren != null ? tren.Nivell : 1;
+            z.carregaDeTren = tren != null ? tren.CarregaActual : 0;
+            z.doblersALEstacio = estacio != null ? estacio.DoblersEmmagatzemats : 0;
+            z.nivellDeTenda = tenda != null ? tenda.Nivell : 1;
+            z.carregaDelTransportista = tenda != null ? tenda.CarregaDelTransportista : 0;
+            z.encarregats = GestorDEncarregats.Instancia != null ? GestorDEncarregats.Instancia.Guardar() : null;
+            z.encarregatsCompratsPerTipus = GestorDEncarregats.Instancia != null
+                ? GestorDEncarregats.Instancia.GuardarComprats() : null;
+
+            ServeiDeGuardat.Guardar(_dades);
+        }
+
+        #endregion
+
+        #region Reiniciar
+
+        // Esborra la partida i torna a carregar l'escena com si fos el primer cop.
+        public void ReiniciarPartida()
+        {
+            if (_reiniciant) return;
+            _reiniciant = true;
+
+            ServeiDeGuardat.Esborrar();
+
+            // Som DontDestroyOnLoad: si no ens destruïm, sobreviuríem a la
+            // recàrrega amb referències als pantans de l'escena vella, ja
+            // destruïts, i la nova escena esborraria el seu GameManager en
+            // veure que ja n'hi ha un. Ens apartem perquè el nou ocupi el lloc.
+            Instancia = null;
+            Destroy(gameObject);
+
+            Scene escena = SceneManager.GetActiveScene();
+            if (escena.buildIndex >= 0)
             {
-                marcaDeTempsUtc = DateTime.UtcNow.ToBinary(),
-                doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0,
-                nivellsDePanta = llistaDePantans.ObtenirNivells(),
-                capsesDePanta = llistaDePantans.ObtenirCapses(),
-                barreres = llistaDePantans.ObtenirBarreres(),
-                nivellDeTren = tren != null ? tren.Nivell : 1,
-                carregaDeTren = tren != null ? tren.CarregaActual : 0,
-                doblersALEstacio = estacio != null ? estacio.DoblersEmmagatzemats : 0,
-                nivellDeTenda = tenda != null ? tenda.Nivell : 1,
-                carregaDelTransportista = tenda != null ? tenda.CarregaDelTransportista : 0,
-                encarregats = GestorDEncarregats.Instancia != null
-                    ? GestorDEncarregats.Instancia.Guardar() : null,
-                encarregatsComprats = GestorDEncarregats.Instancia != null
-                    ? GestorDEncarregats.Instancia.Comprats : 0
-            });
+                SceneManager.LoadScene(escena.buildIndex);
+                return;
+            }
+
+#if UNITY_EDITOR
+            // L'escena no és a la llista d'escenes del build. A l'editor la
+            // podem carregar igualment; en una build no.
+            UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode(
+                escena.path, new LoadSceneParameters(LoadSceneMode.Single));
+#else
+            Debug.LogError("GameManager: l'escena no és a la llista d'escenes del build i no es pot recarregar");
+#endif
         }
 
         #endregion

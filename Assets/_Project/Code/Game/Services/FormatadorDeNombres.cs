@@ -39,6 +39,9 @@ namespace IdleFrogs.Game
         public static string Decimals(double valor, int xifres) =>
             valor.ToString("F" + xifres, Cultura);
 
+        // Multiplicadors i percentatges: "5", "2.5", sense ".0" al darrere.
+        public static string Factor(double valor) => valor.ToString("0.#", Cultura);
+
         // El delta que ensenya el panell de millora: sempre amb signe.
         public static string Delta(double valor)
         {
@@ -67,6 +70,17 @@ namespace IdleFrogs.Game
             if (t.TotalDays >= 1) return $"{(int)t.TotalDays}d {t.Hours}h";
             if (t.TotalHours >= 1) return $"{(int)t.TotalHours}h {t.Minutes}m";
             if (t.TotalMinutes >= 1) return $"{t.Minutes}m {t.Seconds}s";
+            return $"{t.Seconds}s";
+        }
+
+        // Per a durades fixes, on els zeros sobren: "3m" i no "3m 0s".
+        public static string TempsCurt(double segons)
+        {
+            if (segons <= 0) return "0s";
+            TimeSpan t = TimeSpan.FromSeconds(Math.Ceiling(segons));
+            if (t.TotalDays >= 1) return t.Hours > 0 ? $"{(int)t.TotalDays}d {t.Hours}h" : $"{(int)t.TotalDays}d";
+            if (t.TotalHours >= 1) return t.Minutes > 0 ? $"{(int)t.TotalHours}h {t.Minutes}m" : $"{(int)t.TotalHours}h";
+            if (t.TotalMinutes >= 1) return t.Seconds > 0 ? $"{t.Minutes}m {t.Seconds}s" : $"{t.Minutes}m";
             return $"{t.Seconds}s";
         }
     }

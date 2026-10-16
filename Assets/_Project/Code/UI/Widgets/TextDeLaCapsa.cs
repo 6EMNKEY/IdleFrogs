@@ -37,7 +37,7 @@ namespace IdleFrogs.UI
 
         private void Refrescar(double quantitat)
         {
-            _text.text = FormatadorDeNombres.Doblers(quantitat);
+            _text.text = FormatadorDeNombres.Doblers(quantitat) + Icones.Moneda;
         }
     }
 }

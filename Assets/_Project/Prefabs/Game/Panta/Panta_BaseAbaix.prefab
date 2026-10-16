@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5040290974591457634, guid: 7238b46ee085b1f90842f6f9ae52ff3e, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1771050413662363984, guid: b9e78579f0ccb034c965cbd1c4124d64, type: 3}
     - target: {fileID: 5418805433622546967, guid: 7238b46ee085b1f90842f6f9ae52ff3e, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -116,8 +120,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.47, y: 0.38}
-    newSize: {x: 0.18, y: 0.07}
+    oldSize: {x: 1.3, y: 1.36}
+    newSize: {x: 1.3, y: 1.36}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -167,7 +171,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.47, y: 0.38}
+    oldSize: {x: 1.98, y: 0.48}
     newSize: {x: 0.18, y: 0.07}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

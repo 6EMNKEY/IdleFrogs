@@ -10,10 +10,8 @@ namespace IdleFrogs.EditorTools
     //
     // Menú: IdleFrogs > Crear encarregats de prova
     //
-    // Les magnituds surten de les taules del teardown d'Idle Miner, que dona
-    // tres columnes (Junior/Senior/Executive). Aquí n'hi ha quatre rareses,
-    // així que s'hi ha afegit un esglaó baix per al Comú. Els percentatges
-    // de raresa NO surten d'IMT: el teardown no en documenta cap.
+    // Quatre esglaons per efecte, un per raresa: Comú, Rar, Èpic i
+    // Llegendari. Els percentatges de raresa són al catàleg.
     public static class CreadorDEncarregats
     {
         private const string Carpeta = "Assets/_Project/Data/Encarregats";
@@ -31,9 +29,6 @@ namespace IdleFrogs.EditorTools
             }
         }
 
-        // IMT Mine Shaft:  Walking 3.5/5.5/7.5 · Mining 3/5/7 · Cost 40/70/80%
-        // IMT Elevator:    Movement 2/4/6 · Loading 2/4/6 · Load Exp 3/5/7 · Cost 40/70/80%
-        // IMT Warehouse:   Walking 3/5/7 · Loading 3/5/8 · Load Exp 3/5/8 · Cost 40/70/80%
         private static readonly Recepta[] Receptes =
         {
             new Recepta(TipusDeLloc.Panta, TipusDEfecte.VelocitatDeMoviment, "Saltador",   2.0, 3.5, 5.5, 7.5),
@@ -51,8 +46,7 @@ namespace IdleFrogs.EditorTools
             new Recepta(TipusDeLloc.Tenda, TipusDEfecte.ReduccioDeCost,      "Regatejador", 0.2, 0.4, 0.7, 0.8),
         };
 
-        // IMT: durada 1m/3m/10m, recàrrega 5m/15m/50m. Quatre rareses,
-        // així que s'hi afegeix un esglaó baix.
+        // Com més rar, més dura l'habilitat i més triga a recarregar-se.
         private static readonly float[] Duracio  = { 30f, 60f, 180f, 600f };
         private static readonly float[] Recarrega = { 180f, 300f, 900f, 3000f };
         private static readonly double[] MagnitudHabilitat = { 2, 3, 5, 8 };

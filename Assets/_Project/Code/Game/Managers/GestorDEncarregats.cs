@@ -13,6 +13,9 @@ namespace IdleFrogs.Game
         public bool assignat;
         public Ranura ranura;
 
+        // El que va costar. Vendre'l en torna la meitat.
+        public double preuPagat;
+
         // Com a Barrera: venciment en UTC i no segons restants, perquè si no
         // tancar el joc congelaria el cooldown.
         public System.DateTime fiDeLHabilitat;
@@ -23,6 +26,15 @@ namespace IdleFrogs.Game
 
         public bool HabilitatActiva => System.DateTime.UtcNow < fiDeLHabilitat;
         public bool HabilitatLlesta => System.DateTime.UtcNow >= fiDeRecarrega;
+
+        public double SegonsDHabilitatRestants
+        {
+            get
+            {
+                double queden = (fiDeLHabilitat - System.DateTime.UtcNow).TotalSeconds;
+                return queden < 0 ? 0 : queden;
+            }
+        }
 
         public double SegonsFinsLlesta
         {
@@ -43,14 +55,41 @@ namespace IdleFrogs.Game
         [SerializeField] private CatalegDEncarregats cataleg;
 
         private readonly List<EncarregatPosseit> _posseits = new List<EncarregatPosseit>();
-        private int _comprats;
+        // Un comptador per tipus de lloc: el preu puja per a cada tipus pel seu
+        // compte. Comprar quatre encarregats de tenda no encareix els de pantà,
+        // que tornen a començar a 100.
+        private static readonly int QuantitatDeTipus = System.Enum.GetValues(typeof(TipusDeLloc)).Length;
+        private readonly int[] _compratsPerTipus = new int[QuantitatDeTipus];
         private int _seguentId = 1;
 
         public IReadOnlyList<EncarregatPosseit> Posseits => _posseits;
-        public int Comprats => _comprats;
-        public double PreuDeLaSeguentCompra => cataleg != null ? cataleg.PreuDeLaCompra(_comprats) : 0;
+
+        public int Comprats(TipusDeLloc lloc) => _compratsPerTipus[(int)lloc];
+
+        public double PreuDeLaSeguentCompra(TipusDeLloc lloc) =>
+            cataleg != null ? cataleg.PreuDeLaCompra(Comprats(lloc)) : 0;
 
         public event System.Action EnCanviDEncarregats;
+        public event System.Action EnDesbloquejar;
+
+        // Es calcula en viu a partir del nivell del primer pantà, no es guarda:
+        // si un dia el prestigi reinicia els pantans, es tornen a bloquejar sols.
+        private bool _desbloquejats;
+        private Panta _primerPanta;
+
+        public bool EstanDesbloquejats => _desbloquejats;
+        public int NivellDeDesbloqueig =>
+            cataleg != null ? cataleg.nivellDelPrimerPantaPerDesbloquejar : 5;
+
+        public bool HiHaAlgunAssignat
+        {
+            get
+            {
+                foreach (EncarregatPosseit e in _posseits)
+                    if (e.assignat) return true;
+                return false;
+            }
+        }
 
         private void Awake()
         {
@@ -64,6 +103,7 @@ namespace IdleFrogs.Game
 
         private void OnDestroy()
         {
+            if (_primerPanta != null) _primerPanta.EnCanviDeNivell -= ComprovarDesbloqueig;
             if (GameManager.Instancia != null)
                 GameManager.Instancia.EnTickDeSegon -= ComprovarHabilitats;
             if (Instancia == this) Instancia = null;
@@ -73,9 +113,9 @@ namespace IdleFrogs.Game
         // Compra
         // ---------------------------------------------------------------
 
-        public bool PucPagarLaCompra =>
+        public bool PucPagarLaCompra(TipusDeLloc lloc) =>
             CurrencyManager.Instancia != null &&
-            CurrencyManager.Instancia.doblersActuals >= PreuDeLaSeguentCompra;
+            CurrencyManager.Instancia.doblersActuals >= PreuDeLaSeguentCompra(lloc);
 
         // El tipus de lloc el decideix la silueta des d'on es compra; només
         // la raresa és aleatòria. Torna el que ha sortit, o null si no s'ha
@@ -88,8 +128,9 @@ namespace IdleFrogs.Game
                 return null;
             }
             if (CurrencyManager.Instancia == null) return null;
+            if (!_desbloquejats) return null;
 
-            double preu = PreuDeLaSeguentCompra;
+            double preu = PreuDeLaSeguentCompra(lloc);
             EncarregatSO triat = cataleg.Sortejar(lloc);
             if (triat == null)
             {
@@ -105,12 +146,13 @@ namespace IdleFrogs.Game
                 definicio = triat,
                 id = _seguentId++,
                 assignat = false,
+                preuPagat = preu,
                 // Neix llest: el cooldown comença quan s'activa l'habilitat.
                 fiDeLHabilitat = System.DateTime.MinValue,
                 fiDeRecarrega = System.DateTime.MinValue
             });
 
-            _comprats++;
+            _compratsPerTipus[(int)lloc]++;
             EnCanviDEncarregats?.Invoke();
             return triat;
         }
@@ -133,6 +175,14 @@ namespace IdleFrogs.Game
             sortida.Clear();
             foreach (EncarregatPosseit e in _posseits)
                 if (e.definicio != null && e.definicio.lloc == lloc) sortida.Add(e);
+        }
+
+        // Els d'aquell tipus que no treballen enlloc: la llista del panell.
+        public void NoAssignats(TipusDeLloc lloc, List<EncarregatPosseit> sortida)
+        {
+            sortida.Clear();
+            foreach (EncarregatPosseit e in _posseits)
+                if (!e.assignat && e.definicio != null && e.definicio.lloc == lloc) sortida.Add(e);
         }
 
         public bool Assignar(EncarregatPosseit encarregat, Ranura ranura)
@@ -169,6 +219,32 @@ namespace IdleFrogs.Game
         }
 
         // ---------------------------------------------------------------
+        // Venda
+        // ---------------------------------------------------------------
+
+        public static double PreuDeVenda(EncarregatPosseit encarregat) =>
+            encarregat != null ? encarregat.preuPagat / 2 : 0;
+
+        // El comptador del tipus no baixa: si baixés, comprar i vendre
+        // abaratiria la tirada següent. Si estava treballant, la ranura
+        // es queda buida.
+        public bool Vendre(EncarregatPosseit encarregat)
+        {
+            if (encarregat == null || CurrencyManager.Instancia == null) return false;
+            if (!_posseits.Remove(encarregat)) return false;
+
+            if (encarregat.assignat)
+            {
+                encarregat.assignat = false;
+                Recalcular(encarregat.ranura);
+            }
+
+            CurrencyManager.Instancia.AfegirDoblers(PreuDeVenda(encarregat));
+            EnCanviDEncarregats?.Invoke();
+            return true;
+        }
+
+        // ---------------------------------------------------------------
         // Efectes — el gestor calcula i empeny; les unitats no el consulten
         // cada frame, es guarden el resultat.
         // ---------------------------------------------------------------
@@ -192,7 +268,27 @@ namespace IdleFrogs.Game
             if (tren != null) _unitats[tren.Ranura] = tren;
             if (tenda != null) _unitats[tenda.Ranura] = tenda;
 
+            // El desbloqueig depèn del nivell del primer pantà: l'escoltem.
+            if (_primerPanta != null) _primerPanta.EnCanviDeNivell -= ComprovarDesbloqueig;
+            _primerPanta = pantans != null && pantans.Quantitat > 0 ? pantans.Obtenir(0) : null;
+            if (_primerPanta != null) _primerPanta.EnCanviDeNivell += ComprovarDesbloqueig;
+            ComprovarDesbloqueig();
+
             RecalcularTot();
+        }
+
+        private void ComprovarDesbloqueig()
+        {
+            // Si ja en tens algun (una partida d'abans d'aquest canvi), no te'ls
+            // amaguem: ja els havies aconseguit.
+            bool ara = _posseits.Count > 0 ||
+                       (_primerPanta != null && _primerPanta.Nivell >= NivellDeDesbloqueig);
+
+            if (ara == _desbloquejats) return;
+            _desbloquejats = ara;
+
+            if (ara) EnDesbloquejar?.Invoke();
+            EnCanviDEncarregats?.Invoke();
         }
 
         public void RecalcularTot()
@@ -294,16 +390,42 @@ namespace IdleFrogs.Game
                     llocTipus = (int)e.ranura.tipus,
                     llocIndex = e.ranura.index,
                     fiDeLHabilitatUtc = e.fiDeLHabilitat.ToBinary(),
-                    fiDeRecarregaUtc = e.fiDeRecarrega.ToBinary()
+                    fiDeRecarregaUtc = e.fiDeRecarrega.ToBinary(),
+                    preuPagat = e.preuPagat
                 };
             }
             return dades;
         }
 
-        public void Carregar(EncarregatGuardat[] dades, int comprats)
+        // Les partides d'abans de la venda no guardaven el preu. Es dedueix
+        // de l'ordre de compra: l'id d'instància puja amb cada compra, així
+        // que el k-è de cada tipus per id va costar PreuDeLaCompra(k).
+        private void ReconstruirPreusPagats()
+        {
+            if (cataleg == null) return;
+
+            foreach (EncarregatPosseit e in _posseits)
+            {
+                if (e.preuPagat > 0 || e.definicio == null) continue;
+
+                int abans = 0;
+                foreach (EncarregatPosseit altre in _posseits)
+                    if (altre.definicio != null && altre.definicio.lloc == e.definicio.lloc && altre.id < e.id)
+                        abans++;
+                e.preuPagat = cataleg.PreuDeLaCompra(abans);
+            }
+        }
+
+        public int[] GuardarComprats() => (int[])_compratsPerTipus.Clone();
+
+        // compratsPerTipus és null en les partides d'abans d'aquest canvi, que
+        // només tenien un comptador global. Llavors es reconstrueix comptant
+        // els encarregats que ja tens de cada tipus: aquelles partides són
+        // d'abans de poder vendre, així que és exactament el que has comprat.
+        public void Carregar(EncarregatGuardat[] dades, int[] compratsPerTipus)
         {
             _posseits.Clear();
-            _comprats = comprats < 0 ? 0 : comprats;
+            System.Array.Clear(_compratsPerTipus, 0, _compratsPerTipus.Length);
             _seguentId = 1;
 
             if (dades != null && cataleg != null)
@@ -326,6 +448,7 @@ namespace IdleFrogs.Game
                         id = d.idInstancia,
                         assignat = d.assignat,
                         ranura = new Ranura((TipusDeLloc)d.llocTipus, d.llocIndex),
+                        preuPagat = d.preuPagat,
                         fiDeLHabilitat = System.DateTime.FromBinary(d.fiDeLHabilitatUtc),
                         fiDeRecarrega = System.DateTime.FromBinary(d.fiDeRecarregaUtc),
 
@@ -339,6 +462,19 @@ namespace IdleFrogs.Game
 
                     if (d.idInstancia >= _seguentId) _seguentId = d.idInstancia + 1;
                 }
+            }
+
+            ReconstruirPreusPagats();
+
+            if (compratsPerTipus != null)
+            {
+                int n = System.Math.Min(compratsPerTipus.Length, _compratsPerTipus.Length);
+                for (int i = 0; i < n; i++) _compratsPerTipus[i] = System.Math.Max(0, compratsPerTipus[i]);
+            }
+            else
+            {
+                foreach (EncarregatPosseit e in _posseits)
+                    if (e.definicio != null) _compratsPerTipus[(int)e.definicio.lloc]++;
             }
 
             EnCanviDEncarregats?.Invoke();

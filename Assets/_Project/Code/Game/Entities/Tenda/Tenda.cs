@@ -56,8 +56,8 @@ namespace IdleFrogs.Game
             return Mathf.Clamp(total, 0, transportistes != null ? transportistes.Length : 0);
         }
 
-        // Nominal: ignora el temps de camí, igual que el número de IMT
-        // i que el que ensenya el pantà.
+        // Nominal: ignora el temps de camí, igual que el número que
+        // ensenya el pantà.
         public double ProduccioAlNivell(int n) =>
             TransportistesAlNivell(n) * CapacitatAlNivell(n)
             / (config.tempsDeCarrega + config.tempsDeDescarrega);
@@ -71,23 +71,30 @@ namespace IdleFrogs.Game
         public float TempsDeCarrega => Mathf.Max(0.02f, config.tempsDeCarrega / (float)Bonus.treball);
         public float TempsDeDescarrega => Mathf.Max(0.02f, config.tempsDeDescarrega / (float)Bonus.treball);
 
+        public override FitaDeMultiplicador[] FitesDeMillora => config.fites;
+
+        // CabalReal compta el camí i l'encarregat: el que entra de debò.
+        public override FilaEstadistica Resum(int desti) => new FilaEstadistica(TipusDEstadistica.Resum,
+            "Venda total",
+            FormatadorDeNombres.Ritme(CabalReal),
+            FormatadorDeNombres.Ritme(CabalRealAlNivell(desti)));
+
         public override void OmplirFiles(List<FilaEstadistica> files, int desti)
         {
-            files.Add(new FilaEstadistica("Venda",
-                FormatadorDeNombres.Ritme(ProduccioPerSegon),
-                FormatadorDeNombres.Delta(ProduccioAlNivell(desti) - ProduccioPerSegon)));
-
-            files.Add(new FilaEstadistica("Per viatge",
+            files.Add(new FilaEstadistica(TipusDEstadistica.CapacitatPerViatge,
+                "Per viatge",
                 FormatadorDeNombres.Doblers(CapacitatPerViatge),
-                FormatadorDeNombres.Delta(CapacitatAlNivell(desti) - CapacitatPerViatge)));
+                FormatadorDeNombres.Doblers(CapacitatAlNivell(desti) * Bonus.capacitat)));
 
-            files.Add(new FilaEstadistica("Transportistes",
+            files.Add(new FilaEstadistica(TipusDEstadistica.Transportistes,
+                "Transportistes",
                 TransportistesActius.ToString(),
-                FormatadorDeNombres.Delta(TransportistesAlNivell(desti) - TransportistesActius)));
+                TransportistesAlNivell(desti).ToString()));
 
-            files.Add(new FilaEstadistica("Velocitat",
+            files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDeTransportista,
+                "Velocitat",
                 FormatadorDeNombres.Decimals(Velocitat, 2),
-                FormatadorDeNombres.Delta(VelocitatAlNivell(desti) - Velocitat)));
+                FormatadorDeNombres.Decimals(VelocitatAlNivell(desti) * Bonus.velocitat, 2)));
         }
 
         // ---------------------------------------------------------------
@@ -135,12 +142,38 @@ namespace IdleFrogs.Game
             }
         }
 
+        // Tot el que s'ha venut en aquesta sessió. No es guarda: només el fa
+        // servir la guia inicial per saber si ja has fet la primera venda.
+        public double TotalVenut { get; private set; }
+
+        // Per a la guia inicial, que ha d'assenyalar una granota concreta.
+        public GranotaTransportista TransportistaPrincipal =>
+            transportistes != null && transportistes.Length > 0 ? transportistes[0] : null;
+
         // La crida la granota en arribar
         public void Vendre(double quantitat)
         {
             if (quantitat <= 0) return;
+            TotalVenut += quantitat;
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.AfegirDoblers(quantitat);
+        }
+
+        // Doblers per segon que venen totes les granotes actives fent viatges
+        // sencers: anada i tornada + recollir + vendre. El fa servir l'offline.
+        public double CabalReal => CabalRealAlNivell(nivell);
+
+        // La mateixa fórmula a qualsevol nivell, amb les bonificacions d'ara:
+        // és el número de destí de la targeta del panell.
+        public double CabalRealAlNivell(int n)
+        {
+            if (puntDeRecollida == null || puntDeVenda == null) return 0;
+            float velocitat = VelocitatAlNivell(n) * (float)Bonus.velocitat;
+            if (velocitat <= 0) return 0;
+
+            double cami = 2 * Vector3.Distance(puntDeRecollida.position, puntDeVenda.position) / velocitat;
+            double temps = TempsDeCarrega + TempsDeDescarrega + cami;
+            return temps <= 0 ? 0 : TransportistesAlNivell(n) * CapacitatAlNivell(n) * Bonus.capacitat / temps;
         }
 
         // La suma de tots: el guardat la retorna sencera a la cartera.

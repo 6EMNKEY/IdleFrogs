@@ -26,6 +26,18 @@ namespace IdleFrogs.Game
         [SerializeField] private Transform capsaMosques;
         [SerializeField] private Transform[] nenufars = new Transform[6];
 
+        // On seu la granota respecte al centre del nenúfar. Sense això la granota
+        // queda centrada sobre el nenúfar i sembla enfonsada a l'aigua; amb un
+        // petit desplaçament cap amunt sembla que hi seu a sobre. Es veu a
+        // l'escena seleccionant el pantà (cercles grocs).
+        [Tooltip("On es posa la granota respecte al centre del nenúfar, en unitats del món")]
+        [SerializeField] private Vector2 desplacamentDeLaGranota = Vector2.zero;
+
+        // El mateix per quan la granota arriba a la capsa a buidar. Només mou la
+        // granota: el tren segueix parant on és la capsa (PosicioCapsa).
+        [Tooltip("On es posa la granota respecte a la capsa quan hi va a buidar, en unitats del món")]
+        [SerializeField] private Vector2 desplacamentALaCapsa = Vector2.zero;
+
         [Header("Referencies")]
         [SerializeField] private ControladorGranota[] slotsGranotes = new ControladorGranota[6];
 
@@ -69,28 +81,38 @@ namespace IdleFrogs.Game
         public override double CreixementDeCost => config.creixementDeCost;
         public override int NivellMaxim => config.nivellMaxim;
 
+        public override FitaDeMultiplicador[] FitesDeMillora => config.fites;
+
+        // ProduccioReal i no ProduccioPerSegon: amb encarregat, el número de
+        // dalt ha de dir el que de debò cau a la capsa.
+        public override FilaEstadistica Resum(int desti) => new FilaEstadistica(TipusDEstadistica.Resum,
+            "Producció total",
+            FormatadorDeNombres.Ritme(ProduccioReal),
+            FormatadorDeNombres.Ritme(ProduccioRealAlNivell(desti)));
+
+        // Els valors de destí porten la mateixa bonificació que els d'ara;
+        // si no, amb encarregat la fletxa diria que millorar et fa baixar.
         public override void OmplirFiles(List<FilaEstadistica> files, int desti)
         {
-            files.Add(new FilaEstadistica("Producció",
-                FormatadorDeNombres.Ritme(ProduccioPerSegon),
-                FormatadorDeNombres.Delta(ProduccioAlNivell(desti) - ProduccioPerSegon)));
+            // La velocitat de moviment no puja de nivell: surt sense fletxa.
+            string velocitat = FormatadorDeNombres.Decimals(VelocitatDeMoviment, 1);
+            files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDeGranota,
+                "Velocitat", velocitat, velocitat));
 
-            files.Add(new FilaEstadistica("Granotes",
+            files.Add(new FilaEstadistica(TipusDEstadistica.Granotes,
+                "Nombre de granotes",
                 GranotesActives.ToString(),
-                FormatadorDeNombres.Delta(GranotesAlNivell(desti) - GranotesActives)));
+                GranotesAlNivell(desti).ToString()));
 
-            // La velocitat de moviment no puja de nivell, igual que
-            // Walking Speed a IMT, que sempre ensenya +0.
-            files.Add(new FilaEstadistica("Velocitat",
-                FormatadorDeNombres.Decimals(VelocitatDeMoviment, 1), "+0"));
-
-            files.Add(new FilaEstadistica("Recol·lecció",
+            files.Add(new FilaEstadistica(TipusDEstadistica.Recollecio,
+                "Velocitat recol·lecció",
                 FormatadorDeNombres.Ritme(VelocitatDeRecoleccio),
-                FormatadorDeNombres.Delta(VelocitatDeRecoleccioAlNivell(desti) - VelocitatDeRecoleccio)));
+                FormatadorDeNombres.Ritme(VelocitatDeRecoleccioAlNivell(desti) * Bonus.treball)));
 
-            files.Add(new FilaEstadistica("Capacitat",
+            files.Add(new FilaEstadistica(TipusDEstadistica.CapacitatDeGranota,
+                "Capacitat",
                 FormatadorDeNombres.Doblers(CapacitatPerGranota),
-                FormatadorDeNombres.Delta(CapacitatAlNivell(desti) - CapacitatPerGranota)));
+                FormatadorDeNombres.Doblers(CapacitatAlNivell(desti) * Bonus.capacitat)));
         }
 
         // ---------------------------------------------------------------
@@ -102,10 +124,8 @@ namespace IdleFrogs.Game
         // Profunditat i fites multipliquen els DOS stats, així que la producció
         // puja just aquell factor i el temps d'omplir es mou poc.
         //
-        // El floor és el d'IMT: amb base 20 i 5 reprodueix les seves columnes
-        // de capacitat i mineria exactes als deu primers nivells. I és el que
-        // fa que el temps d'omplir oscil·li entre 4,0 i 4,4s en comptes de
-        // quedar-se clavat, que és d'on surt la seva extracció a salts
+        // El floor fa que el temps d'omplir oscil·li entre 4,0 i 4,4s en
+        // comptes de quedar-se clavat, i que la producció pugi a salts
         // (3,3 → 3,4 → 4 → 4,1) en comptes de pujar llisa.
         //
         // Màxim amb 1 perquè una base petita no doni 0 i parteixi la divisió.
@@ -142,9 +162,8 @@ namespace IdleFrogs.Game
         }
 
         // El camí del nenúfar a la capsa, tret de la geometria de l'escena.
-        // Només l'anada: el "Total Extraction" d'IMT mesura des que comença
-        // a recollir fins que deixa la mercaderia, no el cicle sencer. Als
-        // seus nivells 1-10 aquest tram surt constant a 2,06s (camí + buidar).
+        // Només l'anada: la producció es mesura des que comença a recollir
+        // fins que deixa la mercaderia a la capsa, no el cicle sencer.
         public float TempsDeCami
         {
             get
@@ -156,7 +175,7 @@ namespace IdleFrogs.Game
                 foreach (Transform n in nenufars)
                 {
                     if (n == null) continue;
-                    suma += Vector3.Distance(n.position, capsaMosques.position);
+                    suma += Vector3.Distance(SeientDeLaGranota(n), LlocDeBuidar);
                     compte++;
                 }
                 if (compte == 0) return 0f;
@@ -182,6 +201,22 @@ namespace IdleFrogs.Game
             VelocitatDeRecoleccio <= 0 ? 0f : (float)(CapacitatPerGranota / VelocitatDeRecoleccio);
         public int GranotesActives => GranotesAlNivell(nivell);
         public double ProduccioPerSegon => ProduccioAlNivell(nivell);
+
+        // La mateixa definició que el número del panell, però amb les
+        // bonificacions de l'encarregat. És el que es fa servir per al
+        // progrés offline: el jugador veu "X/s" i espera rebre X × temps.
+        public double ProduccioReal => ProduccioRealAlNivell(nivell);
+
+        // La mateixa fórmula a qualsevol nivell, amb les bonificacions d'ara:
+        // és el número de destí de la targeta del panell.
+        public double ProduccioRealAlNivell(int n)
+        {
+            double capacitat = CapacitatAlNivell(n) * Bonus.capacitat;
+            double velocitat = VelocitatDeRecoleccioAlNivell(n) * Bonus.treball;
+            float finsPle = velocitat <= 0 ? 0f : (float)(capacitat / velocitat);
+            float temps = Mathf.Max(0.02f, finsPle) + TempsBuidar + TempsDeCami;
+            return temps <= 0 ? 0 : GranotesAlNivell(n) * capacitat / temps;
+        }
         public float VelocitatDeMoviment => config.velocitatDeMoviment * (float)Bonus.velocitat;
         public float TempsBuidar => config.tempsBuidar / (float)Bonus.treball;
 
@@ -222,6 +257,13 @@ namespace IdleFrogs.Game
         // perquè ha de passar DESPRÉS de carregar els nivells guardats.
         // ---------------------------------------------------------------
 
+        // On es posa la granota d'aquest nenúfar.
+        private Vector3 SeientDeLaGranota(Transform nenufar) =>
+            nenufar.position + (Vector3)desplacamentDeLaGranota;
+
+        // On es posa la granota quan buida a la capsa.
+        private Vector3 LlocDeBuidar => capsaMosques.position + (Vector3)desplacamentALaCapsa;
+
         public void InicialitzarPanta()
         {
             AplicarAspecte();
@@ -231,7 +273,7 @@ namespace IdleFrogs.Game
                 if (slotsGranotes[i] != null && nenufars.Length > i && nenufars[i] != null)
                 {
                     slotsGranotes[i].Inicialitzar(
-                        this, nenufars[i].position, pilaDeMosques.position, capsaMosques.position);
+                        this, SeientDeLaGranota(nenufars[i]), pilaDeMosques.position, LlocDeBuidar);
                 }
             }
             ActualitzarGranotes();
@@ -325,5 +367,27 @@ namespace IdleFrogs.Game
             doblersALaCapsa = quantitat < 0 ? 0 : quantitat;
             EnCanviDeCapsa?.Invoke(doblersALaCapsa);
         }
+
+#if UNITY_EDITOR
+        // Seleccionant el pantà es veu on seurà cada granota, sense haver de
+        // donar al Play: així el desplaçament s'ajusta mirant l'escena.
+        private void OnDrawGizmosSelected()
+        {
+            if (nenufars == null) return;
+            Gizmos.color = new Color(1f, 0.85f, 0.2f);
+            foreach (Transform n in nenufars)
+            {
+                if (n == null) continue;
+                Vector3 seient = SeientDeLaGranota(n);
+                Gizmos.DrawWireSphere(seient, 0.12f);
+                Gizmos.DrawLine(n.position, seient);
+            }
+
+            if (capsaMosques == null) return;
+            Gizmos.color = new Color(0.3f, 0.9f, 1f);
+            Gizmos.DrawWireSphere(LlocDeBuidar, 0.12f);
+            Gizmos.DrawLine(capsaMosques.position, LlocDeBuidar);
+        }
+#endif
     }
 }

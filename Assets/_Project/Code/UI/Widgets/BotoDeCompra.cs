@@ -7,7 +7,7 @@ namespace IdleFrogs.UI
     // El cartell "Comprar pantà". Viu dins del prefab del pantà, penjant
     // de l'arrel que Panta encén només quan l'estat és EnVenda, així que
     // no ha de decidir si es veu o no: només si es pot pagar.
-    public class BotoDeCompra : MonoBehaviour
+    public class BotoDeCompra : MonoBehaviour, IEsPotTocar
     {
         [Header("Color quan no hi ha doblers")]
         [SerializeField] private Color colorApagat = new Color(0.5f, 0.5f, 0.5f, 1f);
@@ -48,7 +48,7 @@ namespace IdleFrogs.UI
                 CurrencyManager.Instancia.EnCanviDeDoblers -= RefrescarPerDoblers;
         }
 
-        private void OnMouseDown()
+        public void EnTocar()
         {
             if (!enabled || _panta == null) return;
             _panta.Comprar();

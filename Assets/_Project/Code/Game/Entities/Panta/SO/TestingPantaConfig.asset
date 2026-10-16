@@ -21,8 +21,13 @@ MonoBehaviour:
   fites:
   - nivell: 25
     multiplicador: 2.1
+    gemes: 20
   - nivell: 50
     multiplicador: 2.1
+    gemes: 20
+  - nivell: 10
+    multiplicador: 2.1
+    gemes: 10
   costBase: 100
   creixementDeCost: 1.2
   preusDeCompra:
@@ -33,7 +38,5 @@ MonoBehaviour:
   multiplicadorDelPrimerSalt: 50
   multiplicadorDeCadaSalt: 10
   granotesInicials: 1
-  nivellsDeGranotaExtra:
-  - 10
-  - 50
+  nivellsDeGranotaExtra: 0a00000032000000
   nivellMaxim: 800

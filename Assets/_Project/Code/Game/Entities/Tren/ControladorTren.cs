@@ -6,7 +6,7 @@ namespace IdleFrogs.Game
 {
     public enum EstatTren { Esperant, Anant, Carregant, Tornant, Descarregant }
 
-    public class ControladorTren : UnitatMillorable
+    public class ControladorTren : UnitatMillorable, IEsPotTocar
     {
         [Header("Configuració")]
         [SerializeField] private TrenConfigSO config;
@@ -65,23 +65,60 @@ namespace IdleFrogs.Game
         public double RitmeDeCarrega => RitmeDeCarregaAlNivell(nivell) * Bonus.treball;
         public double RitmeDeDescarrega => RitmeDeDescarregaAlNivell(nivell) * Bonus.treball;
 
+        public override FitaDeMultiplicador[] FitesDeMillora => config.fites;
+
+        // La capacitat és el número gran del tren; les altres tres van a les caixes.
+        public override FilaEstadistica Resum(int desti) => new FilaEstadistica(TipusDEstadistica.Resum,
+            "Capacitat",
+            FormatadorDeNombres.Doblers(Capacitat),
+            FormatadorDeNombres.Doblers(CapacitatAlNivell(desti) * Bonus.capacitat));
+
         public override void OmplirFiles(List<FilaEstadistica> files, int desti)
         {
-            files.Add(new FilaEstadistica("Capacitat",
-                FormatadorDeNombres.Doblers(Capacitat),
-                FormatadorDeNombres.Delta(CapacitatAlNivell(desti) - Capacitat)));
-
-            files.Add(new FilaEstadistica("Velocitat",
+            files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDelTren,
+                "Velocitat",
                 FormatadorDeNombres.Decimals(VelocitatDeMoviment, 2),
-                FormatadorDeNombres.Delta(VelocitatAlNivell(desti) - VelocitatDeMoviment)));
+                FormatadorDeNombres.Decimals(VelocitatAlNivell(desti) * Bonus.velocitat, 2)));
 
-            files.Add(new FilaEstadistica("Càrrega",
+            files.Add(new FilaEstadistica(TipusDEstadistica.Carrega,
+                "Càrrega",
                 FormatadorDeNombres.Ritme(RitmeDeCarrega),
-                FormatadorDeNombres.Delta(RitmeDeCarregaAlNivell(desti) - RitmeDeCarrega)));
+                FormatadorDeNombres.Ritme(RitmeDeCarregaAlNivell(desti) * Bonus.treball)));
 
-            files.Add(new FilaEstadistica("Descàrrega",
+            files.Add(new FilaEstadistica(TipusDEstadistica.Descarrega,
+                "Descàrrega",
                 FormatadorDeNombres.Ritme(RitmeDeDescarrega),
-                FormatadorDeNombres.Delta(RitmeDeDescarregaAlNivell(desti) - RitmeDeDescarrega)));
+                FormatadorDeNombres.Ritme(RitmeDeDescarregaAlNivell(desti) * Bonus.treball)));
+        }
+
+        // Doblers per segon que el tren pot moure fent viatges sencers fins al
+        // pantà comprat més llunyà: capacitat / (anada i tornada + carregar +
+        // descarregar). El fa servir el progrés offline.
+        public double CabalReal
+        {
+            get
+            {
+                if (llistaDePantans == null || puntDeDescarrega == null) return 0;
+
+                int maxim = Mathf.Min(llistaDePantans.IndexMaximAccessible(), llistaDePantans.Quantitat - 1);
+                Panta mesLlunya = null;
+                for (int i = maxim; i >= 0; i--)
+                {
+                    Panta p = llistaDePantans.Obtenir(i);
+                    if (p != null && p.EstaComprat) { mesLlunya = p; break; }
+                }
+                if (mesLlunya == null) return 0;
+
+                float velocitat = VelocitatDeMoviment;
+                if (velocitat <= 0) return 0;
+
+                double distancia = Mathf.Abs(mesLlunya.PosicioCapsa.x - puntDeDescarrega.position.x);
+                double c = Capacitat;
+                double temps = 2 * distancia / velocitat
+                               + SegonsPerTransferir(c, RitmeDeCarrega)
+                               + SegonsPerTransferir(c, RitmeDeDescarrega);
+                return temps <= 0 ? 0 : c / temps;
+            }
         }
 
         // Un ritme de 0 donaria una espera infinita i penjaria la corrutina.
@@ -104,9 +141,8 @@ namespace IdleFrogs.Game
         }
 
         // El tren espera a l'estació fins que el toques, igual que les
-        // granotes. Quan hi hagi encarregats, qui cridarà IntentarEngegar()
-        // serà l'automatisme i no el dit.
-        private void OnMouseDown() => IntentarEngegar();
+        // granotes. Amb encarregat, qui crida IntentarEngegar() és Update().
+        public void EnTocar() => IntentarEngegar();
 
         private void Update()
         {

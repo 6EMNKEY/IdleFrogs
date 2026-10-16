@@ -43,7 +43,7 @@ namespace IdleFrogs.UI
 
         private void Refrescar(double quantitat)
         {
-            _text.text = $"{FormatadorDeNombres.Doblers(quantitat)} / {FormatadorDeNombres.Doblers(_tren.Capacitat)}";
+            _text.text = $"{FormatadorDeNombres.Doblers(quantitat)} / {FormatadorDeNombres.Doblers(_tren.Capacitat)}{Icones.Moneda}";
         }
     }
 }

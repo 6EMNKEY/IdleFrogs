@@ -7,10 +7,15 @@ namespace IdleFrogs.UI
     // fosca; amb encarregat assignat ensenya el seu retrat amb el color de
     // la raresa. Tocar-la obre el panell.
     //
+    // No es veu fins que els encarregats es desbloquegen (primer pantà a
+    // nivell 5). No n'apaguem el GameObject, perquè llavors aquest mateix
+    // script deixaria de córrer i no se sabria tornar a encendre: apaguem
+    // el dibuix i el collider.
+    //
     // Mateix patró que BotoDeMillora: dins del prefab del pantà es busca la
     // unitat sola, però a l'estació i a la tenda el botó no penja de la
     // unitat que representa i cal omplir el camp a mà.
-    public class SiluetaDEncarregat : MonoBehaviour
+    public class SiluetaDEncarregat : MonoBehaviour, IEsPotTocar
     {
         [Tooltip("Buit dins d'un prefab (es busca sol pujant per la jerarquia). " +
                  "Omple'l quan la silueta no penja de la unitat: l'Estació és del Tren.")]
@@ -25,10 +30,13 @@ namespace IdleFrogs.UI
         [Tooltip("S'encén mentre l'habilitat està activa. Opcional: hi pots posar una llum, un halo...")]
         [SerializeField] private GameObject indicadorDHabilitat;
 
+        private Collider2D _collider;
+
         private void Awake()
         {
             if (unitat == null) unitat = GetComponentInParent<UnitatMillorable>();
             if (retrat == null) retrat = GetComponent<SpriteRenderer>();
+            _collider = GetComponent<Collider2D>();
         }
 
         private void Start()
@@ -48,6 +56,9 @@ namespace IdleFrogs.UI
             if (GameManager.Instancia != null)
                 GameManager.Instancia.EnTickDeSegon += Refrescar;
 
+            // Comprar el pantà també la pot fer aparèixer.
+            unitat.EnCanviDeNivell += Refrescar;
+
             Refrescar();
         }
 
@@ -57,9 +68,10 @@ namespace IdleFrogs.UI
                 GestorDEncarregats.Instancia.EnCanviDEncarregats -= Refrescar;
             if (GameManager.Instancia != null)
                 GameManager.Instancia.EnTickDeSegon -= Refrescar;
+            if (unitat != null) unitat.EnCanviDeNivell -= Refrescar;
         }
 
-        private void OnMouseDown()
+        public void EnTocar()
         {
             if (!enabled) return;
             if (PanellDEncarregats.Instancia != null)
@@ -69,6 +81,18 @@ namespace IdleFrogs.UI
         private void Refrescar()
         {
             if (retrat == null || unitat == null) return;
+
+            bool visible = unitat.EstaComprat &&
+                           GestorDEncarregats.Instancia != null &&
+                           GestorDEncarregats.Instancia.EstanDesbloquejats;
+
+            retrat.enabled = visible;
+            if (_collider != null) _collider.enabled = visible;
+            if (!visible)
+            {
+                if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(false);
+                return;
+            }
 
             EncarregatPosseit assignat = GestorDEncarregats.Instancia != null
                 ? GestorDEncarregats.Instancia.ALaRanura(unitat.Ranura)

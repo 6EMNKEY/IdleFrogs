@@ -6,14 +6,12 @@ namespace IdleFrogs.Game
     [CreateAssetMenu(fileName = "PantaConfig", menuName = "IdleFrogs/PantaConfig")]
     public class PantaConfigSO : ScriptableObject
     {
-        // A IMT la Walking Speed del primer pou és 2 i no puja mai amb el
-        // nivell. Allà el temps que no és minar surt constant a 2,06s, i és
-        // camí d'anada + buidar + camí de tornada.
+        // La velocitat de la granota no puja mai amb el nivell: el temps que
+        // no és recollir (camí d'anada + buidar + camí de tornada) és fix.
         //
         // Al prefab Panta_Base els sis nenúfars queden de mitjana a 1,751
         // unitats de la capsa, o sigui 1,751s d'anada i tornada a velocitat 2.
-        // Deixem el fix total en ~1,95s en comptes de 2,06 — una mica més
-        // ràpid que IMT a propòsit, per no calcar-los els números:
+        // El fix total queda en ~1,95s:
         //     1,751 (camí) + 0,20 (buidar) = 1,951s
         [Header("Moviment (no puja amb el nivell)")]
         public float velocitatDeMoviment = 2.0f;
@@ -24,9 +22,7 @@ namespace IdleFrogs.Game
         // pugen pel mateix factor el temps no es mou i la producció puja just
         // aquell factor — que és el que fa que el ×50 de profunditat doni ×50
         // de producció i no ×2500.
-        // Valors del primer pou d'IMT: MiningSpeed 5 i Worker Capacity 20,
-        // totes dues ×1.1 per nivell. Amb aquests números la fórmula reprodueix
-        // la seva taula de nivells 1-10 amb menys d'un 1,6% d'error.
+        // Primer pantà: velocitat 5 i capacitat 20, totes dues ×1.1 per nivell.
         [Header("Recol·lecció — doblers per segon (puja amb el nivell)")]
         public double velocitatDeRecoleccioBase = 5;
         public double creixementDeVelocitatDeRecoleccio = 1.1;
@@ -36,7 +32,7 @@ namespace IdleFrogs.Game
         public double capacitatBase = 20;
         public double creixementDeCapacitat = 1.1;
 
-        // IMT: ×2.1 a la velocitat i la capacitat al nivell 25, i un altre al 50.
+        // ×2.1 a la velocitat i la capacitat al nivell 25, i un altre al 50.
         [Header("Fites — multipliquen velocitat i capacitat alhora")]
         public FitaDeMultiplicador[] fites =
         {
@@ -48,7 +44,7 @@ namespace IdleFrogs.Game
         public double costBase = 100;
         public double creixementDeCost = 1.2;
 
-        // IMT: 10 → 1.000 (×100) → 30.000 (×30) → ×20 constant a partir d'aquí.
+        // 10 → 1.000 (×100) → 30.000 (×30) → ×20 constant a partir d'aquí.
         // No és una corba: els tres primers són a mà i la resta té factor de cua.
         [Header("Compra del pantà")]
         public double[] preusDeCompra = { 10, 1000, 30000 };
@@ -60,7 +56,7 @@ namespace IdleFrogs.Game
         [FormerlySerializedAs("multiplicadorPerProfunditat")]
         public double multiplicadorDeCadaSalt = 10;
 
-        // IMT: +1 miner al 10 i un altre al 50, sobre una base d'1.
+        // +1 granota al 10 i una altra al 50, sobre una base d'1.
         [Header("Granotes")]
         public int granotesInicials = 1;
         public int[] nivellsDeGranotaExtra = { 10, 50 };

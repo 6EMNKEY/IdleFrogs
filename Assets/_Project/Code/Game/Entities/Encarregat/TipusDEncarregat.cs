@@ -10,13 +10,13 @@ namespace IdleFrogs.Game
     // Només la raresa és aleatòria. Marca la força de l'efecte i el color.
     public enum Raresa { Comu, Rar, Epic, Llegendari }
 
-    // Un encarregat té UN sol efecte passiu, com a IMT. El segon efecte és
+    // Un encarregat té UN sol efecte passiu. El segon efecte és
     // l'habilitat activa amb cooldown, que va a part.
     public enum TipusDEfecte
     {
         VelocitatDeMoviment,   // caminar (pantà, tenda) / moure's (tren)
         VelocitatDeTreball,    // capturar (pantà) / transferir (tren, tenda)
-        Capacitat,             // load expansion — no aplica al pantà
+        Capacitat,             // més càrrega per viatge — no aplica al pantà
         ReduccioDeCost         // rebaixa el cost de millora d'aquell tram
     }
 
@@ -28,6 +28,14 @@ namespace IdleFrogs.Game
             Raresa.Epic => new Color(0.70f, 0.40f, 0.95f),
             Raresa.Llegendari => new Color(1.00f, 0.70f, 0.15f),
             _ => new Color(0.75f, 0.75f, 0.75f)
+        };
+
+        public static string Nom(Raresa raresa) => raresa switch
+        {
+            Raresa.Rar => "Rare",
+            Raresa.Epic => "Epic",
+            Raresa.Llegendari => "Legendary",
+            _ => "Common"
         };
     }
 

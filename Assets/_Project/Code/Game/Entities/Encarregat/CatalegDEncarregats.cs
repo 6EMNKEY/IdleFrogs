@@ -18,11 +18,8 @@ namespace IdleFrogs.Game
         [Header("Tots els encarregats")]
         public EncarregatSO[] encarregats;
 
-        // AVÍS: aquests pesos són una proposta, NO són els d'Idle Miner.
-        // El teardown no documenta cap taula de probabilitats de managers;
-        // l'única que hi surt (80/15/4.8/0.2) és la d'Expedicions, un altre
-        // sistema. Es parteix d'aquella perquè és l'únic referent que hi ha.
-        [Header("Probabilitat de raresa (proposta, no copiada d'IMT)")]
+        // Pesos de partida, per ajustar quan es provi l'economia.
+        [Header("Probabilitat de raresa")]
         public PesDeRaresa[] pesos =
         {
             new PesDeRaresa { raresa = Raresa.Comu,       pes = 80f },
@@ -30,6 +27,11 @@ namespace IdleFrogs.Game
             new PesDeRaresa { raresa = Raresa.Epic,       pes = 4.8f },
             new PesDeRaresa { raresa = Raresa.Llegendari, pes = 0.2f },
         };
+
+        // Els encarregats apareixen quan el primer pantà arriba al nivell 5.
+        // Abans toques tu: és la fase activa que fa que l'automatisme valgui.
+        [Header("Desbloqueig")]
+        [Min(1)] public int nivellDelPrimerPantaPerDesbloquejar = 5;
 
         [Header("Preu de compra")]
         public double preuBase = 100;

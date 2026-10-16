@@ -8,7 +8,7 @@ namespace IdleFrogs.Game
     // Fa el tram estació → tenda. Mateix patró que ControladorGranota: es
     // toca per engegar-la i tot el que depèn del nivell es llegeix en viu
     // de la tenda, perquè pot pujar de nivell mentre la granota camina.
-    public class GranotaTransportista : MonoBehaviour
+    public class GranotaTransportista : MonoBehaviour, IEsPotTocar
     {
         [Header("Estat")]
         public EstatTransportista estatActual = EstatTransportista.Idle;
@@ -34,7 +34,7 @@ namespace IdleFrogs.Game
             AvisarCarrega();
         }
 
-        private void OnMouseDown()
+        public void EnTocar()
         {
             // L'avís va aquí i no a Start: l'ordre de Start entre objectes no
             // està garantit, així que allà donaria falsos positius. Aquí només
