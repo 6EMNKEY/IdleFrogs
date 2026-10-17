@@ -2,14 +2,34 @@ using UnityEngine;
 
 namespace IdleFrogs.Game
 {
+    // Els pantans van per trams separats per barreres. Un tram no ocupa cap
+    // índex de pantà: la barrera n va just després de l'últim pantà del tram n.
+    public static class TramsDePantans
+    {
+        // L'índex de l'últim pantà del tram (comptant des de 0). Si el tram no
+        // existeix, el de l'últim que n'hi hagi.
+        public static int UltimDelTram(int[] trams, int tram)
+        {
+            if (trams == null || trams.Length == 0 || tram < 0) return -1;
+            int fins = Mathf.Min(tram, trams.Length - 1);
+            int suma = 0;
+            for (int i = 0; i <= fins; i++) suma += Mathf.Max(0, trams[i]);
+            return suma - 1;
+        }
+
+        public static int Total(int[] trams) => UltimDelTram(trams, int.MaxValue) + 1;
+    }
+
     public class LlistaDePantans : MonoBehaviour
     {
-        public const int PantansPerNivell = 5;
-
         [Header("Tots els pantans en ordre (0 = el més a prop de la descàrrega)")]
         [SerializeField] private Panta[] pantans;
 
-        [Header("Una barrera per nivell, en el mateix ordre")]
+        [Header("Pantans de cada tram, en ordre. Entre tram i tram hi ha una barrera")]
+        [Tooltip("La suma ha de ser el nombre de pantans, i hi ha d'haver una barrera menys que trams")]
+        [SerializeField] private int[] pantansPerTram = { 5, 5, 4, 4, 4, 4 };
+
+        [Header("Una barrera entre cada dos trams, en el mateix ordre")]
         [SerializeField] private Barrera[] barreres;
 
         public int Quantitat => pantans != null ? pantans.Length : 0;
@@ -46,8 +66,8 @@ namespace IdleFrogs.Game
                 if (barreres[n] != null) barreres[n].EnCanviDeTemps -= ActualitzarEstats;
         }
 
-        // La barrera del nivell N guarda el pantà d'índex (N+1)*5 - 1.
-        // Si està tancada, no es pot arribar més enllà del pantà anterior.
+        // La primera barrera tancada talla la fila: no es pot passar de
+        // l'últim pantà del seu tram.
         public int IndexMaximAccessible()
         {
             if (barreres != null)
@@ -55,7 +75,7 @@ namespace IdleFrogs.Game
                 for (int n = 0; n < barreres.Length; n++)
                 {
                     if (barreres[n] != null && !barreres[n].EstaOberta)
-                        return (n + 1) * PantansPerNivell - 2;
+                        return Mathf.Min(TramsDePantans.UltimDelTram(pantansPerTram, n), Quantitat - 1);
                 }
             }
             return Quantitat - 1;
@@ -105,7 +125,7 @@ namespace IdleFrogs.Game
             if (barreres == null || index < 0 || index >= barreres.Length) return false;
             if (barreres[index] == null || barreres[index].EstaOberta) return false;
 
-            int ultimAbans = (index + 1) * PantansPerNivell - 2;
+            int ultimAbans = TramsDePantans.UltimDelTram(pantansPerTram, index);
             if (ultimAbans < 0 || ultimAbans >= Quantitat) return false;
             return pantans[ultimAbans] != null && pantans[ultimAbans].EstaComprat;
         }
@@ -164,6 +184,18 @@ namespace IdleFrogs.Game
             for (int i = 0; i < n; i++)
                 if (barreres[i] != null) barreres[i].Carregar(dades[i]);
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            int total = TramsDePantans.Total(pantansPerTram);
+            if (pantans != null && total != pantans.Length)
+                Debug.LogWarning($"LlistaDePantans: els trams sumen {total} pantans i n'hi ha {pantans.Length}", this);
+            int calen = pantansPerTram != null ? Mathf.Max(0, pantansPerTram.Length - 1) : 0;
+            if (barreres != null && barreres.Length != calen)
+                Debug.LogWarning($"LlistaDePantans: amb {pantansPerTram?.Length ?? 0} trams calen {calen} barreres i n'hi ha {barreres.Length}", this);
+        }
+#endif
 
         public void InicialitzarPantans()
         {

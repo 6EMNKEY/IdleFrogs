@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using IdleFrogs.Game;
@@ -166,11 +167,28 @@ namespace IdleFrogs.UI
         }
 
         // Ordenació igual que la de dibuix: primer la capa, després l'ordre.
+        //
+        // Amb un Sorting Group (els pantans de dalt i de baix respecte al
+        // tren) mana el del grup sencer: un sprite amb ordre 50 dins d'un
+        // pantà de dalt queda per sota del tren encara que el número sigui
+        // més alt. L'ordre propi només desempata dins del mateix grup.
         private static long OrdreDeDibuix(Collider2D c)
         {
             SpriteRenderer sr = c.GetComponent<SpriteRenderer>() ?? c.GetComponentInParent<SpriteRenderer>();
             if (sr == null) return 0;
-            return (long)SortingLayer.GetLayerValueFromID(sr.sortingLayerID) * 1_000_000L + sr.sortingOrder;
+
+            long propi = Clau(sr.sortingLayerID, sr.sortingOrder);
+            // El més exterior: és el que es compara amb la resta del món.
+            SortingGroup[] grups = sr.GetComponentsInParent<SortingGroup>();
+            long exterior = grups.Length > 0
+                ? Clau(grups[grups.Length - 1].sortingLayerID, grups[grups.Length - 1].sortingOrder)
+                : propi;
+
+            return exterior * 10_000_000L + propi;
         }
+
+        // Una capa val més que qualsevol ordre dins d'una capa (±32768).
+        private static long Clau(int capa, int ordre) =>
+            (long)SortingLayer.GetLayerValueFromID(capa) * 70_000L + ordre;
     }
 }

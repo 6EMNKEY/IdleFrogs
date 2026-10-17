@@ -4,7 +4,7 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    // Mateix patró que TextDeLaCapsa, però per al tren: "12.4K / 50K".
+    // Mateix patró que TextDeLaCapsa, però per al tren: "12.4K" i la moneda.
     // Va en un TMP_Text penjant del tren.
     public class TextDeCarregaDelTren : MonoBehaviour
     {
@@ -27,8 +27,6 @@ namespace IdleFrogs.UI
             }
 
             _tren.EnCanviDeCarrega += Refrescar;
-            // La capacitat és el denominador, i canvia en millorar el tren.
-            _tren.EnCanviDeNivell += RefrescarPerNivell;
             Refrescar(_tren.CarregaActual);
         }
 
@@ -36,14 +34,11 @@ namespace IdleFrogs.UI
         {
             if (_tren == null) return;
             _tren.EnCanviDeCarrega -= Refrescar;
-            _tren.EnCanviDeNivell -= RefrescarPerNivell;
         }
-
-        private void RefrescarPerNivell() => Refrescar(_tren.CarregaActual);
 
         private void Refrescar(double quantitat)
         {
-            _text.text = $"{FormatadorDeNombres.Doblers(quantitat)} / {FormatadorDeNombres.Doblers(_tren.Capacitat)}{Icones.Moneda}";
+            _text.text = FormatadorDeNombres.Doblers(quantitat) + Icones.Moneda;
         }
     }
 }
