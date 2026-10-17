@@ -220,6 +220,19 @@ namespace IdleFrogs.Game
         public float VelocitatDeMoviment => config.velocitatDeMoviment * (float)Bonus.velocitat;
         public float TempsBuidar => config.tempsBuidar / (float)Bonus.treball;
 
+        // Les mosques que volen pel pantà: les llengües de les granotes en
+        // cacen. Es busca la primera vegada; el pantà pot no tenir-ne.
+        private EixamDeMosques _eixam;
+        private bool _eixamBuscat;
+        public EixamDeMosques Eixam
+        {
+            get
+            {
+                if (!_eixamBuscat) { _eixam = GetComponentInChildren<EixamDeMosques>(true); _eixamBuscat = true; }
+                return _eixam;
+            }
+        }
+
         // ---------------------------------------------------------------
         // Compra
         // ---------------------------------------------------------------

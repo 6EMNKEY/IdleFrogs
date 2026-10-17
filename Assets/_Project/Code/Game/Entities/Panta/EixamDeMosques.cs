@@ -31,7 +31,17 @@ namespace IdleFrogs.Game
         [Tooltip("La mosca del davant (la de Y més baixa) té ordreBase + quantes - 1")]
         [SerializeField] private int ordreBase = 50;
 
+        [Header("Quan una granota se'n menja una")]
+        [Tooltip("Segons fins que en torna a entrar una per la vora de la zona")]
+        [Min(0)] [SerializeField] private float segonsFinsQueTorna = 1.5f;
+
         private const float DistanciaDArribada = 0.15f;
+
+        // Volant: va a la seva. Reservada: una llengua hi va, però encara vola.
+        // Capturada: la mou la llengua. Menjada: amagada fins que torna.
+        private enum EstatDeMosca { Volant, Reservada, Capturada, Menjada }
+        private EstatDeMosca[] _estats;
+        private float[] _tornaA;
 
         private SpriteRenderer[] _mosques;
         private Vector2[] _posicions;
@@ -63,6 +73,8 @@ namespace IdleFrogs.Game
             _llavors = new float[quantes];
             _alcades = new float[quantes];
             _ordres = new int[quantes];
+            _estats = new EstatDeMosca[quantes];
+            _tornaA = new float[quantes];
 
             for (int i = 0; i < quantes; i++)
             {
@@ -82,6 +94,18 @@ namespace IdleFrogs.Game
 
             for (int i = 0; i < quantes; i++)
             {
+                if (_estats[i] == EstatDeMosca.Menjada)
+                {
+                    if (Time.time < _tornaA[i]) continue;
+                    Reapareixer(i);
+                }
+                if (_estats[i] == EstatDeMosca.Capturada)
+                {
+                    // La porta la llengua: només cal saber on és per a l'ordre.
+                    _alcades[i] = _mosques[i].transform.localPosition.y;
+                    continue;
+                }
+
                 Vector2 cap = _objectius[i] - _posicions[i];
                 if (cap.sqrMagnitude < DistanciaDArribada * DistanciaDArribada)
                 {
@@ -111,6 +135,93 @@ namespace IdleFrogs.Game
             OrdreDeMosques.Calcular(_alcades, ordreBase, _ordres);
             for (int i = 0; i < quantes; i++)
                 _mosques[i].sortingOrder = _ordres[i];
+        }
+
+        // ---------------------------------------------------------------
+        // Per a la llengua de les granotes
+        // ---------------------------------------------------------------
+
+        public Vector3 Centre => transform.TransformPoint(centreDeLaZona);
+
+        // La mosca lliure més a prop de 'desDe', o -1 si no en queda cap.
+        // Reservada, cap altra granota no la triarà.
+        public int Reservar(Vector3 desDe)
+        {
+            if (_mosques == null) return -1;
+            int millor = -1;
+            float millorDistancia = float.PositiveInfinity;
+            for (int i = 0; i < quantes; i++)
+            {
+                if (_estats[i] != EstatDeMosca.Volant) continue;
+                float d = ((Vector2)(_mosques[i].transform.position - desDe)).sqrMagnitude;
+                if (d < millorDistancia) { millorDistancia = d; millor = i; }
+            }
+            if (millor >= 0) _estats[millor] = EstatDeMosca.Reservada;
+            return millor;
+        }
+
+        public Vector3 Posicio(int i) => Valida(i) ? _mosques[i].transform.position : Centre;
+
+        // A partir d'ara la mou qui l'ha capturada.
+        public Transform Capturar(int i)
+        {
+            if (!Valida(i)) return null;
+            _estats[i] = EstatDeMosca.Capturada;
+            return _mosques[i].transform;
+        }
+
+        public void Menjada(int i)
+        {
+            if (!Valida(i)) return;
+            _estats[i] = EstatDeMosca.Menjada;
+            _mosques[i].enabled = false;
+            _tornaA[i] = Time.time + segonsFinsQueTorna;
+        }
+
+        // La llengua ha fallat: la mosca s'escapa amb una estrebada en la
+        // direcció que li diuen (la de la llengua) i se'n va lluny d'allà.
+        public void Esquivar(int i, Vector3 direccioAlMon)
+        {
+            if (!Valida(i) || _estats[i] == EstatDeMosca.Menjada) return;
+            if (_estats[i] == EstatDeMosca.Capturada)
+                _posicions[i] = _mosques[i].transform.localPosition;
+
+            Vector2 dir = transform.InverseTransformDirection(direccioAlMon);
+            dir = dir.sqrMagnitude > 1e-6f ? dir.normalized : Random.insideUnitCircle.normalized;
+
+            _velocitats[i] = dir * velocitatMaxima * 2.5f;
+            Vector2 meitat = midaDeLaZona / 2f;
+            Vector2 lluny = _posicions[i] + dir * midaDeLaZona.magnitude;
+            _objectius[i] = new Vector2(
+                Mathf.Clamp(lluny.x, centreDeLaZona.x - meitat.x, centreDeLaZona.x + meitat.x),
+                Mathf.Clamp(lluny.y, centreDeLaZona.y - meitat.y, centreDeLaZona.y + meitat.y));
+            _estats[i] = EstatDeMosca.Volant;
+        }
+
+        // Si la llenguada s'interromp, la mosca torna a volar des d'on sigui.
+        public void Alliberar(int i)
+        {
+            if (!Valida(i) || _estats[i] == EstatDeMosca.Menjada) return;
+            if (_estats[i] == EstatDeMosca.Capturada)
+                _posicions[i] = _mosques[i].transform.localPosition;
+            _estats[i] = EstatDeMosca.Volant;
+        }
+
+        private bool Valida(int i) => _mosques != null && i >= 0 && i < quantes;
+
+        // Entra per una vora a l'atzar i se'n va cap a dins.
+        private void Reapareixer(int i)
+        {
+            Vector2 meitat = midaDeLaZona / 2f;
+            Vector2 p = PuntALAtzar() - centreDeLaZona;
+            if (Random.value < 0.5f) p.x = Mathf.Sign(p.x == 0 ? 1 : p.x) * meitat.x;
+            else p.y = Mathf.Sign(p.y == 0 ? 1 : p.y) * meitat.y;
+
+            _posicions[i] = centreDeLaZona + p;
+            _velocitats[i] = Vector2.zero;
+            _objectius[i] = PuntALAtzar();
+            _mosques[i].enabled = true;
+            _estats[i] = EstatDeMosca.Volant;
         }
 
         private Vector2 PuntALAtzar() => centreDeLaZona + new Vector2(

@@ -5,6 +5,11 @@ namespace IdleFrogs.Game
 {
     // La llengua de la granota: surt de la boca, atrapa una mosca i torna.
     //
+    // La mosca és una de les de l'eixam del pantà: la lliure més a prop. La
+    // llengua la persegueix mentre vola, se l'enduu i, a la boca, se la menja.
+    // Si no en queda cap de lliure (sis granotes i quatre mosques), en surt
+    // una de pròpia cap al centre de l'eixam.
+    //
     // Va en un objecte fill de la granota col·locat a la boca. La llargada i
     // el ritme els porta aquest script amb una corba; el cos, si té Animator,
     // només rep el trigger i la velocitat perquè vagi al mateix temps.
@@ -17,8 +22,14 @@ namespace IdleFrogs.Game
         [SerializeField] private SpriteRenderer tram;
         [Tooltip("El cap enganxós. Es col·loca sol a l'extrem")]
         [SerializeField] private SpriteRenderer punta;
-        [Tooltip("La mosca que atrapa. Apareix on la llengua anirà a buscar-la")]
+        [Tooltip("Mosca de recanvi: només surt quan l'eixam no en té cap de lliure, o si el pantà no en té")]
         [SerializeField] private SpriteRenderer mosca;
+
+        [Header("Boca")]
+        [Tooltip("El SpriteRenderer del cos de la granota")]
+        [SerializeField] private SpriteRenderer cos;
+        [Tooltip("El cos amb la boca oberta. Es posa mentre la llengua és fora")]
+        [SerializeField] private Sprite bocaOberta;
 
         [Header("Ritme d'una llenguada")]
         [Tooltip("Segons que dura a velocitat normal. Si la recol·lecció és més ràpida, s'accelera")]
@@ -32,10 +43,12 @@ namespace IdleFrogs.Game
             new Keyframe(0.78f, 0f),     // ja és a la boca
             new Keyframe(1f, 0f));       // empassar
 
-        [Header("On apareix la mosca, respecte a la boca")]
+        [Header("Mosca de recanvi, respecte a la boca")]
         [Min(0)] [SerializeField] private float distanciaMinima = 0.6f;
         [Min(0)] [SerializeField] private float distanciaMaxima = 1.2f;
-        [Tooltip("En graus: 0 = dreta, 90 = amunt, 180 = esquerra")]
+        [Tooltip("Graus a cada costat de la direcció cap al centre de l'eixam")]
+        [Range(0, 90)] [SerializeField] private float obertura = 20f;
+        [Tooltip("Si el pantà no té eixam. En graus: 0 = dreta, 90 = amunt, 180 = esquerra")]
         [SerializeField] private float angleMinim = 30f;
         [SerializeField] private float angleMaxim = 150f;
 
@@ -50,29 +63,53 @@ namespace IdleFrogs.Game
 
         private Coroutine _actual;
         private float _momentDelPic;
+        private Sprite _bocaTancada;
+
+        // On és la boca amb la granota sense girar (la posició del prefab).
+        private float _xDeLaBoca;
+        private bool _xGuardada;
+
+        // La mosca de l'eixam que porta la llenguada en curs, per tornar-la
+        // si s'interromp.
+        private EixamDeMosques _eixam;
+        private int _moscaDeLEixam = -1;
 
         private void Awake()
         {
             _momentDelPic = MomentDelPic();
+            // La boca tancada és el que tingui posat el cos d'entrada.
+            if (cos != null) _bocaTancada = cos.sprite;
             Amagar();
+        }
+
+        // Quan la granota es gira, la boca passa a l'altra banda del cos.
+        // Pot cridar-se abans d'Awake (granotes d'un pantà encara sense comprar).
+        public void Girar(bool girada)
+        {
+            if (!_xGuardada) { _xDeLaBoca = Mathf.Abs(transform.localPosition.x); _xGuardada = true; }
+            Vector3 p = transform.localPosition;
+            transform.localPosition = new Vector3(girada ? -_xDeLaBoca : _xDeLaBoca, p.y, p.z);
         }
 
         private void OnDisable()
         {
             _actual = null;
+            AlliberarLaMosca();
             Amagar();
         }
 
         // La crida la granota. 'durada' pot ser més curta que Duracio quan la
-        // recol·lecció va ràpida.
-        public void Llancar(float durada)
+        // recol·lecció va ràpida. 'eixam' pot ser null. Amb 'atrapa' a false
+        // la mosca esquiva just quan la llengua hi arriba.
+        public void Llancar(float durada, EixamDeMosques eixam = null, bool atrapa = true)
         {
             if (!isActiveAndEnabled || durada <= 0) return;
             if (_actual != null) StopCoroutine(_actual);
-            _actual = StartCoroutine(Llancament(PuntALAtzar(), durada));
+            AlliberarLaMosca();
+            _actual = StartCoroutine(Llancament(durada, eixam, atrapa));
         }
 
-        private IEnumerator Llancament(Vector3 objectiu, float durada)
+        private IEnumerator Llancament(float durada, EixamDeMosques eixam, bool atrapa)
         {
             if (animador != null)
             {
@@ -82,30 +119,105 @@ namespace IdleFrogs.Game
                     animador.SetTrigger(trigger);
             }
 
-            bool enganxada = false;
+            _eixam = eixam;
+            _moscaDeLEixam = eixam != null ? eixam.Reservar(transform.position) : -1;
+            bool deLEixam = _moscaDeLEixam >= 0;
+
+            Vector3 objectiu = deLEixam ? eixam.Posicio(_moscaDeLEixam)
+                             : eixam != null ? PuntCap(eixam.Centre)
+                             : PuntALAtzar();
+            Transform enduta = null;
+            bool enganxada = false;    // la llengua ja ha arribat (l'agafi o no)
+            Vector3 fuga = Vector3.zero;
+            float momentDeFuga = 0f;
+
             for (float t = 0f; t < durada; t += Time.deltaTime)
             {
                 float u = t / durada;
-                if (!enganxada && u >= _momentDelPic) enganxada = true;
-                Pintar(objectiu, Mathf.Clamp01(extensio.Evaluate(u)), enganxada);
+                float e = Mathf.Clamp01(extensio.Evaluate(u));
+
+                if (!enganxada)
+                {
+                    // Vola mentre la llengua hi va: es persegueix on sigui ara.
+                    if (deLEixam) objectiu = eixam.Posicio(_moscaDeLEixam);
+                    if (u >= _momentDelPic)
+                    {
+                        enganxada = true;
+                        fuga = DireccioDeFuga(objectiu);
+                        momentDeFuga = t;
+                        if (atrapa && deLEixam) enduta = eixam.Capturar(_moscaDeLEixam);
+                        else if (deLEixam)
+                        {
+                            eixam.Esquivar(_moscaDeLEixam, fuga);
+                            _moscaDeLEixam = -1;
+                        }
+                    }
+                }
+
+                Vector3 extrem = Pintar(objectiu, e, enganxada && atrapa, !deLEixam);
+
+                // La de recanvi, quan falla: se'n va volant i desapareix quan
+                // la llengua ja és a la boca.
+                if (!atrapa && enganxada && !deLEixam && mosca != null)
+                {
+                    Vector3 on = objectiu + fuga * (t - momentDeFuga) * 3f;
+                    mosca.enabled = e > 0.001f;
+                    mosca.transform.position = new Vector3(on.x, on.y, mosca.transform.position.z);
+                }
+
+                if (enduta != null)
+                {
+                    enduta.position = new Vector3(extrem.x, extrem.y, enduta.position.z);
+                    // A la boca: menjada.
+                    if (e <= 0.001f)
+                    {
+                        eixam.Menjada(_moscaDeLEixam);
+                        _moscaDeLEixam = -1;
+                        enduta = null;
+                    }
+                }
                 yield return null;
             }
 
+            // Si l'últim fotograma no arriba just a zero, igualment se l'ha menjat.
+            if (_moscaDeLEixam >= 0 && enganxada && atrapa) { eixam.Menjada(_moscaDeLEixam); _moscaDeLEixam = -1; }
+            AlliberarLaMosca();
             Amagar();
             _actual = null;
         }
 
-        private void Pintar(Vector3 objectiu, float e, bool enganxada)
+        // Cap a un costat de la llengua, a l'atzar: sembla que l'esquivi.
+        private Vector3 DireccioDeFuga(Vector3 objectiu)
+        {
+            Vector3 cap = objectiu - transform.position;
+            cap.z = 0f;
+            if (cap.sqrMagnitude < 1e-6f) return Vector3.up;
+            Vector3 costat = new Vector3(-cap.y, cap.x, 0f).normalized * (Random.value < 0.5f ? -1f : 1f);
+            return (costat + cap.normalized * 0.5f).normalized;
+        }
+
+        private void AlliberarLaMosca()
+        {
+            if (_eixam != null && _moscaDeLEixam >= 0) _eixam.Alliberar(_moscaDeLEixam);
+            _moscaDeLEixam = -1;
+        }
+
+        // Torna on queda l'extrem de la llengua.
+        private Vector3 Pintar(Vector3 objectiu, float e, bool enganxada, bool moscaPropia)
         {
             Vector3 boca = transform.position;
             Vector3 cap = objectiu - boca;
             cap.z = 0f;
             float distancia = cap.magnitude;
-            if (distancia < 1e-4f) return;
+            if (distancia < 1e-4f) return boca;
 
             Vector3 direccio = cap / distancia;
             float llargada = distancia * e;
             bool fora = llargada > 0.01f;
+
+            // Mateixa corba que la llengua: s'obre quan surt i es tanca quan
+            // torna, també quan les llenguades s'acceleren.
+            if (cos != null && bocaOberta != null) cos.sprite = fora ? bocaOberta : _bocaTancada;
 
             transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direccio.y, direccio.x) * Mathf.Rad2Deg);
             Vector3 extrem = boca + direccio * llargada;
@@ -122,12 +234,13 @@ namespace IdleFrogs.Game
             }
             if (mosca != null)
             {
-                // Abans d'atrapar-la espera al seu lloc; després viatja enganxada
-                // a la punta, i quan la llengua és a la boca ja se l'ha menjada.
-                mosca.enabled = !enganxada || fora;
+                // La de recanvi: abans d'atrapar-la espera al seu lloc; després
+                // viatja enganxada a la punta, i a la boca ja se l'ha menjada.
+                mosca.enabled = moscaPropia && (!enganxada || fora);
                 Vector3 on = enganxada ? extrem : objectiu;
                 mosca.transform.position = new Vector3(on.x, on.y, mosca.transform.position.z);
             }
+            return extrem;
         }
 
         // Sliced: la mida en unitats locals. Simple: s'escala, i les puntes
@@ -147,6 +260,17 @@ namespace IdleFrogs.Game
                 Vector3 s = sr.transform.localScale;
                 sr.transform.localScale = new Vector3(local / sr.sprite.bounds.size.x, s.y, s.z);
             }
+        }
+
+        // Cap a on hi ha l'eixam, amb una mica de desviació i sense passar-se'n.
+        private Vector3 PuntCap(Vector3 centre)
+        {
+            Vector3 d = centre - transform.position;
+            d.z = 0f;
+            float base_ = Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg;
+            float angle = (base_ + Random.Range(-obertura, obertura)) * Mathf.Deg2Rad;
+            float r = Mathf.Min(d.magnitude, Random.Range(distanciaMinima, Mathf.Max(distanciaMinima, distanciaMaxima)));
+            return transform.position + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * r;
         }
 
         private Vector3 PuntALAtzar()
@@ -178,6 +302,7 @@ namespace IdleFrogs.Game
             if (tram != null) tram.enabled = false;
             if (punta != null) punta.enabled = false;
             if (mosca != null) mosca.enabled = false;
+            if (cos != null && _bocaTancada != null) cos.sprite = _bocaTancada;
         }
 
 #if UNITY_EDITOR

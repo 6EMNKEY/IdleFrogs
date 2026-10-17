@@ -38,5 +38,5 @@ MonoBehaviour:
   multiplicadorDelPrimerSalt: 50
   multiplicadorDeCadaSalt: 10
   granotesInicials: 1
-  nivellsDeGranotaExtra: 0a00000032000000
+  nivellsDeGranotaExtra: 0a00000032000000c8000000f4010000
   nivellMaxim: 800
