@@ -12,6 +12,10 @@ namespace IdleFrogs.EditorTools
     //
     // Quatre esglaons per efecte, un per raresa: Comú, Rar, Èpic i
     // Llegendari. Els percentatges de raresa són al catàleg.
+    //
+    // L'efecte passiu és petit a propòsit (+5% a +20%, i de l'1% al 4% de
+    // rebaixa de cost): el que fa valer un encarregat és que automatitza
+    // i la seva habilitat activa.
     public static class CreadorDEncarregats
     {
         private const string Carpeta = "Assets/_Project/Data/Encarregats";
@@ -31,19 +35,19 @@ namespace IdleFrogs.EditorTools
 
         private static readonly Recepta[] Receptes =
         {
-            new Recepta(TipusDeLloc.Panta, TipusDEfecte.VelocitatDeMoviment, "Saltador",   2.0, 3.5, 5.5, 7.5),
-            new Recepta(TipusDeLloc.Panta, TipusDEfecte.VelocitatDeTreball,  "Llengut",    2.0, 3.0, 5.0, 7.0),
-            new Recepta(TipusDeLloc.Panta, TipusDEfecte.ReduccioDeCost,      "Comptable",  0.2, 0.4, 0.7, 0.8),
+            new Recepta(TipusDeLloc.Panta, TipusDEfecte.VelocitatDeMoviment, "Saltador",   1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Panta, TipusDEfecte.VelocitatDeTreball,  "Llengut",    1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Panta, TipusDEfecte.ReduccioDeCost,      "Comptable",  0.01, 0.02, 0.03, 0.04),
 
-            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.VelocitatDeMoviment, "Maquinista", 1.5, 2.0, 4.0, 6.0),
-            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.VelocitatDeTreball,  "Carregador", 1.5, 2.0, 4.0, 6.0),
-            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.Capacitat,           "Vagoner",    2.0, 3.0, 5.0, 7.0),
-            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.ReduccioDeCost,      "Cap d'estació", 0.2, 0.4, 0.7, 0.8),
+            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.VelocitatDeMoviment, "Maquinista", 1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.VelocitatDeTreball,  "Carregador", 1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.Capacitat,           "Vagoner",    1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Tren,  TipusDEfecte.ReduccioDeCost,      "Cap d'estació", 0.01, 0.02, 0.03, 0.04),
 
-            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.VelocitatDeMoviment, "Corredor",   2.0, 3.0, 5.0, 7.0),
-            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.VelocitatDeTreball,  "Empaquetador", 2.0, 3.0, 5.0, 8.0),
-            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.Capacitat,           "Cisteller",  2.0, 3.0, 5.0, 8.0),
-            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.ReduccioDeCost,      "Regatejador", 0.2, 0.4, 0.7, 0.8),
+            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.VelocitatDeMoviment, "Corredor",   1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.VelocitatDeTreball,  "Empaquetador", 1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.Capacitat,           "Cisteller",  1.05, 1.10, 1.15, 1.20),
+            new Recepta(TipusDeLloc.Tenda, TipusDEfecte.ReduccioDeCost,      "Regatejador", 0.01, 0.02, 0.03, 0.04),
         };
 
         // Com més rar, més dura l'habilitat i més triga a recarregar-se.

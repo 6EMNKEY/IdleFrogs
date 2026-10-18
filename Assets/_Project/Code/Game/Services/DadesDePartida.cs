@@ -68,6 +68,9 @@ namespace IdleFrogs.Game
         // Les partides d'abans no el tenen i JsonUtility el deixa a 0, que és
         // el que toca: no cal pujar de versió.
         public int gemes;
+
+        // El que es va guanyar fora i encara no s'ha acceptat al panell.
+        public RecompensaOffline offlinePendent;
         public int pasDeLaGuia;
 
         // La zona on era el jugador l'últim cop, per tornar-hi en obrir.

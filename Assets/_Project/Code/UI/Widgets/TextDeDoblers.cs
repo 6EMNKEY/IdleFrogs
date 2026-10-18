@@ -31,6 +31,9 @@ namespace IdleFrogs.UI
             }
 
             CurrencyManager.Instancia.EnCanviDeDoblers += Refrescar;
+            // Mentre volen monedes cap aquí, el número puja a mesura que arriben.
+            if (EfecteDeRecompensa.Instancia != null)
+                EfecteDeRecompensa.Instancia.EnCanviDelQueEsMostra += RefrescarPerEfecte;
             Refrescar(CurrencyManager.Instancia.doblersActuals);
         }
 
@@ -38,8 +41,21 @@ namespace IdleFrogs.UI
         {
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.EnCanviDeDoblers -= Refrescar;
+            if (EfecteDeRecompensa.Instancia != null)
+                EfecteDeRecompensa.Instancia.EnCanviDelQueEsMostra -= RefrescarPerEfecte;
         }
 
-        private void Refrescar(double quantitat) => _text.text = FormatadorDeNombres.Doblers(quantitat);
+        private void RefrescarPerEfecte(TipusDeMoneda tipus)
+        {
+            if (tipus == TipusDeMoneda.Doblers && CurrencyManager.Instancia != null)
+                Refrescar(CurrencyManager.Instancia.doblersActuals);
+        }
+
+        // El saldo menys el que encara és de camí en forma de monedes.
+        private void Refrescar(double quantitat)
+        {
+            double retingut = EfecteDeRecompensa.Instancia != null ? EfecteDeRecompensa.Instancia.Retingut(TipusDeMoneda.Doblers) : 0;
+            _text.text = FormatadorDeNombres.Doblers(System.Math.Max(0, quantitat - retingut));
+        }
     }
 }

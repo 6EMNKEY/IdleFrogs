@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using IdleFrogs.Game;
+using IdleFrogs.UI;
 
 namespace IdleFrogs.EditorTools
 {
@@ -9,7 +10,8 @@ namespace IdleFrogs.EditorTools
     // Doblers i gemes de franc per provar, només amb el joc en marxa: fora
     // de Play no hi ha CurrencyManager i les opcions surten en gris. Passen
     // pel CurrencyManager com qualsevol ingrés, així que els textos i els
-    // panells s'actualitzen sols i l'autoguardat se'ls queda.
+    // panells s'actualitzen sols i l'autoguardat se'ls queda. Si hi ha
+    // EfecteDeRecompensa a l'escena, volen des del centre de la pantalla.
     public static class EinesDeTesting
     {
         private const string Menu = "IdleFrogs/Testing/";
@@ -35,6 +37,7 @@ namespace IdleFrogs.EditorTools
         private static void Gemes()
         {
             CurrencyManager.Instancia.AfegirGemes(100);
+            Efecte(TipusDeMoneda.Gemes, 100);
             Debug.Log($"IdleFrogs: +100 gemes → {CurrencyManager.Instancia.gemesActuals}");
         }
 
@@ -46,9 +49,32 @@ namespace IdleFrogs.EditorTools
         [MenuItem(Menu + "+100 gemes", true)]
         private static bool EnJoc() => Application.isPlaying && CurrencyManager.Instancia != null;
 
+        private static void Efecte(TipusDeMoneda tipus, double quantitat)
+        {
+            if (EfecteDeRecompensa.Instancia != null)
+                EfecteDeRecompensa.Instancia.Llancar(tipus, new Vector2(Screen.width / 2f, Screen.height / 2f), quantitat);
+        }
+
+        // Les tres capacitats de la cadena, el coll d'ampolla i l'idle.
+        [MenuItem(Menu + "Mesures de la cadena", priority = Prioritat + 40)]
+        private static void Mesures()
+        {
+            MesuresDeLaCadena m = GameManager.Instancia.Mesures();
+            Debug.Log("IdleFrogs: mesures de la cadena\n" +
+                      $"  Pantans: {FormatadorDeNombres.Ritme(m.pantans)}\n" +
+                      $"  Tren:    {FormatadorDeNombres.Ritme(m.tren)}\n" +
+                      $"  Tenda:   {FormatadorDeNombres.Ritme(m.tenda)}\n" +
+                      $"  Coll d'ampolla: {m.QuinTram} ({FormatadorDeNombres.Ritme(m.CollDAmpolla)})\n" +
+                      $"  Idle: {FormatadorDeNombres.Ritme(m.Idle)}");
+        }
+
+        [MenuItem(Menu + "Mesures de la cadena", true)]
+        private static bool HiHaPartida() => Application.isPlaying && GameManager.Instancia != null;
+
         private static void Afegir(double quantitat)
         {
             CurrencyManager.Instancia.AfegirDoblers(quantitat);
+            Efecte(TipusDeMoneda.Doblers, quantitat);
             Debug.Log($"IdleFrogs: +{FormatadorDeNombres.Doblers(quantitat)} doblers → " +
                       FormatadorDeNombres.Doblers(CurrencyManager.Instancia.doblersActuals));
         }

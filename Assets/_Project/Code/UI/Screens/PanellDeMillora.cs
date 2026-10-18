@@ -279,7 +279,18 @@ namespace IdleFrogs.UI
         private void Millorar()
         {
             if (_unitat == null) return;
-            _unitat.Millorar(QuantitatActual());
+
+            int gemesAbans = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0;
+            if (!_unitat.Millorar(QuantitatActual())) return;
+
+            // Si ha passat una fita, les gemes surten del "+20" de la barra.
+            int guanyades = (CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0) - gemesAbans;
+            if (guanyades > 0 && EfecteDeRecompensa.Instancia != null)
+            {
+                RectTransform origen = textRecompensa != null ? textRecompensa.rectTransform
+                                     : barraDeBoost != null ? barraDeBoost.rectTransform : null;
+                EfecteDeRecompensa.Instancia.LlancarDesDe(TipusDeMoneda.Gemes, origen, guanyades);
+            }
         }
     }
 }

@@ -51,6 +51,8 @@ namespace IdleFrogs.Game
             int segur = Mathf.Min(
                 Fites.NivellMaximSegur(capacitatBase, creixementDeCapacitat, Fites.Acumulat(fites, nivellMaxim)),
                 Fites.NivellMaximSegur(ritmeDeCarregaBase, creixementDeRitme, Fites.Acumulat(fites, nivellMaxim)));
+            // El cost també: amb un creixement alt es passa de rang abans que la capacitat.
+            segur = Mathf.Min(segur, Fites.NivellMaximSegur(costBase, creixementDeCost));
 
             if (nivellMaxim > segur)
                 Debug.LogWarning($"{name}: nivellMaxim {nivellMaxim} passa de rang. " +

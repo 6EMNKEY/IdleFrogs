@@ -10,13 +10,20 @@ namespace IdleFrogs.Game
         [Header("Mosques")]
         [Tooltip("La mosca model. Es fa servir com a primera mosca i es clona per a la resta")]
         [SerializeField] private SpriteRenderer mosca;
-        [SerializeField, Range(1, 8)] private int quantes = 4;
+        [Tooltip("Les que es creen. Si alguna cosa en demana menys (EstablirVisibles), la resta s'amaga")]
+        [SerializeField, Range(1, 30)] private int quantes = 4;
         [Tooltip("Marca-ho si el dibuix de la mosca mira cap a la dreta")]
         [SerializeField] private bool elDibuixMiraALaDreta = true;
 
         [Header("Zona — rectangle verd en seleccionar, en unitats locals")]
         [SerializeField] private Vector2 centreDeLaZona = Vector2.zero;
         [SerializeField] private Vector2 midaDeLaZona = new Vector2(3f, 3f);
+
+        [Header("Límits")]
+        [Tooltip("Que cap mosca surti del rectangle, ni amb el brunzit. Per a un recipient tancat")]
+        [SerializeField] private bool noSortirDeLaZona;
+        [Tooltip("Marge per dins de la vora, en unitats locals: més o menys mitja mosca")]
+        [Min(0)] [SerializeField] private float margeDinsDeLaZona = 0.1f;
 
         [Header("Vol")]
         [SerializeField] private float velocitatMinima = 0.5f;
@@ -39,7 +46,101 @@ namespace IdleFrogs.Game
 
         // Volant: va a la seva. Reservada: una llengua hi va, però encara vola.
         // Capturada: la mou la llengua. Menjada: amagada fins que torna.
-        private enum EstatDeMosca { Volant, Reservada, Capturada, Menjada }
+        // Aspirada: va cap al succionador. Buidada: ja hi ha entrat i no torna
+        // fins que se'n tornin a demanar (EstablirVisibles).
+        private enum EstatDeMosca { Volant, Reservada, Capturada, Menjada, Aspirada, Buidada }
+
+        private Vector3[] _origenDAspiracio;
+        private Vector3[] _destiDAspiracio;
+        private float[] _iniciDAspiracio;
+        private float[] _duradaDAspiracio;
+        private Vector3 _escalaDeLaMosca = Vector3.one;
+        private int _visibles;
+
+        public int Quantes => quantes;
+
+        // Quantes es veuen ara (de 0 a Quantes). Les altres s'amaguen on són
+        // i, quan tornen, continuen el vol des d'allà.
+        public void EstablirVisibles(int n)
+        {
+            _visibles = Mathf.Clamp(n, 0, quantes);
+            if (_estats == null) return;
+            // Les que s'havien aspirat i ara tornen a fer falta, a dins de nou.
+            for (int i = 0; i < _visibles; i++)
+                if (_estats[i] == EstatDeMosca.Buidada)
+                {
+                    _posicions[i] = PuntALAtzar();
+                    _objectius[i] = PuntALAtzar();
+                    _velocitats[i] = Vector2.zero;
+                    _estats[i] = EstatDeMosca.Volant;
+                }
+        }
+
+        // ---------------------------------------------------------------
+        // Aspirar (el succionador de l'estació)
+        // ---------------------------------------------------------------
+
+        // La visible que vola més a prop d'un punt del món, o -1.
+        public int LaMesProperA(Vector3 puntAlMon)
+        {
+            if (_mosques == null) return -1;
+            int millor = -1;
+            float millorDistancia = float.PositiveInfinity;
+            for (int i = 0; i < _visibles; i++)
+            {
+                if (_estats[i] != EstatDeMosca.Volant) continue;
+                float d = ((Vector2)(_mosques[i].transform.position - puntAlMon)).sqrMagnitude;
+                if (d < millorDistancia) { millorDistancia = d; millor = i; }
+            }
+            return millor;
+        }
+
+        public int QuantesVolen()
+        {
+            if (_mosques == null) return 0;
+            int n = 0;
+            for (int i = 0; i < _visibles; i++)
+                if (_estats[i] == EstatDeMosca.Volant) n++;
+            return n;
+        }
+
+        // Se l'endú cap a 'puntAlMon' en 'durada' segons, accelerant i
+        // encongint-se, i desapareix en arribar-hi.
+        public void Aspirar(int i, Vector3 puntAlMon, float durada)
+        {
+            if (!Valida(i) || _estats[i] != EstatDeMosca.Volant) return;
+            _estats[i] = EstatDeMosca.Aspirada;
+            _origenDAspiracio[i] = _mosques[i].transform.localPosition;
+            Vector3 desti = transform.InverseTransformPoint(puntAlMon);
+            desti.z = _origenDAspiracio[i].z;
+            _destiDAspiracio[i] = desti;
+            _iniciDAspiracio[i] = Time.time;
+            _duradaDAspiracio[i] = Mathf.Max(0.05f, durada);
+        }
+
+        private void MoureAspirada(int i)
+        {
+            float u = Mathf.Clamp01((Time.time - _iniciDAspiracio[i]) / _duradaDAspiracio[i]);
+            Transform tr = _mosques[i].transform;
+
+            if (u >= 1f)
+            {
+                _mosques[i].enabled = false;
+                tr.localScale = _escalaDeLaMosca;
+                _estats[i] = EstatDeMosca.Buidada;
+                return;
+            }
+
+            // Accelera cap a la boca i fa un petit remolí que s'apaga en arribar.
+            float e = u * u;
+            Vector3 a = _origenDAspiracio[i], b = _destiDAspiracio[i];
+            Vector3 cap = b - a;
+            Vector3 costat = new Vector3(-cap.y, cap.x, 0f).normalized;
+            float remoli = Mathf.Sin(u * Mathf.PI * 3f + _llavors[i]) * 0.15f * (1f - u);
+            tr.localPosition = Vector3.Lerp(a, b, e) + costat * remoli;
+            tr.localScale = _escalaDeLaMosca * Mathf.Lerp(1f, 0.3f, e);
+            _alcades[i] = tr.localPosition.y;
+        }
         private EstatDeMosca[] _estats;
         private float[] _tornaA;
 
@@ -74,7 +175,13 @@ namespace IdleFrogs.Game
             _alcades = new float[quantes];
             _ordres = new int[quantes];
             _estats = new EstatDeMosca[quantes];
+            _origenDAspiracio = new Vector3[quantes];
+            _destiDAspiracio = new Vector3[quantes];
+            _iniciDAspiracio = new float[quantes];
+            _duradaDAspiracio = new float[quantes];
+            _escalaDeLaMosca = mosca.transform.localScale;
             _tornaA = new float[quantes];
+            _visibles = quantes;
 
             for (int i = 0; i < quantes; i++)
             {
@@ -94,6 +201,10 @@ namespace IdleFrogs.Game
 
             for (int i = 0; i < quantes; i++)
             {
+                // L'aspiració s'acaba encara que ja no se'n demanin de visibles.
+                if (_estats[i] == EstatDeMosca.Aspirada) { MoureAspirada(i); continue; }
+                if (_estats[i] == EstatDeMosca.Buidada) { _mosques[i].enabled = false; continue; }
+
                 if (_estats[i] == EstatDeMosca.Menjada)
                 {
                     if (Time.time < _tornaA[i]) continue;
@@ -106,6 +217,13 @@ namespace IdleFrogs.Game
                     continue;
                 }
 
+                if (i >= _visibles)
+                {
+                    if (_estats[i] == EstatDeMosca.Volant) _mosques[i].enabled = false;
+                    continue;
+                }
+                if (_estats[i] == EstatDeMosca.Volant && !_mosques[i].enabled) _mosques[i].enabled = true;
+
                 Vector2 cap = _objectius[i] - _posicions[i];
                 if (cap.sqrMagnitude < DistanciaDArribada * DistanciaDArribada)
                 {
@@ -117,6 +235,7 @@ namespace IdleFrogs.Game
                 Vector2 desitjada = cap.normalized * _rapidesa[i];
                 _velocitats[i] = Vector2.Lerp(_velocitats[i], desitjada, suavitat);
                 _posicions[i] += _velocitats[i] * dt;
+                if (noSortirDeLaZona) _posicions[i] = DinsDeLaZona(_posicions[i]);
 
                 float t = Time.time * frequenciaDelBrunzit;
                 Vector2 brunzit = new Vector2(
@@ -124,6 +243,7 @@ namespace IdleFrogs.Game
                     Mathf.PerlinNoise(_llavors[i] + 37f, t) - 0.5f) * (2f * amplitudDelBrunzit);
 
                 Vector2 visible = _posicions[i] + brunzit;
+                if (noSortirDeLaZona) visible = DinsDeLaZona(visible);
                 Transform tr = _mosques[i].transform;
                 tr.localPosition = new Vector3(visible.x, visible.y, tr.localPosition.z);
                 _alcades[i] = visible.y;
@@ -152,7 +272,7 @@ namespace IdleFrogs.Game
             float millorDistancia = float.PositiveInfinity;
             for (int i = 0; i < quantes; i++)
             {
-                if (_estats[i] != EstatDeMosca.Volant) continue;
+                if (_estats[i] != EstatDeMosca.Volant || i >= _visibles) continue;
                 float d = ((Vector2)(_mosques[i].transform.position - desDe)).sqrMagnitude;
                 if (d < millorDistancia) { millorDistancia = d; millor = i; }
             }
@@ -212,7 +332,7 @@ namespace IdleFrogs.Game
         // Entra per una vora a l'atzar i se'n va cap a dins.
         private void Reapareixer(int i)
         {
-            Vector2 meitat = midaDeLaZona / 2f;
+            Vector2 meitat = MidaUtil / 2f;
             Vector2 p = PuntALAtzar() - centreDeLaZona;
             if (Random.value < 0.5f) p.x = Mathf.Sign(p.x == 0 ? 1 : p.x) * meitat.x;
             else p.y = Mathf.Sign(p.y == 0 ? 1 : p.y) * meitat.y;
@@ -224,9 +344,22 @@ namespace IdleFrogs.Game
             _estats[i] = EstatDeMosca.Volant;
         }
 
+        // Amb noSortirDeLaZona, els destins també queden lluny de la vora.
+        private Vector2 MidaUtil => noSortirDeLaZona
+            ? Vector2.Max(Vector2.zero, midaDeLaZona - 2f * margeDinsDeLaZona * Vector2.one)
+            : midaDeLaZona;
+
         private Vector2 PuntALAtzar() => centreDeLaZona + new Vector2(
-            (Random.value - 0.5f) * midaDeLaZona.x,
-            (Random.value - 0.5f) * midaDeLaZona.y);
+            (Random.value - 0.5f) * MidaUtil.x,
+            (Random.value - 0.5f) * MidaUtil.y);
+
+        private Vector2 DinsDeLaZona(Vector2 p)
+        {
+            Vector2 meitat = MidaUtil / 2f;
+            return new Vector2(
+                Mathf.Clamp(p.x, centreDeLaZona.x - meitat.x, centreDeLaZona.x + meitat.x),
+                Mathf.Clamp(p.y, centreDeLaZona.y - meitat.y, centreDeLaZona.y + meitat.y));
+        }
 
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()

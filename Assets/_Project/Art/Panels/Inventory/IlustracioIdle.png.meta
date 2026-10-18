@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: be02bfd2bfb1f4c88a9cca3a9affc1ee
+guid: d1e727b238a7161d6aa2178af3c074dd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5387546771323939835
-    second: PanellEncarregatsBack_0
+      213: 8068532852766083745
+    second: IlustracioIdle_0
+  - first:
+      213: -6540132798910220425
+    second: IlustracioIdle_1
+  - first:
+      213: 1664530907380617596
+    second: IlustracioIdle_2
+  - first:
+      213: 2748147612014661087
+    second: IlustracioIdle_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +135,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PanellEncarregatsBack_0
+      name: IlustracioIdle_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 756
-        height: 989
+        x: 674
+        y: 902
+        width: 74
+        height: 39
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +150,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bfbe09b7e3964ca40800000000000000
-      internalID: 5387546771323939835
+      spriteID: 1aa01b371ef29ff60800000000000000
+      internalID: 8068532852766083745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IlustracioIdle_1
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 909
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7773319ded7cc35a0800000000000000
+      internalID: -6540132798910220425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IlustracioIdle_2
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 902
+        width: 17
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c71941c8a0a991710800000000000000
+      internalID: 1664530907380617596
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: IlustracioIdle_3
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 208
+        width: 920
+        height: 533
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fddc87c51b1632620800000000000000
+      internalID: 2748147612014661087
       vertices: []
       indices: 
       edges: []
@@ -161,7 +236,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PanellEncarregatsBack_0: 5387546771323939835
+      IlustracioIdle_0: 8068532852766083745
+      IlustracioIdle_1: -6540132798910220425
+      IlustracioIdle_2: 1664530907380617596
+      IlustracioIdle_3: 2748147612014661087
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

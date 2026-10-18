@@ -35,7 +35,7 @@ namespace IdleFrogs.Game
         // que tornar cada dues hores.
         [Header("Progrés offline")]
         [SerializeField] private float horesMaximesOffline = 2f;
-        [Tooltip("Per sota d'això no s'ensenya el panell de 'mentre no hi eres'")]
+        [Tooltip("Per sota d'això no s'ensenya el panell: els doblers es donen directament")]
         [SerializeField] private float segonsMinimsPerAvisar = 60f;
 
         // Events per a que altres managers es suscriguin
@@ -43,11 +43,15 @@ namespace IdleFrogs.Game
         public event Action EnTickDeJoc;
         public event Action EnTickDeSegon;
 
-        // El panell de progrés offline pot fer el seu Start abans o després
-        // del nostre: per això el resultat es queda pendent fins que algú
-        // el recull, i a més s'avisa per l'event.
-        public event Action<ResultatOffline> EnProgresOffline;
-        private ResultatOffline? _resultatPendent;
+        // La recompensa offline queda pendent fins que el jugador l'accepta al
+        // panell, i es guarda amb la partida: si tanca l'app abans, no la perd.
+        // El panell la mira al seu Start i, per si arriba més tard (tornar de
+        // segon pla), també se l'avisa per l'event.
+        public event Action<RecompensaOffline> EnProgresOffline;
+        private RecompensaOffline _offlinePendent;
+
+        public bool HiHaRecompensaOffline => _offlinePendent.HiHaRecompensa;
+        public RecompensaOffline RecompensaOfflinePendent => _offlinePendent;
 
         // Quan és true, tot el que depèn de la partida carregada ja és a lloc.
         public bool PartidaCarregada { get; private set; }
@@ -105,8 +109,8 @@ namespace IdleFrogs.Game
             if (GestorDEncarregats.Instancia != null)
                 GestorDEncarregats.Instancia.RegistrarUnitats(llistaDePantans, tren, tenda);
 
-            // L'últim: necessita saber quins trams van sols, i això ho
-            // acaba de decidir RegistrarUnitats.
+            // L'últim: l'idle depèn dels nivells i dels bonus dels encarregats,
+            // que acaba de posar RegistrarUnitats.
             if (_marcaCarregada != DateTime.MinValue)
                 AplicarProgresOffline(_marcaCarregada);
 
@@ -114,8 +118,8 @@ namespace IdleFrogs.Game
 
             // Guardem ja: si l'app es tanqués abans del primer autoguardat, la
             // partida guardada encara tindria la marca de temps vella, i el
-            // proper cop es tornaria a donar el mateix offline (i a cobrar la
-            // càrrega de la granota transportista) per segona vegada.
+            // proper cop es tornaria a comptar el mateix temps fora (i a cobrar
+            // la càrrega de la granota transportista) per segona vegada.
             SaveGameData();
             Debug.Log("GameManager: Inicialització completa");
         }
@@ -175,59 +179,63 @@ namespace IdleFrogs.Game
             }
         }
 
-        public ResultatOffline? ConsumirResultatOffline()
+        // La crida el panell en acceptar (o tancar). Torna el que s'ha cobrat.
+        public double CobrarRecompensaOffline()
         {
-            ResultatOffline? r = _resultatPendent;
-            _resultatPendent = null;
-            return r;
+            double doblers = _offlinePendent.doblers;
+            _offlinePendent = default;
+            if (doblers > 0 && CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.AfegirDoblers(doblers);
+            SaveGameData();
+            return doblers;
         }
 
+        // Les tres capacitats de la cadena, tant si hi ha encarregat com si no:
+        // el que podrien fer treballant sense parar. Els pantans només compten
+        // si són comprats i a l'abast del tren (no darrere d'una barrera).
+        public MesuresDeLaCadena Mesures()
+        {
+            double pantans = 0;
+            if (llistaDePantans != null)
+            {
+                int maxim = Mathf.Min(llistaDePantans.IndexMaximAccessible(), llistaDePantans.Quantitat - 1);
+                for (int i = 0; i <= maxim; i++)
+                {
+                    Panta p = llistaDePantans.Obtenir(i);
+                    if (p != null && p.EstaComprat) pantans += p.ProduccioReal;
+                }
+            }
+            return new MesuresDeLaCadena(
+                pantans,
+                tren != null ? tren.CabalReal : 0,
+                tenda != null ? tenda.CabalReal : 0);
+        }
+
+        // El coll d'ampolla entre deu.
+        public double IngresIdlePerSegon() => Mesures().Idle;
+
+        // Idle × temps fora, amb el tope d'hores. No es dona: queda pendent
+        // fins que el jugador l'accepta al panell. Una absència curta es dona
+        // directament, sense panell.
         private void AplicarProgresOffline(DateTime desDe)
         {
-            if (llistaDePantans == null) return;
-
             double segons = (DateTime.UtcNow - desDe).TotalSeconds;
             if (segons <= 1) return;
 
-            int n = llistaDePantans.Quantitat;
-            var produccio = new double[n];
-            for (int i = 0; i < n; i++)
+            RecompensaOffline r = RecompensaOffline.Calcular(segons, horesMaximesOffline * 3600.0, IngresIdlePerSegon());
+            if (!r.HiHaRecompensa) return;
+
+            Debug.Log($"GameManager: offline {FormatadorDeNombres.Temps(r.segonsComptats)} × " +
+                      $"{FormatadorDeNombres.Ritme(r.PerSegon)} = {FormatadorDeNombres.Doblers(r.doblers)}");
+
+            if (segons < segonsMinimsPerAvisar && !_offlinePendent.HiHaRecompensa)
             {
-                Panta p = llistaDePantans.Obtenir(i);
-                if (p != null && p.EstaComprat && p.EstaAutomatitzada)
-                    produccio[i] = p.ProduccioReal;
+                if (CurrencyManager.Instancia != null) CurrencyManager.Instancia.AfegirDoblers(r.doblers);
+                return;
             }
 
-            double[] capses = llistaDePantans.ObtenirCapses();
-            double cabalTren = tren != null && tren.EstaAutomatitzada ? tren.CabalReal : 0;
-            double cabalTenda = tenda != null && tenda.EstaAutomatitzada ? tenda.CabalReal : 0;
-            double estacioAra = estacio != null ? estacio.DoblersEmmagatzemats : 0;
-
-            ResultatOffline r = ProgresOffline.Calcular(
-                segons, horesMaximesOffline * 3600.0,
-                produccio, capses, cabalTren, estacioAra, cabalTenda,
-                out double estacioDespres);
-
-            if (!r.HiHaAlgunGuany) return;
-
-            llistaDePantans.AplicarCapses(capses);
-
-            // Sense estació el tren hauria anat directe a la cartera: és el
-            // mateix fallback que fa el tren de debò.
-            if (estacio != null) estacio.AplicarDoblers(estacioDespres);
-            else if (CurrencyManager.Instancia != null) CurrencyManager.Instancia.AfegirDoblers(estacioDespres - estacioAra);
-
-            if (CurrencyManager.Instancia != null) CurrencyManager.Instancia.AfegirDoblers(r.venut);
-
-            Debug.Log($"GameManager: offline {FormatadorDeNombres.Temps(r.segonsComptats)} → " +
-                      $"produït {FormatadorDeNombres.Doblers(r.produitAlsPantans)}, " +
-                      $"venut {FormatadorDeNombres.Doblers(r.venut)}");
-
-            // Els doblers ja s'han donat. El panell només ho explica, així que
-            // si el jugador mata l'app abans de veure'l no perd res.
-            if (r.segonsFora < segonsMinimsPerAvisar) return;
-            _resultatPendent = r;
-            EnProgresOffline?.Invoke(r);
+            _offlinePendent = _offlinePendent.Sumar(r);
+            EnProgresOffline?.Invoke(_offlinePendent);
         }
 
         #endregion
@@ -255,6 +263,7 @@ namespace IdleFrogs.Game
                 CurrencyManager.Instancia.EstablirDoblers(_dades.doblers);
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.EstablirGemes(_dades.gemes);
+            _offlinePendent = _dades.offlinePendent;
             PasDeLaGuia = _dades.pasDeLaGuia;
 
             // La zona d'aquesta escena. Si encara no s'hi ha jugat mai, comença
@@ -316,6 +325,7 @@ namespace IdleFrogs.Game
                 CurrencyManager.Instancia.EstablirDoblers(doblersInicials);
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.EstablirGemes(0);
+            _offlinePendent = default;
             PasDeLaGuia = 0;
             Debug.Log("GameManager: partida nova");
         }
@@ -341,6 +351,7 @@ namespace IdleFrogs.Game
             _dades.marcaDeTempsUtc = DateTime.UtcNow.ToBinary();
             _dades.doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0;
             _dades.gemes = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0;
+            _dades.offlinePendent = _offlinePendent;
             _dades.pasDeLaGuia = PasDeLaGuia;
             _dades.zonaActual = zona;
 

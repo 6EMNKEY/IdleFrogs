@@ -209,13 +209,27 @@ namespace IdleFrogs.Game
 
         // La mateixa fórmula a qualsevol nivell, amb les bonificacions d'ara:
         // és el número de destí de la targeta del panell.
+        //
+        // Granota per granota, amb el cicle sencer que fa de debò: recollir,
+        // anar a la capsa, buidar i TORNAR, i cadascuna des del seu nenúfar
+        // (no tots són a la mateixa distància).
         public double ProduccioRealAlNivell(int n)
         {
             double capacitat = CapacitatAlNivell(n) * Bonus.capacitat;
             double velocitat = VelocitatDeRecoleccioAlNivell(n) * Bonus.treball;
-            float finsPle = velocitat <= 0 ? 0f : (float)(capacitat / velocitat);
-            float temps = Mathf.Max(0.02f, finsPle) + TempsBuidar + TempsDeCami;
-            return temps <= 0 ? 0 : GranotesAlNivell(n) * capacitat / temps;
+            double finsPle = velocitat <= 0 ? 0 : capacitat / velocitat;
+            float caminar = VelocitatDeMoviment;
+            if (capsaMosques == null || nenufars == null || slotsGranotes == null) return 0;
+
+            double total = 0;
+            int granotes = GranotesAlNivell(n);
+            for (int i = 0; i < granotes && i < slotsGranotes.Length; i++)
+            {
+                if (slotsGranotes[i] == null || i >= nenufars.Length || nenufars[i] == null) continue;
+                float distancia = Vector3.Distance(SeientDeLaGranota(nenufars[i]), LlocDeBuidar);
+                total += CicleDeGranota.Produccio(capacitat, finsPle, TempsBuidar, distancia, caminar);
+            }
+            return total;
         }
         public float VelocitatDeMoviment => config.velocitatDeMoviment * (float)Bonus.velocitat;
         public float TempsBuidar => config.tempsBuidar / (float)Bonus.treball;

@@ -28,6 +28,7 @@ namespace IdleFrogs.Game
 
         private LlenguaDeGranota _llengua;
         private SpriteRenderer _cos;
+        private float _xDeLesMosques;
         private readonly Llenguada[] _pla = new Llenguada[4];
 
         private Panta _pantaPare;
@@ -58,21 +59,29 @@ namespace IdleFrogs.Game
             // El centre de l'eixam i no la pila: la pila és la mosca model de
             // l'eixam i a aquestes alçades ja vola per on vol.
             Vector3 mosques = panta != null && panta.Eixam != null ? panta.Eixam.Centre : pilaDeMosques;
-            MirarCap(mosques.x);
+            _xDeLesMosques = mosques.x;
+            MirarLesMosques();
         }
+
+        // Al nenúfar mira les mosques, que és on llança la llengua.
+        private void MirarLesMosques() => Mirar(_xDeLesMosques < _posicioInicial.x);
 
         // Es gira el dibuix (flipX), no l'escala: amb escala negativa la
         // llengua, que s'orienta en coordenades del món, apuntaria al revés.
-        private void MirarCap(float x)
+        private void Mirar(bool capALEsquerra)
         {
             BuscarPeces();
-            bool alaEsquerra = x < _posicioInicial.x;
-            if (_cos != null) _cos.flipX = elDibuixMiraALaDreta ? alaEsquerra : !alaEsquerra;
-            if (_llengua != null) _llengua.Girar(alaEsquerra == elDibuixMiraALaDreta);
+            if (_cos != null) _cos.flipX = elDibuixMiraALaDreta ? capALEsquerra : !capALEsquerra;
+            if (_llengua != null) _llengua.Girar(capALEsquerra == elDibuixMiraALaDreta);
         }
 
+        // Mentre camina mira cap on va. Si el destí és just a sobre o a sota,
+        // es queda com estava.
         private IEnumerator MouresALaPosicio(Vector3 posicioObjectiu)
         {
+            float dx = posicioObjectiu.x - transform.position.x;
+            if (Mathf.Abs(dx) > 0.01f) Mirar(dx < 0f);
+
             while (Vector3.Distance(transform.position, posicioObjectiu) >= 0.05f)
             {
                 transform.position = Vector3.MoveTowards(
@@ -141,6 +150,7 @@ namespace IdleFrogs.Game
             // 4. Tornar a nenufar
             estatActual = EstatGranota.MoventseAlNenufar;
             yield return MouresALaPosicio(_posicioInicial);
+            MirarLesMosques();
             estatActual = EstatGranota.Idle;
         }
 

@@ -18,7 +18,7 @@ MonoBehaviour:
   lloc: 2
   raresa: 3
   efecte: 3
-  magnitud: 0.8
+  magnitud: 0.04
   magnitudDeLHabilitat: 8
   segonsDeDuracio: 600
   segonsDeRecarrega: 3000

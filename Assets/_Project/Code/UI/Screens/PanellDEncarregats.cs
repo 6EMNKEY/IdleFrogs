@@ -258,7 +258,16 @@ namespace IdleFrogs.UI
         {
             if (GestorDEncarregats.Instancia == null) return;
             if (_seleccionat == e) _seleccionat = null;
-            GestorDEncarregats.Instancia.Vendre(e);
+
+            // La carta desapareix en vendre: on era, abans que es refresqui.
+            RectTransform carta = null;
+            foreach (FitxaDEncarregat f in _fitxes)
+                if (f != null && f.gameObject.activeSelf && f.Encarregat == e) { carta = (RectTransform)f.transform; break; }
+            Vector2 origen = carta != null ? EfecteDeRecompensa.PuntDePantalla(carta) : Vector2.zero;
+            double preu = GestorDEncarregats.PreuDeVenda(e);
+
+            if (GestorDEncarregats.Instancia.Vendre(e) && carta != null && EfecteDeRecompensa.Instancia != null)
+                EfecteDeRecompensa.Instancia.Llancar(TipusDeMoneda.Doblers, origen, preu);
         }
 
         private void AssignarElSeleccionat()

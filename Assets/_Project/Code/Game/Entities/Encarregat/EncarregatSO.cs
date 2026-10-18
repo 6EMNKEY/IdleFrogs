@@ -37,14 +37,14 @@ namespace IdleFrogs.Game
 
         public bool EsReduccioDeCost => efecte == TipusDEfecte.ReduccioDeCost;
 
-        // Text curt per a la fitxa del panell. La reducció s'ensenya com a
-        // percentatge i la resta com a multiplicador, que és com es llegeixen.
+        // Text curt de l'efecte passiu. Tot en percentatge: amb bonus petits
+        // (×1.05) un multiplicador es llegeix pitjor que "+5%".
         public string DescripcioDeLEfecte => efecte switch
         {
-            TipusDEfecte.VelocitatDeMoviment => $"Velocitat ×{FormatadorDeNombres.Decimals(magnitud, 1)}",
-            TipusDEfecte.VelocitatDeTreball => $"Treball ×{FormatadorDeNombres.Decimals(magnitud, 1)}",
-            TipusDEfecte.Capacitat => $"Capacitat ×{FormatadorDeNombres.Decimals(magnitud, 1)}",
-            TipusDEfecte.ReduccioDeCost => $"Cost −{FormatadorDeNombres.Decimals(magnitud * 100, 0)}%",
+            TipusDEfecte.VelocitatDeMoviment => $"Velocitat +{Percentatge(magnitud - 1)}%",
+            TipusDEfecte.VelocitatDeTreball => $"Treball +{Percentatge(magnitud - 1)}%",
+            TipusDEfecte.Capacitat => $"Capacitat +{Percentatge(magnitud - 1)}%",
+            TipusDEfecte.ReduccioDeCost => $"Cost −{Percentatge(magnitud)}%",
             _ => string.Empty
         };
 
@@ -56,6 +56,8 @@ namespace IdleFrogs.Game
             : $"{FormatadorDeNombres.Factor(magnitudDeLHabilitat)}x";
 
         // "5x Velocitat de recol·lecció" — la targeta de l'encarregat assignat.
+        private static string Percentatge(double fraccio) => FormatadorDeNombres.Factor(fraccio * 100);
+
         public string DescripcioDeLHabilitat => $"{ValorDeLHabilitat} {NomDeLEix(false)}";
 
         // "5x Vel" — les cartes petites de la llista.

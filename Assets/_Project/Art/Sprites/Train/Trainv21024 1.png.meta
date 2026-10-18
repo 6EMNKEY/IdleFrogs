@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0a22e3c934341f58b958fcc2369aeb5a
+guid: 43b19d90bf65c80ccbe34923f400e884
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8783832784957521826
-    second: PanellMilloraBack(1)_0
+      213: -8646111456884499522
+    second: Trainv21024 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PanellMilloraBack(1)_0
+      name: Trainv21024 1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 756
-        height: 989
+        x: 215
+        y: 280
+        width: 1100
+        height: 515
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2afb2d1116176e970800000000000000
-      internalID: 8783832784957521826
+      spriteID: ebbd6f36077d20880800000000000000
+      internalID: -8646111456884499522
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PanellMilloraBack(1)_0: 8783832784957521826
+      Trainv21024 1_0: -8646111456884499522
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

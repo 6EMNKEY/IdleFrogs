@@ -24,6 +24,8 @@ namespace IdleFrogs.Game
 
         public double CarregaActual => carregaActual;
         public event System.Action<double> EnCanviDeCarrega;
+        // Just abans de descarregar a l'estació, amb els segons que hi estarà.
+        public event System.Action<float> EnComencaADescarregar;
 
         // ---------------------------------------------------------------
         // UnitatMillorable
@@ -219,7 +221,9 @@ namespace IdleFrogs.Game
             // 3. Descarregar — a cabal, no a temps fix. L'estació no té
             //    tope: el que no se'n dugui la granota s'hi va acumulant.
             estatActual = EstatTren.Descarregant;
-            yield return new WaitForSeconds(SegonsPerTransferir(carregaActual, RitmeDeDescarrega));
+            float segonsDeDescarrega = SegonsPerTransferir(carregaActual, RitmeDeDescarrega);
+            EnComencaADescarregar?.Invoke(segonsDeDescarrega);
+            yield return new WaitForSeconds(segonsDeDescarrega);
 
             if (estacio != null) estacio.Descarregar(carregaActual);
             else if (CurrencyManager.Instancia != null)

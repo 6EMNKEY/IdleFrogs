@@ -1,4 +1,4 @@
-using System.Text;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,87 +6,73 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    // "Mentre no hi eres": explica què han fet els encarregats mentre el joc
-    // estava tancat o en segon pla.
+    // "Offline Progress!!": el que has guanyat mentre no hi eres, idle × temps.
     //
-    // Els doblers ja els ha donat el GameManager quan ha carregat; aquest
-    // panell només ho ensenya. Així, si el jugador tanca l'app sense mirar-lo,
-    // no perd res.
+    // Els doblers no es donen en carregar: es queden pendents (i guardats) fins
+    // que el jugador accepta. Tant ACCEPTAR com la creu cobren, i les monedes
+    // volen del total cap al comptador.
     public class PanellDeProgresOffline : MonoBehaviour
     {
         [Header("Arrel del panell (el que s'amaga i es mostra)")]
         [SerializeField] private GameObject arrel;
 
-        [SerializeField] private TMP_Text textTemps;
-        [SerializeField] private TMP_Text textGuanys;
-        [SerializeField] private Button botoTancar;
+        [Header("Textos")]
+        [Tooltip("\"36000s x 18.5B\" i la moneda")]
+        [SerializeField] private TMP_Text textCalcul;
+        [Tooltip("\"78T!!\" i la moneda")]
+        [SerializeField] private TMP_Text textTotal;
 
-        private readonly StringBuilder _sb = new StringBuilder();
+        [Header("Botons — tots dos cobren")]
+        [SerializeField] private Button botoAcceptar;
+        [SerializeField] private Button botoTancar;
 
         private void Awake()
         {
-            if (botoTancar != null) botoTancar.onClick.AddListener(Tancar);
+            if (botoAcceptar != null) botoAcceptar.onClick.AddListener(Cobrar);
+            if (botoTancar != null) botoTancar.onClick.AddListener(Cobrar);
             if (arrel != null) arrel.SetActive(false);
         }
 
         // El GameManager pot haver fet el càlcul abans o després d'aquest
-        // Start: si ja l'ha fet, el recollim; si no, ens arribarà per l'event.
+        // Start: si ja hi ha una recompensa pendent, s'ensenya ara; si no,
+        // arribarà per l'event.
         private void Start()
         {
             if (GameManager.Instancia == null) return;
 
-            GameManager.Instancia.EnProgresOffline += EnRebreProgres;
-
-            ResultatOffline? pendent = GameManager.Instancia.ConsumirResultatOffline();
-            if (pendent.HasValue) Ensenyar(pendent.Value);
+            GameManager.Instancia.EnProgresOffline += Ensenyar;
+            if (GameManager.Instancia.HiHaRecompensaOffline)
+                Ensenyar(GameManager.Instancia.RecompensaOfflinePendent);
         }
 
         private void OnDestroy()
         {
             if (GameManager.Instancia != null)
-                GameManager.Instancia.EnProgresOffline -= EnRebreProgres;
+                GameManager.Instancia.EnProgresOffline -= Ensenyar;
         }
 
-        private void EnRebreProgres(ResultatOffline r)
+        private void Ensenyar(RecompensaOffline r)
         {
-            if (GameManager.Instancia != null) GameManager.Instancia.ConsumirResultatOffline();
-            Ensenyar(r);
-        }
-
-        private void Ensenyar(ResultatOffline r)
-        {
-            if (textTemps != null)
+            if (textCalcul != null)
             {
-                textTemps.text = r.HiHaTope
-                    ? $"Has estat fora {FormatadorDeNombres.Temps(r.segonsFora)}\n" +
-                      $"<size=70%>(els encarregats treballen com a molt {FormatadorDeNombres.Temps(r.segonsComptats)})</size>"
-                    : $"Has estat fora {FormatadorDeNombres.Temps(r.segonsFora)}";
+                string segons = System.Math.Round(r.segonsComptats).ToString("0", CultureInfo.InvariantCulture);
+                textCalcul.text = $"{segons}s x {FormatadorDeNombres.Doblers(r.PerSegon)}{Icones.Moneda}";
             }
-
-            if (textGuanys != null)
-            {
-                _sb.Clear();
-                if (r.venut > 0)
-                    _sb.AppendLine($"Venut a la tenda: <b>+{FormatadorDeNombres.Doblers(r.venut)}</b>");
-                if (r.portatALEstacio > 0)
-                    _sb.AppendLine($"Portat a l'estació: {FormatadorDeNombres.Doblers(r.portatALEstacio)}");
-                if (r.produitAlsPantans > 0)
-                    _sb.AppendLine($"Recollit als pantans: {FormatadorDeNombres.Doblers(r.produitAlsPantans)}");
-
-                // Si només hi ha encarregats a mitja cadena, els doblers s'han
-                // quedat esperant: val la pena dir-ho, o semblarà que no ha fet res.
-                if (r.venut <= 0)
-                    _sb.AppendLine("<size=80%>Sense encarregat a la tenda, no s'ha venut res.</size>");
-
-                textGuanys.text = _sb.ToString().TrimEnd();
-            }
+            if (textTotal != null)
+                textTotal.text = $"{FormatadorDeNombres.Doblers(r.doblers)}!!{Icones.Moneda}";
 
             if (arrel != null) arrel.SetActive(true);
         }
 
-        public void Tancar()
+        public void Cobrar()
         {
+            if (arrel != null && !arrel.activeSelf) return;
             if (arrel != null) arrel.SetActive(false);
+            if (GameManager.Instancia == null) return;
+
+            double cobrat = GameManager.Instancia.CobrarRecompensaOffline();
+            if (cobrat > 0 && EfecteDeRecompensa.Instancia != null && textTotal != null)
+                EfecteDeRecompensa.Instancia.LlancarDesDe(TipusDeMoneda.Doblers, textTotal.rectTransform, cobrat);
         }
     }
 }

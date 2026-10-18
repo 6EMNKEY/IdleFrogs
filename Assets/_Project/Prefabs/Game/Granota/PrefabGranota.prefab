@@ -147,6 +147,8 @@ MonoBehaviour:
   estatActual: 0
   llenguades: 2
   duracioMinima: 0.2
+  llenguadesPerMosca: 2
+  elDibuixMiraALaDreta: 1
 --- !u!1 &380902679330429800
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,8 +230,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 8757233308753707989, guid: 50efd5453f86d26628e033207e63c02d, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: ea1a357c1f5fcd1848e7202e4d053894, type: 3}
+  m_Color: {r: 0.9716981, g: 0.7104397, b: 0.7104397, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -266,7 +268,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6235245164644483430}
@@ -320,7 +322,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -427066485589525634, guid: 9d4af3645e7ac0ea0a9ec28a8fb5f85e, type: 3}
+  m_Sprite: {fileID: 1277535868799009592, guid: 5f6775432e6801135a399978b9879327, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -381,7 +383,7 @@ MonoBehaviour:
   punta: {fileID: 0}
   mosca: {fileID: 2893156157573045638}
   cos: {fileID: 1587369738913854892}
-  bocaOberta: {fileID: 2220449377725373134, guid: b300ed7daac16c0819fa3487ea411737, type: 3}
+  bocaOberta: {fileID: 3671952770530855084, guid: f895cfdcafc51bc3ab1092140d93847d, type: 3}
   duracio: 0.45
   extensio:
     serializedVersion: 2
@@ -436,6 +438,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   distanciaMinima: 0.6
   distanciaMaxima: 1.2
+  obertura: 20
   angleMinim: 30
   angleMaxim: 150
   animador: {fileID: 0}

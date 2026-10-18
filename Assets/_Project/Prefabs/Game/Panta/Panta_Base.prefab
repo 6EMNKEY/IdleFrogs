@@ -230,12 +230,15 @@ MonoBehaviour:
   elDibuixMiraALaDreta: 1
   centreDeLaZona: {x: 0, y: 0}
   midaDeLaZona: {x: 2, y: 2}
+  noSortirDeLaZona: 0
+  margeDinsDeLaZona: 0.1
   velocitatMinima: 0.5
   velocitatMaxima: 1.2
   gir: 3
   amplitudDelBrunzit: 0.04
   frequenciaDelBrunzit: 8
   ordreBase: 50
+  segonsFinsQueTorna: 1.5
 --- !u!1 &1641264304698430895
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,7 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.Panta
   nivell: 0
-  retratDelPanell: {fileID: 0}
+  retratDelPanell: {fileID: -3232510099193956884, guid: b27c53a3100f84d9084232260294523d, type: 3}
   titolDeLesEstadistiques: Stats
   config: {fileID: 11400000, guid: 4b1b94928c4034a07afcfe52f318dd37, type: 2}
   aspecte: {fileID: 11400000, guid: 5be5a72683c5b3bef95f871843c9151e, type: 2}
@@ -1113,7 +1116,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.058, y: -0.104, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalScale: {x: 0.45, y: 0.45, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1800374753615191871}
@@ -1167,7 +1170,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 50
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -427066485589525634, guid: 9d4af3645e7ac0ea0a9ec28a8fb5f85e, type: 3}
+  m_Sprite: {fileID: 1277535868799009592, guid: 5f6775432e6801135a399978b9879327, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
