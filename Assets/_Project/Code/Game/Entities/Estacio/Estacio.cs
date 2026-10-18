@@ -2,13 +2,13 @@ using UnityEngine;
 
 namespace IdleFrogs.Game
 {
-    // El magatzem on descarrega el tren. No té nivell ni tope: el que la
-    // granota transportista no se'n dugui cap a la tenda, s'hi va acumulant.
-    // El que limita cada tram és el tren per una banda i la tenda per l'altra,
+    // El magatzem on descarrega el tren, unit al restaurant per un tub. No té
+    // nivell ni tope: el que els clients no paguin s'hi va acumulant. El que
+    // limita cada tram és el tren per una banda i el restaurant per l'altra,
     // no aquest dipòsit.
     //
-    // No es buida tocant-la: d'aquí ho treu la granota. Si es pogués recollir
-    // a mà, la tenda no serviria de res.
+    // No es buida tocant-la: d'aquí ho treuen els clients en pagar. Si es
+    // pogués recollir a mà, el restaurant no serviria de res.
     public class Estacio : MonoBehaviour
     {
         [SerializeField] private double doblersEmmagatzemats;
@@ -24,7 +24,7 @@ namespace IdleFrogs.Game
             Avisar();
         }
 
-        // Se'n du la granota transportista
+        // Ho paga un client en acabar de menjar
         public double Retirar(double maxim)
         {
             if (maxim <= 0 || doblersEmmagatzemats <= 0) return 0;

@@ -3,40 +3,77 @@ using UnityEngine;
 
 namespace IdleFrogs.Game
 {
-    // El tercer coll d'ampolla. La granota transportista treu doblers de
-    // l'estació i els porta fins aquí; en arribar es venen i entren a la
-    // cartera. El nivell de la tenda és el que mana sobre la granota:
-    // quant carrega per viatge i com de ràpid camina.
-    public class Tenda : UnitatMillorable
+    // El tercer coll d'ampolla: el restaurant. El tren descarrega a l'estació
+    // (un tub la uneix amb el restaurant; és només dibuix, el dipòsit és un
+    // de sol) i els clients venen des de baix, entren, mengen i, en acabar,
+    // paguen: els doblers surten de l'estació i entren a la cartera.
+    //
+    // La classe es diu Tenda perquè el guardat, els encarregats de tenda i el
+    // GameManager ja la coneixen així.
+    //
+    // Sense encarregat, els clients s'esperen a la porta fins que en toques
+    // un (o el restaurant): llavors entren tots els que feien cua.
+    public class Tenda : UnitatMillorable, IEsPotTocar
     {
         [Header("Configuració")]
         [SerializeField] private TendaConfigSO config;
 
         [Header("Referències")]
+        [Tooltip("D'on surten els doblers que paguen els clients")]
         [SerializeField] private Estacio estacio;
-        [Tooltip("Una per ranura. Se n'activen segons el nivell, com les granotes del pantà.")]
-        [SerializeField] private GranotaTransportista[] transportistes;
+        [Tooltip("Prefab amb SpriteRenderer, Collider2D i ClientDelRestaurant")]
+        [SerializeField] private ClientDelRestaurant prefabDeClient;
+        [Tooltip("On es creen els clients. Buit: aquest objecte (vigila que no tingui escala)")]
+        [SerializeField] private Transform contenidorDeClients;
 
-        [Header("Posicions")]
-        [Tooltip("On espera la granota, al costat de l'estació")]
-        [SerializeField] private Transform puntDeRecollida;
-        [Tooltip("On deixa la càrrega, dins de la tenda")]
-        [SerializeField] private Transform puntDeVenda;
+        [Header("Camí — carril d'anada i carril de tornada")]
+        [Tooltip("D'on apareixen, a baix")]
+        [SerializeField] private Transform puntDAparicio;
+        [Tooltip("La porta del restaurant")]
+        [SerializeField] private Transform puntDEntrada;
+        [Tooltip("On desapareixen en tornar, a baix (separat de l'aparició perquè no es creuin)")]
+        [SerializeField] private Transform puntDeSortida;
+
+        [Header("Zones — cada punt és el centre d'un rectangle (es veuen en seleccionar)")]
+        [Tooltip("Cada client apareix en un lloc a l'atzar d'aquí dins")]
+        [SerializeField] private Vector2 midaDeLAparicio = new Vector2(1.5f, 0.6f);
+        [Tooltip("Cada client entra per un lloc a l'atzar de la porta")]
+        [SerializeField] private Vector2 midaDeLEntrada = new Vector2(0.6f, 0.3f);
+        [SerializeField] private Vector2 midaDeLaSortida = new Vector2(1.5f, 0.6f);
+        [Header("Aspecte dels clients")]
+        [Tooltip("Se'n tria un a l'atzar cada vegada que surt un client. Buit: el del prefab")]
+        [SerializeField] private Sprite[] aspectes;
+        [SerializeField] private bool elDibuixMiraALaDreta = true;
+        [Tooltip("Quant s'aparta cada client del seu lloc a la cua, perquè sigui un grup i no una fila índia")]
+        [Min(0)] [SerializeField] private float dispersioDeLaCua = 0.3f;
+        [Tooltip("Distància entre els que fan cua a la porta")]
+        [Min(0.05f)] [SerializeField] private float espaiALaCua = 0.45f;
+        [Tooltip("El de més avall va davant: de l'ordre base cap amunt")]
+        [SerializeField] private int ordreBase = 20;
+
+        [Header("Quants se'n dibuixen")]
+        [Tooltip("Per sobre d'aquest número cada client dibuixat en representa uns quants")]
+        [Range(1, 60)] [SerializeField] private int clientsVisiblesMaxims = 20;
+
+        private readonly List<ClientDelRestaurant> _clients = new List<ClientDelRestaurant>();
+        private readonly List<SpriteRenderer> _dibuixos = new List<SpriteRenderer>();
+        private readonly List<ClientDelRestaurant> _cua = new List<ClientDelRestaurant>();
+        private float _ultimToc = float.NegativeInfinity;
+        private float[] _alcades = new float[0];
+        private int[] _ordres = new int[0];
 
         // ---------------------------------------------------------------
         // UnitatMillorable
         // ---------------------------------------------------------------
 
         public override Ranura Ranura => new Ranura(TipusDeLloc.Tenda);
-        public override string NomVisible => "Tenda";
+        public override string NomVisible => "Restaurant";
         public override double CostBase => config.costBase;
         public override double CreixementDeCost => config.creixementDeCost;
         public override int NivellMaxim => config.nivellMaxim;
+        public override FitaDeMultiplicador[] FitesDeMillora => config.fites;
 
-        // Floor com al pantà i al tren: la càrrega per viatge és un número
-        // enter. La velocitat de moviment es queda amb decimals, que creix
-        // a l'1% i arrodonida es quedaria congelada trenta nivells.
-        public double CapacitatAlNivell(int n) =>
+        public double PerClientAlNivell(int n) =>
             System.Math.Max(1, System.Math.Floor(
                 config.capacitatBase * System.Math.Pow(config.creixementDeCapacitat, n - 1)
                 * Fites.Acumulat(config.fites, n)));
@@ -46,34 +83,17 @@ namespace IdleFrogs.Game
                       config.velocitatBase * Mathf.Pow(config.creixementDeVelocitat, n - 1)
                       * (float)Fites.Acumulat(config.fites, n));
 
-        public int TransportistesAlNivell(int n)
-        {
-            if (n < 1) return 0;
-            int total = config.transportistesInicials;
-            if (config.nivellsDeTransportistaExtra != null)
-                foreach (int fita in config.nivellsDeTransportistaExtra)
-                    if (n >= fita) total++;
-            return Mathf.Clamp(total, 0, transportistes != null ? transportistes.Length : 0);
-        }
+        public int ClientsAlNivell(int n) =>
+            ModelDelRestaurant.Clients(n, config.clientsInicials, config.clientsPerFita, config.nivellsDeClientsExtra);
 
-        // Nominal: ignora el temps de camí, igual que el número que
-        // ensenya el pantà.
-        public double ProduccioAlNivell(int n) =>
-            TransportistesAlNivell(n) * CapacitatAlNivell(n)
-            / (config.tempsDeCarrega + config.tempsDeDescarrega);
-
-        public int TransportistesActius => TransportistesAlNivell(nivell);
-
-        // Multiplicadors fora dels clamps, com al tren.
-        public double CapacitatPerViatge => CapacitatAlNivell(nivell) * Bonus.capacitat;
+        // Amb les bonificacions de l'encarregat: moviment = caminar, treball =
+        // menjar més de pressa, capacitat = més doblers per client.
+        public int ClientsActius => ClientsAlNivell(nivell);
+        public double PerClient => PerClientAlNivell(nivell) * Bonus.capacitat;
         public float Velocitat => VelocitatAlNivell(nivell) * (float)Bonus.velocitat;
-        public double ProduccioPerSegon => ProduccioAlNivell(nivell);
-        public float TempsDeCarrega => Mathf.Max(0.02f, config.tempsDeCarrega / (float)Bonus.treball);
-        public float TempsDeDescarrega => Mathf.Max(0.02f, config.tempsDeDescarrega / (float)Bonus.treball);
+        public float TempsDeMenjar => Mathf.Max(0.02f, config.tempsDeMenjar / (float)Bonus.treball);
+        public bool ElDibuixMiraALaDreta => elDibuixMiraALaDreta;
 
-        public override FitaDeMultiplicador[] FitesDeMillora => config.fites;
-
-        // CabalReal compta el camí i l'encarregat: el que entra de debò.
         public override FilaEstadistica Resum(int desti) => new FilaEstadistica(TipusDEstadistica.Resum,
             "Venda total",
             FormatadorDeNombres.Ritme(CabalReal),
@@ -81,20 +101,83 @@ namespace IdleFrogs.Game
 
         public override void OmplirFiles(List<FilaEstadistica> files, int desti)
         {
-            files.Add(new FilaEstadistica(TipusDEstadistica.CapacitatPerViatge,
-                "Per viatge",
-                FormatadorDeNombres.Doblers(CapacitatPerViatge),
-                FormatadorDeNombres.Doblers(CapacitatAlNivell(desti) * Bonus.capacitat)));
+            files.Add(new FilaEstadistica(TipusDEstadistica.Clients,
+                "Clients",
+                ClientsActius.ToString(),
+                ClientsAlNivell(desti).ToString()));
 
-            files.Add(new FilaEstadistica(TipusDEstadistica.Transportistes,
-                "Transportistes",
-                TransportistesActius.ToString(),
-                TransportistesAlNivell(desti).ToString()));
+            files.Add(new FilaEstadistica(TipusDEstadistica.PerClient,
+                "Per client",
+                FormatadorDeNombres.Doblers(PerClient),
+                FormatadorDeNombres.Doblers(PerClientAlNivell(desti) * Bonus.capacitat)));
 
-            files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDeTransportista,
+            // No puja amb el nivell: surt sense fletxa.
+            string menjar = FormatadorDeNombres.Decimals(TempsDeMenjar, 1) + "s";
+            files.Add(new FilaEstadistica(TipusDEstadistica.TempsDeMenjar, "Temps de menjar", menjar, menjar));
+
+            files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDelClient,
                 "Velocitat",
                 FormatadorDeNombres.Decimals(Velocitat, 2),
                 FormatadorDeNombres.Decimals(VelocitatAlNivell(desti) * Bonus.velocitat, 2)));
+        }
+
+        // ---------------------------------------------------------------
+        // Venda — la tercera mesura de la cadena i el que fa servir l'offline
+        // ---------------------------------------------------------------
+
+        public double CabalReal => CabalRealAlNivell(nivell);
+
+        public double CabalRealAlNivell(int n)
+        {
+            if (!TeElCami) return 0;
+            return ModelDelRestaurant.Venda(
+                ClientsAlNivell(n), PerClientAlNivell(n) * Bonus.capacitat, TempsDeMenjar,
+                DistanciaDAnada, DistanciaDeTornada, VelocitatAlNivell(n) * Bonus.velocitat);
+        }
+
+        private bool TeElCami => puntDAparicio != null && puntDEntrada != null && puntDeSortida != null;
+        private float DistanciaDAnada => Vector3.Distance(puntDAparicio.position, puntDEntrada.position);
+        private float DistanciaDeTornada => Vector3.Distance(puntDEntrada.position, puntDeSortida.position);
+
+        private float SegonsDelCicle =>
+            Velocitat <= 0 ? 0f : TempsDeMenjar + (DistanciaDAnada + DistanciaDeTornada) / Velocitat;
+
+        // Tot el que s'ha venut en aquesta sessió. No es guarda: només el fa
+        // servir la guia inicial per saber si ja has fet la primera venda.
+        public double TotalVenut { get; private set; }
+
+        // La crida el client en acabar de menjar. Paga per tots els que
+        // representa, i mai més del que hi ha a l'estació.
+        // El que ja tenen reservat els clients que són a dins menjant: encara
+        // és a l'estació, però ja no hi ha ningú més que ho pugui menjar.
+        private double _reservat;
+
+        private double Lliure => estacio != null ? System.Math.Max(0, estacio.DoblersEmmagatzemats - _reservat) : 0;
+
+        // En entrar: el que pagarà en acabar, o el que quedi si n'hi ha menys.
+        public double Reservar()
+        {
+            int visibles = ModelDelRestaurant.Visibles(ClientsActius, clientsVisiblesMaxims);
+            double import = PerClient * ModelDelRestaurant.Representa(ClientsActius, visibles);
+            double reserva = System.Math.Min(import, Lliure);
+            _reservat += reserva;
+            return reserva;
+        }
+
+        // Si un client desapareix a mitges (s'apaga), el que tenia reservat torna a ser lliure.
+        public void Alliberar(double reserva) => _reservat = System.Math.Max(0, _reservat - reserva);
+
+        // En acabar de menjar paga just el que havia reservat.
+        public void Cobrar(double reserva)
+        {
+            if (estacio == null) return;
+            Alliberar(reserva);
+            double cobrat = estacio.Retirar(reserva);
+            if (cobrat <= 0) return;
+
+            TotalVenut += cobrat;
+            if (CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.AfegirDoblers(cobrat);
         }
 
         // ---------------------------------------------------------------
@@ -104,89 +187,172 @@ namespace IdleFrogs.Game
 
         public void InicialitzarTenda()
         {
-            if (estacio == null || puntDeRecollida == null || puntDeVenda == null ||
-                transportistes == null || transportistes.Length == 0)
+            if (estacio == null || prefabDeClient == null || !TeElCami)
             {
-                Debug.LogError("Tenda: falten referències (estació, transportistes o punts)", this);
+                Debug.LogError("Tenda: falten referències (estació, prefab de client o punts del camí)", this);
                 return;
             }
-
-            foreach (GranotaTransportista g in transportistes)
-                if (g != null)
-                    g.Inicialitzar(this, estacio, puntDeRecollida.position, puntDeVenda.position);
-
-            ActualitzarTransportistes();
+            ActualitzarClients();
         }
 
-        protected override void DespresDeCanviDeNivell() => ActualitzarTransportistes();
+        protected override void DespresDeCanviDeNivell() => ActualitzarClients();
 
-        private void ActualitzarTransportistes()
+        // Tants clients dibuixats com toquin (fins al màxim). Els nous surten
+        // repartits al llarg d'un cicle perquè no arribin tots alhora.
+        private void ActualitzarClients()
         {
-            if (transportistes == null) return;
-            int actius = TransportistesActius;
-            for (int i = 0; i < transportistes.Length; i++)
+            if (prefabDeClient == null || !TeElCami) return;
+
+            int visibles = EstaComprat ? ModelDelRestaurant.Visibles(ClientsActius, clientsVisiblesMaxims) : 0;
+            Transform pare = contenidorDeClients != null ? contenidorDeClients : transform;
+
+            while (_clients.Count < visibles)
             {
-                if (transportistes[i] == null) continue;
-                transportistes[i].gameObject.SetActive(i < actius);
+                ClientDelRestaurant c = Instantiate(prefabDeClient, pare);
+                c.name = $"Client {_clients.Count + 1}";
+                c.Inicialitzar(this);
+                c.gameObject.SetActive(false);
+                _clients.Add(c);
+                _dibuixos.Add(c.GetComponent<SpriteRenderer>());
+            }
+
+            int nous = 0;
+            for (int i = 0; i < _clients.Count; i++)
+                if (i < visibles && !_clients[i].gameObject.activeSelf) nous++;
+
+            int k = 0;
+            for (int i = 0; i < _clients.Count; i++)
+            {
+                ClientDelRestaurant c = _clients[i];
+                bool cal = i < visibles;
+                if (cal && !c.gameObject.activeSelf)
+                {
+                    c.gameObject.SetActive(true);
+                    c.Arrencar(ModelDelRestaurant.RetardDeSortida(k++, nous, SegonsDelCicle));
+                }
+                else if (!cal && c.gameObject.activeSelf)
+                {
+                    c.gameObject.SetActive(false);
+                }
+            }
+
+            if (_alcades.Length != _clients.Count)
+            {
+                _alcades = new float[_clients.Count];
+                _ordres = new int[_clients.Count];
             }
         }
 
-        private void Update()
-        {
-            if (!EstaAutomatitzada || transportistes == null) return;
+        // ---------------------------------------------------------------
+        // La cua de la porta
+        // ---------------------------------------------------------------
 
-            for (int i = 0; i < transportistes.Length; i++)
-            {
-                if (transportistes[i] == null || !transportistes[i].gameObject.activeSelf) continue;
-                transportistes[i].IntentarEngegar();
-            }
+        public Vector3 PuntDAparicio => puntDAparicio.position;
+        public Vector3 PuntDEntrada => puntDEntrada.position;
+        public Vector3 PuntDeSortida => puntDeSortida.position;
+
+        // Un lloc a l'atzar de cada zona: cada client en tria un a cada cicle.
+        public Vector3 LlocDAparicio() => ALaZona(puntDAparicio.position, midaDeLAparicio);
+        public Vector3 LlocDEntrada() => ALaZona(puntDEntrada.position, midaDeLEntrada);
+        public Vector3 LlocDeSortida() => ALaZona(puntDeSortida.position, midaDeLaSortida);
+
+        private static Vector3 ALaZona(Vector3 centre, Vector2 mida) => centre + new Vector3(
+            (Random.value - 0.5f) * mida.x, (Random.value - 0.5f) * mida.y, 0f);
+
+        public void EntrarALaCua(ClientDelRestaurant c)
+        {
+            if (!_cua.Contains(c)) _cua.Add(c);
         }
 
-        // Tot el que s'ha venut en aquesta sessió. No es guarda: només el fa
-        // servir la guia inicial per saber si ja has fet la primera venda.
-        public double TotalVenut { get; private set; }
+        public void SortirDeLaCua(ClientDelRestaurant c) => _cua.Remove(c);
 
-        // Per a la guia inicial, que ha d'assenyalar una granota concreta.
-        public GranotaTransportista TransportistaPrincipal =>
-            transportistes != null && transportistes.Length > 0 ? transportistes[0] : null;
-
-        // La crida la granota en arribar
-        public void Vendre(double quantitat)
+        // El primer, a un pas de la porta; la resta, enrere cap a d'on venen.
+        public Vector3 PosicioALaCua(ClientDelRestaurant c)
         {
-            if (quantitat <= 0) return;
-            TotalVenut += quantitat;
-            if (CurrencyManager.Instancia != null)
-                CurrencyManager.Instancia.AfegirDoblers(quantitat);
+            int lloc = Mathf.Max(0, _cua.IndexOf(c));
+            Vector3 enrere = (PuntDAparicio - PuntDEntrada).normalized;
+            return PuntDEntrada + enrere * espaiALaCua * (lloc + 1);
         }
 
-        // Doblers per segon que venen totes les granotes actives fent viatges
-        // sencers: anada i tornada + recollir + vendre. El fa servir l'offline.
-        public double CabalReal => CabalRealAlNivell(nivell);
-
-        // La mateixa fórmula a qualsevol nivell, amb les bonificacions d'ara:
-        // és el número de destí de la targeta del panell.
-        public double CabalRealAlNivell(int n)
+        // Entren d'un en un, el primer de la cua. Amb encarregat sempre; sense,
+        // els que ja feien cua quan has tocat. I només si queda menjar que no
+        // s'hagi reservat ja: si a l'estació n'hi ha per a un, n'entra un.
+        public bool PotEntrar(ClientDelRestaurant c)
         {
-            if (puntDeRecollida == null || puntDeVenda == null) return 0;
-            float velocitat = VelocitatAlNivell(n) * (float)Bonus.velocitat;
-            if (velocitat <= 0) return 0;
-
-            double cami = 2 * Vector3.Distance(puntDeRecollida.position, puntDeVenda.position) / velocitat;
-            double temps = TempsDeCarrega + TempsDeDescarrega + cami;
-            return temps <= 0 ? 0 : TransportistesAlNivell(n) * CapacitatAlNivell(n) * Bonus.capacitat / temps;
+            if (_cua.Count == 0 || _cua[0] != c) return false;
+            if (Lliure <= 0) return false;
+            return EstaAutomatitzada || _ultimToc >= c.EsperantDesDe;
         }
 
-        // La suma de tots: el guardat la retorna sencera a la cartera.
-        public double CarregaDelTransportista
+        public void DeixarEntrar() => _ultimToc = Time.time;
+
+        // Tocar el restaurant fa el mateix que tocar un client.
+        public void EnTocar() => DeixarEntrar();
+
+        // Quant s'aparta un client del seu lloc a la cua (en qualsevol direcció).
+        public Vector3 DesviacioALaCua() => (Vector3)(Random.insideUnitCircle * dispersioDeLaCua);
+
+        public void SpriteALAtzar(SpriteRenderer sr)
+        {
+            if (aspectes == null || aspectes.Length == 0 || sr == null) return;
+            Sprite s = aspectes[Random.Range(0, aspectes.Length)];
+            if (s != null) sr.sprite = s;
+        }
+
+        // Per a la guia inicial: el primer que espera a la porta sense encarregat.
+        public ClientDelRestaurant ClientQueEspera
         {
             get
             {
-                if (transportistes == null) return 0;
-                double total = 0;
-                foreach (GranotaTransportista g in transportistes)
-                    if (g != null) total += g.Carrega;
-                return total;
+                if (EstaAutomatitzada) return null;
+                foreach (ClientDelRestaurant c in _cua)
+                    if (c != null && c.estatActual == EstatClient.Esperant) return c;
+                return null;
             }
         }
+
+        public bool AlgunClientMenja
+        {
+            get
+            {
+                foreach (ClientDelRestaurant c in _clients)
+                    if (c != null && c.gameObject.activeSelf && c.estatActual == EstatClient.Menjant) return true;
+                return false;
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // Ordre de dibuix: el de més avall, davant
+        // ---------------------------------------------------------------
+
+        private void LateUpdate()
+        {
+            int n = _clients.Count;
+            if (n == 0) return;
+            for (int i = 0; i < n; i++)
+                _alcades[i] = _clients[i] != null && _clients[i].gameObject.activeSelf
+                    ? _clients[i].transform.position.y
+                    : float.MaxValue;   // els apagats, al fons: no es veuen igualment
+
+            OrdreDeMosques.Calcular(_alcades, ordreBase, _ordres);
+            for (int i = 0; i < n; i++)
+                if (_dibuixos[i] != null) _dibuixos[i].sortingOrder = _ordres[i];
+        }
+
+#if UNITY_EDITOR
+        // Els dos carrils (verd: anada, taronja: tornada) i les tres zones.
+        private void OnDrawGizmosSelected()
+        {
+            if (!TeElCami) return;
+            Gizmos.color = new Color(0.3f, 1f, 0.4f);
+            Gizmos.DrawLine(puntDAparicio.position, puntDEntrada.position);
+            Gizmos.DrawWireCube(puntDAparicio.position, midaDeLAparicio);
+            Gizmos.color = new Color(1f, 0.6f, 0.2f);
+            Gizmos.DrawLine(puntDEntrada.position, puntDeSortida.position);
+            Gizmos.DrawWireCube(puntDeSortida.position, midaDeLaSortida);
+            Gizmos.color = new Color(1f, 1f, 0.3f);
+            Gizmos.DrawWireCube(puntDEntrada.position, midaDeLEntrada);
+        }
+#endif
     }
 }

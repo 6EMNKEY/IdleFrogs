@@ -11,7 +11,10 @@ namespace IdleFrogs.Game
         Resum,
         VelocitatDeGranota, Granotes, Recollecio, CapacitatDeGranota,
         VelocitatDelTren, Carrega, Descarrega,
-        CapacitatPerViatge, Transportistes, VelocitatDeTransportista
+        // Restaurant (abans tenda: els valors no canvien, així les icones ja
+        // assignades a l'inspector continuen al seu lloc).
+        PerClient, Clients, VelocitatDelClient,
+        TempsDeMenjar
     }
 
     // Una estadística del panell de millora: "Capacitat  100k → 110k".

@@ -73,7 +73,11 @@ namespace IdleFrogs.Game
             TipusDEfecte.VelocitatDeMoviment => curt ? "Vel" : "Velocitat",
             TipusDEfecte.VelocitatDeTreball when lloc == TipusDeLloc.Panta =>
                 curt ? "Recol" : "Velocitat de recol·lecció",
+            TipusDEfecte.VelocitatDeTreball when lloc == TipusDeLloc.Tenda =>
+                curt ? "Menjar" : "Velocitat de menjar",
             TipusDEfecte.VelocitatDeTreball => curt ? "Càrrega" : "Velocitat de càrrega",
+            TipusDEfecte.Capacitat when lloc == TipusDeLloc.Tenda =>
+                curt ? "Client" : "Doblers per client",
             TipusDEfecte.Capacitat => curt ? "Cap" : "Capacitat",
             TipusDEfecte.ReduccioDeCost => curt ? "cost" : "Cost de millora",
             _ => string.Empty

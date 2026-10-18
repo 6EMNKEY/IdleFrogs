@@ -1,44 +1,52 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace IdleFrogs.Game
 {
+    // La configuració del restaurant (el tercer tram). El nom de la classe és
+    // el de l'antiga tenda perquè els assets, el guardat i els encarregats de
+    // tenda continuïn valent.
     [CreateAssetMenu(fileName = "TendaConfig", menuName = "IdleFrogs/TendaConfig")]
     public class TendaConfigSO : ScriptableObject
     {
-        // Les granotes treballen a temps fix, no a cabal: és el tren qui
-        // transfereix per cabal. Aquí seguim el mateix criteri que als pantans.
-        [Header("Temps de la granota (no pugen amb el nivell)")]
-        public float tempsDeCarrega = 1.0f;
-        public float tempsDeDescarrega = 1.0f;
+        // Com el transportista: el temps no puja amb el nivell. Un client
+        // carrega una part del que portava el transportista i menja a la
+        // mateixa part del ritme, així que tarda el mateix.
+        [Header("Temps de menjar (no puja amb el nivell)")]
+        [FormerlySerializedAs("tempsDeCarrega")]
+        public float tempsDeMenjar = 4f;
 
-        [Header("Capacitat per viatge (puja amb el nivell)")]
-        public double capacitatBase = 100;
+        [Header("Doblers per client (puja amb el nivell)")]
+        public double capacitatBase = 250;
         public double creixementDeCapacitat = 1.3;
 
-        [Header("Velocitat de la granota (puja amb el nivell)")]
-        public float velocitatBase = 2.0f;
-        public float creixementDeVelocitat = 1.01f;
+        [Header("Velocitat dels clients")]
+        public float velocitatBase = 1f;
+        public float creixementDeVelocitat = 1f;
         public float velocitatMaxima = 20f;
 
-        // Al 20 un transportista més i ×1.3; al 50 un ×1.2.
-        [Header("Fites — multipliquen càrrega i velocitat alhora")]
+        [Header("Fites — multipliquen doblers per client i velocitat alhora")]
         public FitaDeMultiplicador[] fites =
         {
             new FitaDeMultiplicador { nivell = 20, multiplicador = 1.3 },
             new FitaDeMultiplicador { nivell = 50, multiplicador = 1.2 },
         };
 
-        [Header("Transportistes")]
-        public int transportistesInicials = 1;
-        public int[] nivellsDeTransportistaExtra = { 20 };
+        // On abans hi havia un transportista ara n'hi ha uns quants de clients.
+        [Header("Clients")]
+        [FormerlySerializedAs("transportistesInicials")]
+        public int clientsInicials = 4;
+        [Tooltip("Quants se n'hi afegeixen a cada nivell de la llista")]
+        public int clientsPerFita = 4;
+        [FormerlySerializedAs("nivellsDeTransportistaExtra")]
+        public int[] nivellsDeClientsExtra = { 10, 25, 50, 100, 200, 400 };
 
         [Header("Cost de millora")]
-        public double costBase = 500;
-        public double creixementDeCost = 1.2;
+        public double costBase = 1250;
+        public double creixementDeCost = 1.42;
 
-        // Amb creixement 1.3 la càrrega es passa de rang cap al 2680.
         [Header("Límit")]
-        public int nivellMaxim = 2000;
+        public int nivellMaxim = 1500;
 
 #if UNITY_EDITOR
         private void OnValidate()

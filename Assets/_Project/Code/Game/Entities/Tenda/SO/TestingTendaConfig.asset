@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f8585fc370f1c528f377cb9bc65c54, type: 3}
   m_Name: TestingTendaConfig
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.TendaConfigSO
-  tempsDeCarrega: 4
-  tempsDeDescarrega: 4
-  capacitatBase: 1000
+  tempsDeMenjar: 4
+  capacitatBase: 250
   creixementDeCapacitat: 1.3
   velocitatBase: 1.6
   creixementDeVelocitat: 1
@@ -24,9 +23,15 @@ MonoBehaviour:
     multiplicador: 1.3
   - nivell: 50
     multiplicador: 1.2
-  transportistesInicials: 1
-  nivellsDeTransportistaExtra:
+  clientsInicials: 4
+  clientsPerFita: 4
+  nivellsDeClientsExtra:
   - 10
+  - 25
+  - 50
+  - 100
+  - 200
+  - 400
   costBase: 1250
   creixementDeCost: 1.42
   nivellMaxim: 1500

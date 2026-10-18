@@ -363,7 +363,9 @@ namespace IdleFrogs.Game
             z.carregaDeTren = tren != null ? tren.CarregaActual : 0;
             z.doblersALEstacio = estacio != null ? estacio.DoblersEmmagatzemats : 0;
             z.nivellDeTenda = tenda != null ? tenda.Nivell : 1;
-            z.carregaDelTransportista = tenda != null ? tenda.CarregaDelTransportista : 0;
+            // Ja no hi ha transportista: el camp queda per a les partides d'abans,
+            // que en carregar-se encara cobren el que portava.
+            z.carregaDelTransportista = 0;
             z.encarregats = GestorDEncarregats.Instancia != null ? GestorDEncarregats.Instancia.Guardar() : null;
             z.encarregatsCompratsPerTipus = GestorDEncarregats.Instancia != null
                 ? GestorDEncarregats.Instancia.GuardarComprats() : null;

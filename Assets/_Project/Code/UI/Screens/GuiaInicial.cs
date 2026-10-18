@@ -83,8 +83,8 @@ namespace IdleFrogs.UI
         private bool PanellDEncarregatsObert =>
             PanellDEncarregats.Instancia != null && PanellDEncarregats.Instancia.EstaObert;
 
-        private GranotaTransportista Transportista =>
-            tenda != null ? tenda.TransportistaPrincipal : null;
+        private ClientDelRestaurant ClientQueEspera =>
+            tenda != null ? tenda.ClientQueEspera : null;
 
         private bool AlgunaGranotaTreballa
         {
@@ -115,10 +115,9 @@ namespace IdleFrogs.UI
         // no hi ha res a tocar i la fletxa s'amaga.
         private Transform SeguentDelCicle()
         {
-            GranotaTransportista t = Transportista;
-            if (t != null && t.estatActual == EstatTransportista.Idle &&
-                estacio != null && estacio.DoblersEmmagatzemats > 0)
-                return t.transform;
+            ClientDelRestaurant c = ClientQueEspera;
+            if (c != null && estacio != null && estacio.DoblersEmmagatzemats > 0)
+                return c.transform;
 
             if (tren != null && tren.estatActual == EstatTren.Esperant &&
                 llistaDePantans != null && llistaDePantans.IndexMesLlunyaAmbCarrega() >= 0)
@@ -169,11 +168,11 @@ namespace IdleFrogs.UI
                     objectiu = () => tren != null ? tren.transform : null
                 },
                 new Pas {
-                    text = () => "Toca la granota de la tenda perquè vengui el que hi ha a l'estació.",
+                    text = () => "Toca un client perquè entri a menjar al restaurant.",
                     fet = () => tenda != null && tenda.TotalVenut > 0,
-                    enCurs = () => Transportista != null && Transportista.estatActual != EstatTransportista.Idle,
-                    textEnCurs = () => "La granota ho porta a la tenda i ho ven…",
-                    objectiu = () => Transportista != null ? Transportista.transform : null
+                    enCurs = () => tenda != null && tenda.AlgunClientMenja,
+                    textEnCurs = () => "El client menja i, en acabar, paga…",
+                    objectiu = () => ClientQueEspera != null ? ClientQueEspera.transform : null
                 },
                 new Pas {
                     text = () => Doblers < CostDeMillorarElPanta
