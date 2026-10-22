@@ -60,14 +60,14 @@ namespace IdleFrogs.UI
             if (_barrera.EstaIniciada)
             {
                 _text.text = _barrera.Preu > 0
-                    ? $"{FormatadorDeNombres.Temps(_barrera.SegonsRestants)}\no {FormatadorDeNombres.Doblers(_barrera.Preu)}"
+                    ? Textos.F("mon.o", FormatadorDeNombres.Temps(_barrera.SegonsRestants), FormatadorDeNombres.Doblers(_barrera.Preu))
                     : FormatadorDeNombres.Temps(_barrera.SegonsRestants);
                 return;
             }
 
             _text.text = _barrera.EsPotIniciar
-                ? $"Trencar\n{FormatadorDeNombres.Temps(_barrera.SegonsTotals)}"
-                : "Bloquejat";
+                ? Textos.F("mon.trencar", FormatadorDeNombres.Temps(_barrera.SegonsTotals))
+                : Textos.T("mon.bloquejat");
         }
     }
 }

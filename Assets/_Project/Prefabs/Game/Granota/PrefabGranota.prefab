@@ -383,7 +383,7 @@ MonoBehaviour:
   punta: {fileID: 0}
   mosca: {fileID: 2893156157573045638}
   cos: {fileID: 1587369738913854892}
-  bocaOberta: {fileID: 3671952770530855084, guid: f895cfdcafc51bc3ab1092140d93847d, type: 3}
+  bocaOberta: {fileID: 7828782446137287624, guid: 80ea83a476b7b10c495049b305ec16eb, type: 3}
   duracio: 0.45
   extensio:
     serializedVersion: 2

@@ -11,8 +11,9 @@ namespace IdleFrogs.Game
     // La classe es diu Tenda perquè el guardat, els encarregats de tenda i el
     // GameManager ja la coneixen així.
     //
-    // Sense encarregat, els clients s'esperen a la porta fins que en toques
-    // un (o el restaurant): llavors entren tots els que feien cua.
+    // Sense encarregat, cada client s'espera a la porta fins que el toques a
+    // ell (o el restaurant, que deixa passar el primer que espera): un toc,
+    // un client.
     public class Tenda : UnitatMillorable, IEsPotTocar
     {
         [Header("Configuració")]
@@ -46,6 +47,9 @@ namespace IdleFrogs.Game
         [SerializeField] private bool elDibuixMiraALaDreta = true;
         [Tooltip("Quant s'aparta cada client del seu lloc a la cua, perquè sigui un grup i no una fila índia")]
         [Min(0)] [SerializeField] private float dispersioDeLaCua = 0.3f;
+        [Tooltip("Cada client tarda a caminar entre un X% menys i un X% més que la mitjana, a l'atzar " +
+                 "a cada volta. La mitjana no canvia, així que la venda per segon tampoc")]
+        [Range(0f, 0.5f)] [SerializeField] private float variacioDeVelocitat = 0.25f;
         [Tooltip("Distància entre els que fan cua a la porta")]
         [Min(0.05f)] [SerializeField] private float espaiALaCua = 0.45f;
         [Tooltip("El de més avall va davant: de l'ordre base cap amunt")]
@@ -58,7 +62,6 @@ namespace IdleFrogs.Game
         private readonly List<ClientDelRestaurant> _clients = new List<ClientDelRestaurant>();
         private readonly List<SpriteRenderer> _dibuixos = new List<SpriteRenderer>();
         private readonly List<ClientDelRestaurant> _cua = new List<ClientDelRestaurant>();
-        private float _ultimToc = float.NegativeInfinity;
         private float[] _alcades = new float[0];
         private int[] _ordres = new int[0];
 
@@ -67,7 +70,8 @@ namespace IdleFrogs.Game
         // ---------------------------------------------------------------
 
         public override Ranura Ranura => new Ranura(TipusDeLloc.Tenda);
-        public override string NomVisible => "Restaurant";
+        public override string NomVisible => Textos.T("unitat.restaurant");
+        public override string TitolDeLesEstadistiques => Textos.T("titol.restaurant");
         public override double CostBase => config.costBase;
         public override double CreixementDeCost => config.creixementDeCost;
         public override int NivellMaxim => config.nivellMaxim;
@@ -95,28 +99,28 @@ namespace IdleFrogs.Game
         public bool ElDibuixMiraALaDreta => elDibuixMiraALaDreta;
 
         public override FilaEstadistica Resum(int desti) => new FilaEstadistica(TipusDEstadistica.Resum,
-            "Venda total",
+            Textos.T("stat.venda_total"),
             FormatadorDeNombres.Ritme(CabalReal),
             FormatadorDeNombres.Ritme(CabalRealAlNivell(desti)));
 
         public override void OmplirFiles(List<FilaEstadistica> files, int desti)
         {
             files.Add(new FilaEstadistica(TipusDEstadistica.Clients,
-                "Clients",
+                Textos.T("stat.clients"),
                 ClientsActius.ToString(),
                 ClientsAlNivell(desti).ToString()));
 
             files.Add(new FilaEstadistica(TipusDEstadistica.PerClient,
-                "Per client",
+                Textos.T("stat.per_client"),
                 FormatadorDeNombres.Doblers(PerClient),
                 FormatadorDeNombres.Doblers(PerClientAlNivell(desti) * Bonus.capacitat)));
 
             // No puja amb el nivell: surt sense fletxa.
             string menjar = FormatadorDeNombres.Decimals(TempsDeMenjar, 1) + "s";
-            files.Add(new FilaEstadistica(TipusDEstadistica.TempsDeMenjar, "Temps de menjar", menjar, menjar));
+            files.Add(new FilaEstadistica(TipusDEstadistica.TempsDeMenjar, Textos.T("stat.temps_menjar"), menjar, menjar));
 
             files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDelClient,
-                "Velocitat",
+                Textos.T("stat.velocitat"),
                 FormatadorDeNombres.Decimals(Velocitat, 2),
                 FormatadorDeNombres.Decimals(VelocitatAlNivell(desti) * Bonus.velocitat, 2)));
         }
@@ -153,6 +157,9 @@ namespace IdleFrogs.Game
         private double _reservat;
 
         private double Lliure => estacio != null ? System.Math.Max(0, estacio.DoblersEmmagatzemats - _reservat) : 0;
+
+        // Hi ha diners a l'estació que cap client no s'ha reservat encara.
+        public bool HiHaMenjar => Lliure > 0;
 
         // En entrar: el que pagarà en acabar, o el que quedi si n'hi ha menys.
         public double Reservar()
@@ -274,20 +281,28 @@ namespace IdleFrogs.Game
             return PuntDEntrada + enrere * espaiALaCua * (lloc + 1);
         }
 
-        // Entren d'un en un, el primer de la cua. Amb encarregat sempre; sense,
-        // els que ja feien cua quan has tocat. I només si queda menjar que no
-        // s'hagi reservat ja: si a l'estació n'hi ha per a un, n'entra un.
+        // Només si queda menjar que no s'hagi reservat ja: si a l'estació n'hi
+        // ha per a un, n'entra un. Amb encarregat, d'un en un i per ordre de
+        // cua; sense, el que has tocat, sigui on sigui de la cua.
         public bool PotEntrar(ClientDelRestaurant c)
         {
-            if (_cua.Count == 0 || _cua[0] != c) return false;
             if (Lliure <= 0) return false;
-            return EstaAutomatitzada || _ultimToc >= c.EsperantDesDe;
+            if (EstaAutomatitzada) return _cua.Count > 0 && _cua[0] == c;
+            return c.TePermis;
         }
 
-        public void DeixarEntrar() => _ultimToc = Time.time;
+        // Tocar el restaurant deixa passar el primer de la cua que encara no
+        // tingui permís: també és un toc per client.
+        public void EnTocar()
+        {
+            if (!HiHaMenjar) return;
+            foreach (ClientDelRestaurant c in _cua)
+                if (c != null && !c.TePermis) { c.DonarPermis(); return; }
+        }
 
-        // Tocar el restaurant fa el mateix que tocar un client.
-        public void EnTocar() => DeixarEntrar();
+        // El factor de temps de caminar d'una volta: uniforme al voltant d'1,
+        // perquè el temps mitjà (el que compta per a la venda) no canviï.
+        public float FactorDeTempsALAtzar() => 1f + Random.Range(-variacioDeVelocitat, variacioDeVelocitat);
 
         // Quant s'aparta un client del seu lloc a la cua (en qualsevol direcció).
         public Vector3 DesviacioALaCua() => (Vector3)(Random.insideUnitCircle * dispersioDeLaCua);

@@ -13,7 +13,10 @@ namespace IdleFrogs.Game
                  "canviar-lo trenca les partides existents. El nom de l'asset sí que es pot canviar.")]
         public string id;
         public string nomVisible;
+        [Tooltip("El de les cartes del panell. Buit: el del seu tipus al catàleg")]
         public Sprite retrat;
+        [Tooltip("El que es veu al món, a la silueta. Buit: el del seu tipus al catàleg")]
+        public Sprite spriteAlMon;
 
         [Header("Classificació")]
         public TipusDeLloc lloc = TipusDeLloc.Panta;
@@ -41,10 +44,9 @@ namespace IdleFrogs.Game
         // (×1.05) un multiplicador es llegeix pitjor que "+5%".
         public string DescripcioDeLEfecte => efecte switch
         {
-            TipusDEfecte.VelocitatDeMoviment => $"Velocitat +{Percentatge(magnitud - 1)}%",
-            TipusDEfecte.VelocitatDeTreball => $"Treball +{Percentatge(magnitud - 1)}%",
-            TipusDEfecte.Capacitat => $"Capacitat +{Percentatge(magnitud - 1)}%",
-            TipusDEfecte.ReduccioDeCost => $"Cost −{Percentatge(magnitud)}%",
+            TipusDEfecte.ReduccioDeCost => $"−{Percentatge(magnitud)}% {NomDeLEix(false)}",
+            TipusDEfecte.VelocitatDeMoviment or TipusDEfecte.VelocitatDeTreball or TipusDEfecte.Capacitat =>
+                $"+{Percentatge(magnitud - 1)}% {NomDeLEix(false)}",
             _ => string.Empty
         };
 
@@ -68,18 +70,17 @@ namespace IdleFrogs.Game
 
         // El mateix efecte vol dir coses diferents a cada tram: treballar, al
         // pantà, és recollir; al tren i a la tenda, carregar.
+        private static string Eix(string nom, bool curt) => Textos.T(curt ? $"eix.{nom}.curt" : $"eix.{nom}");
+
         private string NomDeLEix(bool curt) => efecte switch
         {
-            TipusDEfecte.VelocitatDeMoviment => curt ? "Vel" : "Velocitat",
-            TipusDEfecte.VelocitatDeTreball when lloc == TipusDeLloc.Panta =>
-                curt ? "Recol" : "Velocitat de recol·lecció",
-            TipusDEfecte.VelocitatDeTreball when lloc == TipusDeLloc.Tenda =>
-                curt ? "Menjar" : "Velocitat de menjar",
-            TipusDEfecte.VelocitatDeTreball => curt ? "Càrrega" : "Velocitat de càrrega",
-            TipusDEfecte.Capacitat when lloc == TipusDeLloc.Tenda =>
-                curt ? "Client" : "Doblers per client",
-            TipusDEfecte.Capacitat => curt ? "Cap" : "Capacitat",
-            TipusDEfecte.ReduccioDeCost => curt ? "cost" : "Cost de millora",
+            TipusDEfecte.VelocitatDeMoviment => Eix("velocitat", curt),
+            TipusDEfecte.VelocitatDeTreball when lloc == TipusDeLloc.Panta => Eix("recollir", curt),
+            TipusDEfecte.VelocitatDeTreball when lloc == TipusDeLloc.Tenda => Eix("menjar", curt),
+            TipusDEfecte.VelocitatDeTreball => Eix("carregar", curt),
+            TipusDEfecte.Capacitat when lloc == TipusDeLloc.Tenda => Eix("per_client", curt),
+            TipusDEfecte.Capacitat => Eix("capacitat", curt),
+            TipusDEfecte.ReduccioDeCost => Eix("cost", curt),
             _ => string.Empty
         };
 

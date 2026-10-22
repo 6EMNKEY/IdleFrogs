@@ -21,6 +21,23 @@ namespace IdleFrogs.Game
             return DesDeV3(JsonUtility.FromJson<DadesDePartidaV3>(json));
         }
 
+        // Les partides d'abans dels països tenien els doblers, el rellotge i
+        // l'offline pendent globals: passen a la zona 0, que és on es jugava.
+        // Es pot cridar sempre: si ja estan passats, no fa res.
+        public static void PassarAPaisos(DadesDePartida d)
+        {
+            if (d == null) return;
+            if (d.paisosDesbloquejats < 1) d.paisosDesbloquejats = 1;
+            if (!d.TeZona(0)) return;
+
+            ZonaGuardada z0 = d.zones[0];
+            if (d.doblers > 0 && z0.doblers <= 0) z0.doblers = d.doblers;
+            if (d.marcaDeTempsUtc != 0 && z0.marcaDeTempsUtc == 0) z0.marcaDeTempsUtc = d.marcaDeTempsUtc;
+            if (d.offlinePendent.HiHaRecompensa && !z0.offlinePendent.HiHaRecompensa) z0.offlinePendent = d.offlinePendent;
+            d.doblers = 0;
+            d.offlinePendent = default;
+        }
+
         public static DadesDePartida DesDeV3(DadesDePartidaV3 v)
         {
             if (v == null) return null;

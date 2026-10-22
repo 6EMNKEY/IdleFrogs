@@ -21,8 +21,10 @@ namespace IdleFrogs.UI
         [SerializeField] private Image retrat;
         [Tooltip("\"3m\"")]
         [SerializeField] private TMP_Text duracio;
-        [Tooltip("\"5x Vel\"")]
+        [Tooltip("L'habilitat activa, curta: \"5x Vel\"")]
         [SerializeField] private TMP_Text efecte;
+        [Tooltip("Opcional: l'efecte passiu, el que fa sempre mentre treballa: \"+5% Velocitat\"")]
+        [SerializeField] private TMP_Text passiu;
 
         [Header("Vendre")]
         [SerializeField] private Button botoVendre;
@@ -56,11 +58,13 @@ namespace IdleFrogs.UI
             if (fonsDelRetrat != null) fonsDelRetrat.color = ColorsDeRaresa.Per(d.raresa);
             if (retrat != null)
             {
-                retrat.sprite = d.retrat;
-                retrat.enabled = d.retrat != null;
+                Sprite s = GestorDEncarregats.Instancia != null ? GestorDEncarregats.Instancia.RetratDe(d) : d.retrat;
+                retrat.sprite = s;
+                retrat.enabled = s != null;
             }
             if (duracio != null) duracio.text = d.DuracioCurta;
             if (efecte != null) efecte.text = d.DescripcioCurtaDeLHabilitat;
+            if (passiu != null) passiu.text = d.DescripcioDeLEfecte;
         }
     }
 }

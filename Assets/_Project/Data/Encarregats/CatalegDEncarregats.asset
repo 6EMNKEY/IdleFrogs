@@ -66,5 +66,19 @@ MonoBehaviour:
     pes: 4.8
   - raresa: 3
     pes: 0.2
+  nivellDelPrimerPantaPerDesbloquejar: 5
   preuBase: 100
   creixementDePreu: 4
+  retratsPerTipus:
+  - lloc: 0
+    qualsevolEfecte: 0
+    efecte: 1
+    retrat: {fileID: 2249111993744481385, guid: 76d7be855db3e43d6bb0085540619aba, type: 3}
+    spriteAlMon: {fileID: -6351525749255287556, guid: 7d508367673ece52badefe6dc539c83e, type: 3}
+  - lloc: 0
+    qualsevolEfecte: 0
+    efecte: 3
+    retrat: {fileID: -5813851993161146049, guid: ec15e0a4cc3003b08a2295f4280d3506, type: 3}
+    spriteAlMon: {fileID: -8578949556640479240, guid: 26cb2c6d64369be90ad3ca48c9d76b8d, type: 3}
+  retratPerDefecte: {fileID: -5813851993161146049, guid: ec15e0a4cc3003b08a2295f4280d3506, type: 3}
+  spriteAlMonPerDefecte: {fileID: -8578949556640479240, guid: 26cb2c6d64369be90ad3ca48c9d76b8d, type: 3}

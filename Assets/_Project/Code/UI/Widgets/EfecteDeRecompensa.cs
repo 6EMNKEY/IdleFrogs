@@ -118,6 +118,12 @@ namespace IdleFrogs.UI
 
         // 'quantitat' és el que s'acaba de donar i ja és al comptador: el que
         // es tenia abans es dedueix restant-ho. Amb 'esCompra' surt el màxim.
+        // La moneda del país on ets (AspecteDelPais).
+        public void EstablirIconaDeDoblers(Sprite icona)
+        {
+            if (icona != null) iconaDoblers = icona;
+        }
+
         public void Llancar(TipusDeMoneda tipus, Vector2 posicioDePantalla, double quantitat, bool esCompra = false)
         {
             RectTransform desti = Desti(tipus);
@@ -126,6 +132,9 @@ namespace IdleFrogs.UI
 
             float intensitat = IntensitatDeRecompensa.Calcular(quantitat, Saldo(tipus) - quantitat, esCompra);
             int quantes = Mathf.RoundToInt(Mathf.Lerp(quantesMinimes, Mathf.Max(quantesMinimes, quantesMaximes), intensitat));
+            // Les gemes es compten d'una en una: mai més icones que gemes guanyades.
+            if (tipus == TipusDeMoneda.Gemes)
+                quantes = Mathf.Min(quantes, Mathf.Max(1, (int)System.Math.Floor(quantitat)));
             float radi = Mathf.Lerp(radiMinim, Mathf.Max(radiMinim, radiMaxim), intensitat);
             Vector2 origen = ALocal(posicioDePantalla);
 

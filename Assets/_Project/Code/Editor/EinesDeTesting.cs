@@ -55,17 +55,61 @@ namespace IdleFrogs.EditorTools
                 EfecteDeRecompensa.Instancia.Llancar(tipus, new Vector2(Screen.width / 2f, Screen.height / 2f), quantitat);
         }
 
+        // ---- Offline sense esperar: com si haguessis tancat el joc ----
+
+        [MenuItem(Menu + "Offline: 10 minuts fora", priority = Prioritat + 60)]
+        private static void Offline10m() => Fora(600);
+
+        [MenuItem(Menu + "Offline: 1 hora fora", priority = Prioritat + 61)]
+        private static void Offline1h() => Fora(3600);
+
+        [MenuItem(Menu + "Offline: 10 hores fora", priority = Prioritat + 62)]
+        private static void Offline10h() => Fora(36000);
+
+        private static void Fora(double segons)
+        {
+            GameManager.Instancia.SimularTempsFora(segons);
+            Debug.Log($"IdleFrogs: simulat {FormatadorDeNombres.Temps(segons)} fora " +
+                      $"(idle {FormatadorDeNombres.Ritme(GameManager.Instancia.IngresIdlePerSegon())})");
+        }
+
+        [MenuItem(Menu + "Offline: 10 minuts fora", true)]
+        [MenuItem(Menu + "Offline: 1 hora fora", true)]
+        [MenuItem(Menu + "Offline: 10 hores fora", true)]
+        private static bool PotSimularOffline() => Application.isPlaying && GameManager.Instancia != null;
+
+        // ---- Barreres: el temporitzador s'acaba ara ----
+
+        [MenuItem(Menu + "Barreres: acabar les que estan en marxa", priority = Prioritat + 80)]
+        private static void AcabarBarreres()
+        {
+            int obertes = 0;
+            foreach (Barrera b in Object.FindObjectsByType<Barrera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (b.EstaOberta || !b.EstaIniciada) continue;
+                b.ReduirTemps(b.SegonsRestants + 1);
+                obertes++;
+            }
+            Debug.Log(obertes > 0
+                ? $"IdleFrogs: {obertes} barrera(es) oberta(es)"
+                : "IdleFrogs: cap barrera en marxa. Primer cal iniciar-ne una (tocar-la quan hi tens accés).");
+        }
+
+        [MenuItem(Menu + "Barreres: acabar les que estan en marxa", true)]
+        private static bool HiHaJoc() => Application.isPlaying;
+
         // Les tres capacitats de la cadena, el coll d'ampolla i l'idle.
         [MenuItem(Menu + "Mesures de la cadena", priority = Prioritat + 40)]
         private static void Mesures()
         {
             MesuresDeLaCadena m = GameManager.Instancia.Mesures();
-            Debug.Log("IdleFrogs: mesures de la cadena\n" +
-                      $"  Pantans: {FormatadorDeNombres.Ritme(m.pantans)}\n" +
-                      $"  Tren:    {FormatadorDeNombres.Ritme(m.tren)}\n" +
-                      $"  Tenda:   {FormatadorDeNombres.Ritme(m.tenda)}\n" +
+            MesuresDeLaCadena sol = GameManager.Instancia.Mesures(nomesAutomatitzat: true);
+            Debug.Log("IdleFrogs: mesures de la cadena (entre parèntesis, només el que va amb encarregat)\n" +
+                      $"  Pantans: {FormatadorDeNombres.Ritme(m.pantans)} ({FormatadorDeNombres.Ritme(sol.pantans)})\n" +
+                      $"  Tren:    {FormatadorDeNombres.Ritme(m.tren)} ({FormatadorDeNombres.Ritme(sol.tren)})\n" +
+                      $"  Tenda:   {FormatadorDeNombres.Ritme(m.tenda)} ({FormatadorDeNombres.Ritme(sol.tenda)})\n" +
                       $"  Coll d'ampolla: {m.QuinTram} ({FormatadorDeNombres.Ritme(m.CollDAmpolla)})\n" +
-                      $"  Idle: {FormatadorDeNombres.Ritme(m.Idle)}");
+                      $"  Idle (només automàtic): {FormatadorDeNombres.Ritme(sol.Idle)}");
         }
 
         [MenuItem(Menu + "Mesures de la cadena", true)]

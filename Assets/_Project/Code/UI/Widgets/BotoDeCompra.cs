@@ -9,18 +9,25 @@ namespace IdleFrogs.UI
     // no ha de decidir si es veu o no: només si es pot pagar.
     public class BotoDeCompra : MonoBehaviour, IEsPotTocar
     {
+        [Header("Textos")]
+        [Tooltip("El text del preu: s'hi escriu el preu i la moneda. El \"Buy\" és un text fix a part. " +
+                 "Buit: s'escriu \"Comprar\" i el preu al primer text que hi hagi")]
+        [SerializeField] private TMP_Text textPreu;
+
         [Header("Color quan no hi ha doblers")]
         [SerializeField] private Color colorApagat = new Color(0.5f, 0.5f, 0.5f, 1f);
 
         private Panta _panta;
         private TMP_Text _textPreu;
+        private bool _nomesPreu;
         private SpriteRenderer _sprite;
         private Color _colorNormal = Color.white;
 
         private void Awake()
         {
             _panta = GetComponentInParent<Panta>();
-            _textPreu = GetComponentInChildren<TMP_Text>();
+            _nomesPreu = textPreu != null;
+            _textPreu = _nomesPreu ? textPreu : GetComponentInChildren<TMP_Text>();
             _sprite = GetComponent<SpriteRenderer>();
             if (_sprite != null) _colorNormal = _sprite.color;
         }
@@ -61,7 +68,10 @@ namespace IdleFrogs.UI
             if (_panta == null) return;
 
             if (_textPreu != null)
-                _textPreu.text = $"Comprar\n{FormatadorDeNombres.Doblers(_panta.PreuDeCompra)}";
+            {
+                string preu = FormatadorDeNombres.Doblers(_panta.PreuDeCompra) + Icones.Moneda;
+                _textPreu.text = _nomesPreu ? preu : Textos.F("mon.comprar", preu);
+            }
 
             if (_sprite != null)
                 _sprite.color = _panta.PucPagarLaCompra ? _colorNormal : colorApagat;

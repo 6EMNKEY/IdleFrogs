@@ -22,6 +22,10 @@ namespace IdleFrogs.UI
         [Tooltip("\"78T!!\" i la moneda")]
         [SerializeField] private TMP_Text textTotal;
 
+        [Header("Esclat de monedes en cobrar")]
+        [Tooltip("D'on surten les monedes. Buit: del text del total")]
+        [SerializeField] private RectTransform origenDeLEsclat;
+
         [Header("Botons — tots dos cobren")]
         [SerializeField] private Button botoAcceptar;
         [SerializeField] private Button botoTancar;
@@ -67,12 +71,19 @@ namespace IdleFrogs.UI
         public void Cobrar()
         {
             if (arrel != null && !arrel.activeSelf) return;
+
+            // On és l'origen, abans d'amagar el panell: un cop apagat ja no és
+            // a la pantalla.
+            RectTransform origen = origenDeLEsclat != null ? origenDeLEsclat
+                                 : textTotal != null ? textTotal.rectTransform : null;
+            Vector2 punt = origen != null ? EfecteDeRecompensa.PuntDePantalla(origen) : Vector2.zero;
+
             if (arrel != null) arrel.SetActive(false);
             if (GameManager.Instancia == null) return;
 
             double cobrat = GameManager.Instancia.CobrarRecompensaOffline();
-            if (cobrat > 0 && EfecteDeRecompensa.Instancia != null && textTotal != null)
-                EfecteDeRecompensa.Instancia.LlancarDesDe(TipusDeMoneda.Doblers, textTotal.rectTransform, cobrat);
+            if (cobrat > 0 && origen != null && EfecteDeRecompensa.Instancia != null)
+                EfecteDeRecompensa.Instancia.Llancar(TipusDeMoneda.Doblers, punt, cobrat);
         }
     }
 }

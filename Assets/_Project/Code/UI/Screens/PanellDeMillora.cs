@@ -133,6 +133,10 @@ namespace IdleFrogs.UI
             if (arrel != null) arrel.SetActive(false);
         }
 
+        private void OnEnable() => Textos.EnCanviDIdioma += Refrescar;
+
+        private void OnDisable() => Textos.EnCanviDIdioma -= Refrescar;
+
         private void OnDestroy()
         {
             if (Instancia == this) Instancia = null;
@@ -201,9 +205,9 @@ namespace IdleFrogs.UI
             bool alMaxim = ara >= _unitat.NivellMaxim;
 
             if (textDoblers != null)
-                textDoblers.text = $"Cash : {FormatadorDeNombres.Doblers(doblers)}{Icones.Moneda}";
+                textDoblers.text = Textos.F("millora.diners", FormatadorDeNombres.Doblers(doblers) + Icones.Moneda);
             if (textCostDeMillora != null)
-                textCostDeMillora.text = alMaxim ? "MAX" : FormatadorDeNombres.Doblers(cost) + Icones.Moneda;
+                textCostDeMillora.text = alMaxim ? Textos.T("millora.max") : FormatadorDeNombres.Doblers(cost) + Icones.Moneda;
             // No interactuable = el Disabled Color del botó: és el que el fa més fosc.
             if (botoMillorar != null)
                 botoMillorar.interactable = !provarSenseDiners && !alMaxim && k > 0 && doblers >= cost;
@@ -233,7 +237,7 @@ namespace IdleFrogs.UI
                 retrat.enabled = retrat.sprite != null;
             }
             if (nom != null) nom.text = _unitat.NomVisible;
-            if (textNivell != null) textNivell.text = $"Level {ara}/{_unitat.NivellMaxim}";
+            if (textNivell != null) textNivell.text = Textos.F("millora.nivell", ara, _unitat.NivellMaxim);
 
             FilaEstadistica resum = _unitat.Resum(desti);
             if (textResum != null)
@@ -245,7 +249,7 @@ namespace IdleFrogs.UI
             FitaDeMultiplicador seguent = Fites.Seguent(fites, ara);
 
             if (textSeguentBoost != null)
-                textSeguentBoost.text = seguent != null ? $"Boost at lvl {seguent.nivell}" : "All boosts reached";
+                textSeguentBoost.text = seguent != null ? Textos.F("millora.boost", seguent.nivell) : Textos.T("millora.tots_boosts");
             if (barraDeBoost != null) barraDeBoost.fillAmount = Fites.Progres(fites, ara);
             if (textRecompensa != null)
                 textRecompensa.text = seguent != null && seguent.gemes > 0 ? $"+{seguent.gemes}{Icones.Gema}" : string.Empty;

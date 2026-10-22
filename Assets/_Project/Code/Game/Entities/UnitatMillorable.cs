@@ -14,7 +14,9 @@ namespace IdleFrogs.Game
         // Restaurant (abans tenda: els valors no canvien, així les icones ja
         // assignades a l'inspector continuen al seu lloc).
         PerClient, Clients, VelocitatDelClient,
-        TempsDeMenjar
+        TempsDeMenjar,
+        // Al final perquè no es moguin els valors ja assignats a l'inspector.
+        CapacitatDelTren
     }
 
     // Una estadística del panell de millora: "Capacitat  100k → 110k".
@@ -71,13 +73,12 @@ namespace IdleFrogs.Game
         [Header("Panell de millora")]
         [Tooltip("La foto de la targeta de dalt del panell")]
         [SerializeField] private Sprite retratDelPanell;
-        [Tooltip("El text del separador, a sobre de les caixes d'estadístiques")]
-        [SerializeField] private string titolDeLesEstadistiques = "Stats";
 
         public int Nivell => nivell;
         public bool EstaComprat => nivell >= 1;
         public Sprite RetratDelPanell => retratDelPanell;
-        public string TitolDeLesEstadistiques => titolDeLesEstadistiques;
+        // El text del separador, a sobre de les caixes d'estadístiques.
+        public abstract string TitolDeLesEstadistiques { get; }
 
         public event System.Action EnCanviDeNivell;
 

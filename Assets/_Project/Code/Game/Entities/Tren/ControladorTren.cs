@@ -32,7 +32,8 @@ namespace IdleFrogs.Game
         // ---------------------------------------------------------------
 
         public override Ranura Ranura => new Ranura(TipusDeLloc.Tren);
-        public override string NomVisible => "Tren i estació";
+        public override string NomVisible => Textos.T("unitat.tren");
+        public override string TitolDeLesEstadistiques => Textos.T("titol.tren");
         public override double CostBase => config.costBase;
         public override double CreixementDeCost => config.creixementDeCost;
         public override int NivellMaxim => config.nivellMaxim;
@@ -69,58 +70,69 @@ namespace IdleFrogs.Game
 
         public override FitaDeMultiplicador[] FitesDeMillora => config.fites;
 
-        // La capacitat és el número gran del tren; les altres tres van a les caixes.
+        // El número gran del tren és el que pot portar a l'estació per segon;
+        // la capacitat va a les caixes amb la resta.
         public override FilaEstadistica Resum(int desti) => new FilaEstadistica(TipusDEstadistica.Resum,
-            "Capacitat",
-            FormatadorDeNombres.Doblers(Capacitat),
-            FormatadorDeNombres.Doblers(CapacitatAlNivell(desti) * Bonus.capacitat));
+            Textos.T("stat.transport_total"),
+            FormatadorDeNombres.Ritme(CabalReal),
+            FormatadorDeNombres.Ritme(CabalRealAlNivell(desti)));
 
         public override void OmplirFiles(List<FilaEstadistica> files, int desti)
         {
+            files.Add(new FilaEstadistica(TipusDEstadistica.CapacitatDelTren,
+                Textos.T("stat.capacitat"),
+                FormatadorDeNombres.Doblers(Capacitat),
+                FormatadorDeNombres.Doblers(CapacitatAlNivell(desti) * Bonus.capacitat)));
+
             files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDelTren,
-                "Velocitat",
+                Textos.T("stat.velocitat"),
                 FormatadorDeNombres.Decimals(VelocitatDeMoviment, 2),
                 FormatadorDeNombres.Decimals(VelocitatAlNivell(desti) * Bonus.velocitat, 2)));
 
+            // Una sola caixa: pugen juntes, i normalment van al mateix ritme.
             files.Add(new FilaEstadistica(TipusDEstadistica.Carrega,
-                "Càrrega",
-                FormatadorDeNombres.Ritme(RitmeDeCarrega),
-                FormatadorDeNombres.Ritme(RitmeDeCarregaAlNivell(desti) * Bonus.treball)));
+                Textos.T("stat.carrega"),
+                Ritmes(nivell),
+                Ritmes(desti)));
+        }
 
-            files.Add(new FilaEstadistica(TipusDEstadistica.Descarrega,
-                "Descàrrega",
-                FormatadorDeNombres.Ritme(RitmeDeDescarrega),
-                FormatadorDeNombres.Ritme(RitmeDeDescarregaAlNivell(desti) * Bonus.treball)));
+        // "150/s", o "150/s · 300/s" si la descàrrega va a un altre ritme.
+        private string Ritmes(int n)
+        {
+            string carrega = FormatadorDeNombres.Ritme(RitmeDeCarregaAlNivell(n) * Bonus.treball);
+            string descarrega = FormatadorDeNombres.Ritme(RitmeDeDescarregaAlNivell(n) * Bonus.treball);
+            return carrega == descarrega ? carrega : $"{carrega} · {descarrega}";
         }
 
         // Doblers per segon que el tren pot moure fent viatges sencers fins al
         // pantà comprat més llunyà: capacitat / (anada i tornada + carregar +
-        // descarregar). El fa servir el progrés offline.
-        public double CabalReal
+        // descarregar). És la mesura de la cadena i el que fa servir l'offline.
+        public double CabalReal => CabalRealAlNivell(nivell);
+
+        // La mateixa fórmula a qualsevol nivell, amb les bonificacions d'ara:
+        // és el número de destí de la targeta del panell.
+        public double CabalRealAlNivell(int n)
         {
-            get
+            if (llistaDePantans == null || puntDeDescarrega == null) return 0;
+
+            int maxim = Mathf.Min(llistaDePantans.IndexMaximAccessible(), llistaDePantans.Quantitat - 1);
+            Panta mesLlunya = null;
+            for (int i = maxim; i >= 0; i--)
             {
-                if (llistaDePantans == null || puntDeDescarrega == null) return 0;
-
-                int maxim = Mathf.Min(llistaDePantans.IndexMaximAccessible(), llistaDePantans.Quantitat - 1);
-                Panta mesLlunya = null;
-                for (int i = maxim; i >= 0; i--)
-                {
-                    Panta p = llistaDePantans.Obtenir(i);
-                    if (p != null && p.EstaComprat) { mesLlunya = p; break; }
-                }
-                if (mesLlunya == null) return 0;
-
-                float velocitat = VelocitatDeMoviment;
-                if (velocitat <= 0) return 0;
-
-                double distancia = Mathf.Abs(mesLlunya.PosicioCapsa.x - puntDeDescarrega.position.x);
-                double c = Capacitat;
-                double temps = 2 * distancia / velocitat
-                               + SegonsPerTransferir(c, RitmeDeCarrega)
-                               + SegonsPerTransferir(c, RitmeDeDescarrega);
-                return temps <= 0 ? 0 : c / temps;
+                Panta p = llistaDePantans.Obtenir(i);
+                if (p != null && p.EstaComprat) { mesLlunya = p; break; }
             }
+            if (mesLlunya == null) return 0;
+
+            float velocitat = VelocitatAlNivell(n) * (float)Bonus.velocitat;
+            if (velocitat <= 0) return 0;
+
+            double distancia = Mathf.Abs(mesLlunya.PosicioCapsa.x - puntDeDescarrega.position.x);
+            double c = CapacitatAlNivell(n) * Bonus.capacitat;
+            double temps = 2 * distancia / velocitat
+                           + SegonsPerTransferir(c, RitmeDeCarregaAlNivell(n) * Bonus.treball)
+                           + SegonsPerTransferir(c, RitmeDeDescarregaAlNivell(n) * Bonus.treball);
+            return temps <= 0 ? 0 : c / temps;
         }
 
         // Un ritme de 0 donaria una espera infinita i penjaria la corrutina.

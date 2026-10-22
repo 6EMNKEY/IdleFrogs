@@ -76,7 +76,8 @@ namespace IdleFrogs.Game
         // ---------------------------------------------------------------
 
         public override Ranura Ranura => new Ranura(TipusDeLloc.Panta, _index);
-        public override string NomVisible => $"Pantà {_index + 1}";
+        public override string NomVisible => Textos.F("unitat.panta", _index + 1);
+        public override string TitolDeLesEstadistiques => Textos.T("titol.panta");
         public override double CostBase => config.costBase * MultiplicadorDeProfunditat;
         public override double CreixementDeCost => config.creixementDeCost;
         public override int NivellMaxim => config.nivellMaxim;
@@ -86,7 +87,7 @@ namespace IdleFrogs.Game
         // ProduccioReal i no ProduccioPerSegon: amb encarregat, el número de
         // dalt ha de dir el que de debò cau a la capsa.
         public override FilaEstadistica Resum(int desti) => new FilaEstadistica(TipusDEstadistica.Resum,
-            "Producció total",
+            Textos.T("stat.produccio_total"),
             FormatadorDeNombres.Ritme(ProduccioReal),
             FormatadorDeNombres.Ritme(ProduccioRealAlNivell(desti)));
 
@@ -97,20 +98,20 @@ namespace IdleFrogs.Game
             // La velocitat de moviment no puja de nivell: surt sense fletxa.
             string velocitat = FormatadorDeNombres.Decimals(VelocitatDeMoviment, 1);
             files.Add(new FilaEstadistica(TipusDEstadistica.VelocitatDeGranota,
-                "Velocitat", velocitat, velocitat));
+                Textos.T("stat.velocitat"), velocitat, velocitat));
 
             files.Add(new FilaEstadistica(TipusDEstadistica.Granotes,
-                "Nombre de granotes",
+                Textos.T("stat.granotes"),
                 GranotesActives.ToString(),
                 GranotesAlNivell(desti).ToString()));
 
             files.Add(new FilaEstadistica(TipusDEstadistica.Recollecio,
-                "Velocitat recol·lecció",
+                Textos.T("stat.recollecio"),
                 FormatadorDeNombres.Ritme(VelocitatDeRecoleccio),
                 FormatadorDeNombres.Ritme(VelocitatDeRecoleccioAlNivell(desti) * Bonus.treball)));
 
             files.Add(new FilaEstadistica(TipusDEstadistica.CapacitatDeGranota,
-                "Capacitat",
+                Textos.T("stat.capacitat"),
                 FormatadorDeNombres.Doblers(CapacitatPerGranota),
                 FormatadorDeNombres.Doblers(CapacitatAlNivell(desti) * Bonus.capacitat)));
         }
@@ -327,18 +328,21 @@ namespace IdleFrogs.Game
 
         private void AplicarAspecte()
         {
-            if (aspecte == null) return;
+            // El del país, si en té; si no, el del pantà.
+            AspectePantaSO delPais = GestorDePaisos.Instancia != null ? GestorDePaisos.Instancia.AspecteDelsPantans : null;
+            AspectePantaSO a = delPais != null ? delPais : aspecte;
+            if (a == null) return;
 
-            PosarSprite(renderitzadorDeFons, aspecte.fons, aspecte.tintDelFons);
-            PosarSprite(renderitzadorDeCapsa, aspecte.capsa, null);
+            PosarSprite(renderitzadorDeFons, a.fons, a.tintDelFons);
+            PosarSprite(renderitzadorDeCapsa, a.capsa, null);
 
             if (nenufars != null)
                 foreach (Transform t in nenufars)
-                    if (t != null) PosarSprite(t.GetComponent<SpriteRenderer>(), aspecte.nenufar, null);
+                    if (t != null) PosarSprite(t.GetComponent<SpriteRenderer>(), a.nenufar, null);
 
             if (slotsGranotes != null)
                 foreach (ControladorGranota g in slotsGranotes)
-                    if (g != null) PosarSprite(g.GetComponent<SpriteRenderer>(), aspecte.granota, null);
+                    if (g != null) PosarSprite(g.GetComponent<SpriteRenderer>(), a.granota, null);
         }
 
         private static void PosarSprite(SpriteRenderer renderitzador, Sprite sprite, Color? tint)

@@ -42,8 +42,10 @@ namespace IdleFrogs.UI
         [SerializeField] private TMP_Text raresaActual;
         [Tooltip("\"Efecte : 3m\"")]
         [SerializeField] private TMP_Text duracioActual;
-        [Tooltip("\"5x Velocitat de recol·lecció\"")]
+        [Tooltip("L'habilitat activa: \"5x Velocitat de recol·lecció\"")]
         [SerializeField] private TMP_Text habilitatActual;
+        [Tooltip("Opcional: l'efecte passiu, el que fa sempre mentre treballa")]
+        [SerializeField] private TMP_Text passiuActual;
         [Tooltip("El botó taronja: engega l'habilitat")]
         [SerializeField] private Button botoHabilitat;
         [Tooltip("Opcional: el temps que queda mentre està encesa o recarregant")]
@@ -56,7 +58,6 @@ namespace IdleFrogs.UI
 
         [Header("Carta buida")]
         [SerializeField] private Color colorDelRetratBuit = new Color(0.35f, 0.25f, 0.18f);
-        [SerializeField] private string textSenseEncarregat = "No boss";
 
         [Header("Llista")]
         [Tooltip("El Content del Scroll View")]
@@ -98,6 +99,10 @@ namespace IdleFrogs.UI
 
             if (arrel != null) arrel.SetActive(false);
         }
+
+        private void OnEnable() => Textos.EnCanviDIdioma += Refrescar;
+
+        private void OnDisable() => Textos.EnCanviDIdioma -= Refrescar;
 
         private void OnDestroy()
         {
@@ -164,7 +169,7 @@ namespace IdleFrogs.UI
             double doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0;
 
             if (textDoblers != null)
-                textDoblers.text = $"Cash : {FormatadorDeNombres.Doblers(doblers)}{Icones.Moneda}";
+                textDoblers.text = Textos.F("millora.diners", FormatadorDeNombres.Doblers(doblers) + Icones.Moneda);
             if (textPreuDeContractar != null)
                 textPreuDeContractar.text = FormatadorDeNombres.Doblers(preu) + Icones.Moneda;
 
@@ -183,17 +188,20 @@ namespace IdleFrogs.UI
                 fonsDelRetratActual.color = hiEs ? ColorsDeRaresa.Per(d.raresa) : colorDelRetratBuit;
             if (retratActual != null)
             {
-                retratActual.sprite = hiEs ? d.retrat : null;
-                retratActual.enabled = hiEs && d.retrat != null;
+                Sprite s = !hiEs ? null
+                         : GestorDEncarregats.Instancia != null ? GestorDEncarregats.Instancia.RetratDe(d) : d.retrat;
+                retratActual.sprite = s;
+                retratActual.enabled = s != null;
             }
-            if (nomActual != null) nomActual.text = hiEs ? d.nomVisible : textSenseEncarregat;
+            if (nomActual != null) nomActual.text = hiEs ? d.nomVisible : Textos.T("enc.cap");
             if (raresaActual != null)
             {
                 raresaActual.text = hiEs ? ColorsDeRaresa.Nom(d.raresa) : string.Empty;
                 if (hiEs) raresaActual.color = ColorsDeRaresa.Per(d.raresa);
             }
-            if (duracioActual != null) duracioActual.text = hiEs ? $"Efecte : {d.DuracioCurta}" : string.Empty;
-            if (habilitatActual != null) habilitatActual.text = hiEs ? d.DescripcioDeLHabilitat : string.Empty;
+            if (duracioActual != null) duracioActual.text = hiEs ? Textos.F("enc.durada", d.DuracioCurta) : string.Empty;
+            if (habilitatActual != null) habilitatActual.text = hiEs ? Textos.F("enc.actiu", d.DescripcioDeLHabilitat) : string.Empty;
+            if (passiuActual != null) passiuActual.text = hiEs ? Textos.F("enc.passiu", d.DescripcioDeLEfecte) : string.Empty;
 
             if (botoTreure != null) botoTreure.gameObject.SetActive(hiEs);
 
@@ -299,7 +307,7 @@ namespace IdleFrogs.UI
             if (rebut == null) return;
 
             if (textDeResultat != null)
-                textDeResultat.text = $"Has contractat {rebut.nomVisible} · {rebut.DescripcioDeLHabilitat}";
+                textDeResultat.text = Textos.F("enc.contractat", rebut.nomVisible, rebut.DescripcioDeLHabilitat);
         }
     }
 }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1c13e3700965ff4880835af4ea598e, type: 3}
+  m_Name: PantaProfund
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PaisSO
+  nom:
+    angles: "Deep Swamp"
+    castella: "Pantano Profundo"
+    catala: "Pantà Profund"
+  nomVisible: "Deep Swamp"
+  esCiutatComercial: 0
+  preuDeDesbloqueig: 10000000
+  colorDeFons: {r: 0.16, g: 0.27, b: 0.15, a: 1}
+  aspecteDelsPantans: {fileID: 0}
+  spriteDeMoneda: moneda_pantafosc
+  iconaDeMoneda: {fileID: 21300000, guid: b4fbb457a38efc21fb33bfd694f74af1, type: 3}

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f895cfdcafc51bc3ab1092140d93847d
+guid: f1ccef6cf8bf5ae758d42e92cbee42de
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3671952770530855084
-    second: GranotaObrintBocaFluix_0
+      213: -4751021974775943165
+    second: espurna_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: GranotaObrintBocaFluix_0
+      name: espurna_0
       rect:
         serializedVersion: 2
-        x: 21
-        y: 26
-        width: 213
-        height: 181
+        x: 0
+        y: 0
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ca8c087079565f230800000000000000
-      internalID: 3671952770530855084
+      spriteID: 300b7699faaf01eb0800000000000000
+      internalID: -4751021974775943165
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      GranotaObrintBocaFluix_0: 3671952770530855084
+      espurna_0: -4751021974775943165
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -9,7 +9,10 @@ namespace IdleFrogs.UI
     public static class Icones
     {
         // Va darrere del número, amb un espai fi entremig.
-        public const string Moneda = "<space=0.12em><sprite name=\"moneda\">";
+        public static string Moneda => $"<space=0.12em><sprite name=\"{SpriteDeLaMoneda}\">";
+
+        // Cada país té la seva moneda: el posa AspecteDelPais en arrencar.
+        public static string SpriteDeLaMoneda = "moneda";
 
         // La moneda premium. Va en un Sprite Asset propi (gema.asset) penjat
         // dels Fallback Sprite Assets de moneda.asset, que és el per defecte.

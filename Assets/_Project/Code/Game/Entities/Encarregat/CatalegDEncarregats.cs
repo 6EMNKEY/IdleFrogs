@@ -3,6 +3,23 @@ using UnityEngine;
 
 namespace IdleFrogs.Game
 {
+    // L'aspecte de tots els encarregats d'un tipus: d'un lloc i, si es vol,
+    // d'un efecte concret. Dues imatges: el retrat de les cartes del panell i
+    // el sprite que es veu al món, a la silueta del pantà, el tren o el
+    // restaurant. Si en falta una, es busca la següent opció per a aquella.
+    [System.Serializable]
+    public class RetratPerTipus
+    {
+        public TipusDeLloc lloc;
+        [Tooltip("Marcat: val per a tots els encarregats del lloc, sigui quin sigui l'efecte")]
+        public bool qualsevolEfecte;
+        public TipusDEfecte efecte;
+        [Tooltip("El de les cartes del panell d'encarregats")]
+        public Sprite retrat;
+        [Tooltip("El que es veu al món, a la silueta")]
+        public Sprite spriteAlMon;
+    }
+
     [System.Serializable]
     public class PesDeRaresa
     {
@@ -40,6 +57,41 @@ namespace IdleFrogs.Game
 
         public double PreuDeLaCompra(int jaComprats) =>
             preuBase * System.Math.Pow(creixementDePreu, Mathf.Max(0, jaComprats));
+
+        [Header("Aspecte per tipus")]
+        [Tooltip("Per a cada imatge mana la pròpia de l'encarregat si en té; si no, la més concreta " +
+                 "d'aquí (lloc + efecte abans que tot el lloc); si no, la de per defecte")]
+        public RetratPerTipus[] retratsPerTipus;
+        [Tooltip("Retrat del panell quan no n'hi ha cap més")]
+        public Sprite retratPerDefecte;
+        [Tooltip("Sprite del món quan no n'hi ha cap més")]
+        public Sprite spriteAlMonPerDefecte;
+
+        // El de les cartes del panell.
+        public Sprite RetratDe(EncarregatSO e) =>
+            Triar(e, e != null ? e.retrat : null, r => r.retrat, retratPerDefecte);
+
+        // El de la silueta, al món.
+        public Sprite SpriteAlMonDe(EncarregatSO e) =>
+            Triar(e, e != null ? e.spriteAlMon : null, r => r.spriteAlMon, spriteAlMonPerDefecte);
+
+        private Sprite Triar(EncarregatSO e, Sprite propi, System.Func<RetratPerTipus, Sprite> imatge, Sprite perDefecte)
+        {
+            if (e == null) return perDefecte;
+            if (propi != null) return propi;
+
+            Sprite delLloc = null;
+            if (retratsPerTipus != null)
+                foreach (RetratPerTipus r in retratsPerTipus)
+                {
+                    if (r == null || r.lloc != e.lloc) continue;
+                    Sprite s = imatge(r);
+                    if (s == null) continue;
+                    if (!r.qualsevolEfecte && r.efecte == e.efecte) return s;
+                    if (r.qualsevolEfecte && delLloc == null) delLloc = s;
+                }
+            return delLloc != null ? delLloc : perDefecte;
+        }
 
         public EncarregatSO PerId(string id)
         {

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1c13e3700965ff4880835af4ea598e, type: 3}
+  m_Name: ElPaisSagrat
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PaisSO
+  nom:
+    angles: "Sacred Land"
+    castella: "El País Sagrado"
+    catala: "El País Sagrat"
+  nomVisible: "Sacred Land"
+  esCiutatComercial: 0
+  preuDeDesbloqueig: 100000000000000000
+  colorDeFons: {r: 0.91, g: 0.9, b: 0.87, a: 1}
+  aspecteDelsPantans: {fileID: 0}
+  spriteDeMoneda: moneda_halo
+  iconaDeMoneda: {fileID: 21300000, guid: afa69671a5f1416bb882e54bda7a8cdd, type: 3}

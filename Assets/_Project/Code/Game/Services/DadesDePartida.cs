@@ -46,6 +46,12 @@ namespace IdleFrogs.Game
 
         public EncarregatGuardat[] encarregats;
         public int[] encarregatsCompratsPerTipus;   // un per TipusDeLloc
+
+        // Cada país té la seva moneda i el seu rellotge: mentre ets en un altre
+        // (o amb el joc tancat) aquest continua produint com a offline.
+        public double doblers;
+        public long marcaDeTempsUtc;
+        public RecompensaOffline offlinePendent;
     }
 
     // Camps públics i no propietats: JsonUtility només serialitza camps.
@@ -61,13 +67,16 @@ namespace IdleFrogs.Game
         public long marcaDeTempsUtc;
 
         // Globals: valen per a totes les zones.
-        // DECISIÓ PENDENT: cada zona podria tenir els seus diners. Aquí de
-        // moment hi ha una sola cartera; si algun dia es reparteixen, això
-        // es mou a ZonaGuardada.
+        // Ja no s'hi guarden els doblers (són de cada país, a ZonaGuardada):
+        // es manté per llegir les partides d'abans, que en carregar-se els
+        // passen a la zona 0.
         public double doblers;
         // Les partides d'abans no el tenen i JsonUtility el deixa a 0, que és
         // el que toca: no cal pujar de versió.
         public int gemes;
+
+        // Quants països de pantans hi ha oberts, en ordre (el primer sempre).
+        public int paisosDesbloquejats = 1;
 
         // El que es va guanyar fora i encara no s'ha acceptat al panell.
         public RecompensaOffline offlinePendent;

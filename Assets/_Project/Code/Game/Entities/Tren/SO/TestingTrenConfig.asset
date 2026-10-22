@@ -15,7 +15,7 @@ MonoBehaviour:
   ritmeDeCarregaBase: 150
   ritmeDeDescarregaBase: 150
   creixementDeRitme: 1.33
-  velocitatBase: 2
+  velocitatBase: 2.5
   creixementDeVelocitat: 1.026
   velocitatMaxima: 30
   capacitatBase: 600

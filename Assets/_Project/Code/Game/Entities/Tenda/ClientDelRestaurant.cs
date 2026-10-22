@@ -20,11 +20,19 @@ namespace IdleFrogs.Game
         private SpriteRenderer _sr;
         private Collider2D _collider;
         private Vector3 _desviacioALaCua;  // perquè la cua sigui un grup i no una fila índia
-        private float _esperantDesDe;      // quan s'ha posat a la cua
+        private bool _tePermis;            // sense encarregat: l'has tocat i pot entrar
+        private float _factorDeTemps = 1f; // aquesta volta camina més lent (>1) o més ràpid (<1)
         private double _reserva;           // el que pagarà en acabar de menjar
         private Coroutine _cicle;
 
-        public float EsperantDesDe => _esperantDesDe;
+        public bool TePermis => _tePermis;
+
+        // Només serveix mentre va cap a la cua o hi espera.
+        public void DonarPermis()
+        {
+            if (estatActual == EstatClient.Arribant || estatActual == EstatClient.Esperant)
+                _tePermis = true;
+        }
 
         private void Awake()
         {
@@ -55,10 +63,11 @@ namespace IdleFrogs.Game
             estatActual = EstatClient.Fora;
         }
 
-        // Sense encarregat, tocar un client fa entrar tots els que esperen.
+        // Sense encarregat: un toc, aquest client entra.
+        // Sense diners a dins no fa res: no hi hauria res per menjar.
         public void EnTocar()
         {
-            if (_tenda != null) _tenda.DeixarEntrar();
+            if (_tenda != null && _tenda.HiHaMenjar) DonarPermis();
         }
 
         private IEnumerator Cicle(float retard)
@@ -78,7 +87,8 @@ namespace IdleFrogs.Game
                 transform.position = _tenda.LlocDAparicio();
                 Amagar(false);
                 estatActual = EstatClient.Arribant;
-                _esperantDesDe = Time.time;
+                _tePermis = false;
+                _factorDeTemps = _tenda.FactorDeTempsALAtzar();
                 _tenda.EntrarALaCua(this);
 
                 // 2. Va avançant a mesura que la cua es mou, fins que pot entrar.
@@ -118,7 +128,9 @@ namespace IdleFrogs.Game
         private bool Moure(Vector3 desti)
         {
             Vector3 abans = transform.position;
-            transform.position = Vector3.MoveTowards(abans, desti, _tenda.Velocitat * Time.deltaTime);
+            // El factor és de temps: a 1,25 tarda un 25% més, o sigui va a 1/1,25.
+            float velocitat = _tenda.Velocitat / Mathf.Max(0.1f, _factorDeTemps);
+            transform.position = Vector3.MoveTowards(abans, desti, velocitat * Time.deltaTime);
             float dx = transform.position.x - abans.x;
             if (Mathf.Abs(dx) > 1e-4f) _sr.flipX = _tenda.ElDibuixMiraALaDreta ? dx < 0f : dx > 0f;
             return (transform.position - desti).sqrMagnitude < 0.0025f;

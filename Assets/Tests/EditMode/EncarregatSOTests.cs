@@ -12,6 +12,8 @@ namespace IdleFrogs.Tests.EditMode
         [SetUp]
         public void Preparar()
         {
+            // Els textos esperats són els catalans.
+            Textos.EstablirPerAProves(Idioma.Catala);
             _e = ScriptableObject.CreateInstance<EncarregatSO>();
             _e.segonsDeDuracio = 180;
             _e.magnitud = 2;
@@ -19,7 +21,11 @@ namespace IdleFrogs.Tests.EditMode
         }
 
         [TearDown]
-        public void Netejar() => Object.DestroyImmediate(_e);
+        public void Netejar()
+        {
+            Object.DestroyImmediate(_e);
+            Textos.EstablirPerAProves(Idioma.English);
+        }
 
         [Test]
         public void Duracio() => Assert.AreEqual("3m", _e.DuracioCurta);

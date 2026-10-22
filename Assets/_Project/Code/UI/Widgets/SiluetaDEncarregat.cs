@@ -4,8 +4,9 @@ using IdleFrogs.Game;
 namespace IdleFrogs.UI
 {
     // La silueta d'un encarregat en una ranura. Buida ensenya la silueta
-    // fosca; amb encarregat assignat ensenya el seu retrat amb el color de
-    // la raresa. Tocar-la obre el panell.
+    // fosca; amb encarregat assignat ensenya el seu retrat tal com és, i
+    // mentre té l'habilitat encesa deixa anar partícules del color de la seva
+    // raresa. Tocar-la obre el panell.
     //
     // No es veu fins que els encarregats es desbloquegen (primer pantà a
     // nivell 5). No n'apaguem el GameObject, perquè llavors aquest mateix
@@ -26,9 +27,16 @@ namespace IdleFrogs.UI
         [Tooltip("El dibuix que es veu quan la ranura és buida")]
         [SerializeField] private Sprite spriteBuit;
         [SerializeField] private Color colorBuit = new Color(0.15f, 0.15f, 0.2f, 0.85f);
+        [Tooltip("Es veu quan hi ha un encarregat assignat però no té retrat")]
+        [SerializeField] private Sprite spriteAssignat;
 
         [Tooltip("S'encén mentre l'habilitat està activa. Opcional: hi pots posar una llum, un halo...")]
         [SerializeField] private GameObject indicadorDHabilitat;
+
+        [Header("Partícules de l'habilitat")]
+        [Tooltip("Es pinten del color de la raresa i sonen mentre l'habilitat està encesa. " +
+                 "Buit: es busca entre els fills")]
+        [SerializeField] private ParticleSystem particules;
 
         private Collider2D _collider;
 
@@ -37,6 +45,8 @@ namespace IdleFrogs.UI
             if (unitat == null) unitat = GetComponentInParent<UnitatMillorable>();
             if (retrat == null) retrat = GetComponent<SpriteRenderer>();
             _collider = GetComponent<Collider2D>();
+            if (particules == null) particules = GetComponentInChildren<ParticleSystem>(true);
+            if (particules != null) particules.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
 
         private void Start()
@@ -91,6 +101,7 @@ namespace IdleFrogs.UI
             if (!visible)
             {
                 if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(false);
+                Particules(false, Color.white);
                 return;
             }
 
@@ -103,12 +114,39 @@ namespace IdleFrogs.UI
                 if (spriteBuit != null) retrat.sprite = spriteBuit;
                 retrat.color = colorBuit;
                 if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(false);
+                Particules(false, Color.white);
                 return;
             }
 
-            if (assignat.definicio.retrat != null) retrat.sprite = assignat.definicio.retrat;
-            retrat.color = ColorsDeRaresa.Per(assignat.definicio.raresa);
+            // El sprite del món (no el retrat del panell): el seu, el del seu
+            // tipus o el de per defecte del catàleg; si no n'hi ha cap, el de
+            // "n'hi ha un" d'aquesta silueta.
+            Sprite s = GestorDEncarregats.Instancia != null
+                ? GestorDEncarregats.Instancia.SpriteAlMonDe(assignat.definicio)
+                : assignat.definicio.spriteAlMon;
+            if (s == null) s = spriteAssignat;
+            if (s != null) retrat.sprite = s;
+            retrat.color = Color.white;
             if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(assignat.HabilitatActiva);
+            Particules(assignat.HabilitatActiva, ColorsDeRaresa.Per(assignat.definicio.raresa));
+        }
+
+        // Es crida cada segon: només s'arrenca o s'atura quan canvia, perquè
+        // tornar a fer Play reiniciaria l'emissió. En aturar-se, les que ja
+        // volen s'acaben de fondre.
+        private void Particules(bool enceses, Color color)
+        {
+            if (particules == null) return;
+            if (enceses)
+            {
+                ParticleSystem.MainModule main = particules.main;
+                main.startColor = color;
+                if (!particules.isEmitting) particules.Play();
+            }
+            else if (particules.isEmitting)
+            {
+                particules.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            }
         }
     }
 }

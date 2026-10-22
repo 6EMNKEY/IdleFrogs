@@ -1,0 +1,897 @@
+fileFormatVersion: 2
+guid: 3e8e92a11c071e094a62bf43ac42ba7a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5407677201946864683
+    second: silueta256_0
+  - first:
+      213: 2363111698652861269
+    second: silueta256_1
+  - first:
+      213: -5103570966027466331
+    second: silueta256_2
+  - first:
+      213: -7710245987739062025
+    second: silueta256_3
+  - first:
+      213: -1786294710559829576
+    second: silueta256_4
+  - first:
+      213: -8906026555769185119
+    second: silueta256_5
+  - first:
+      213: -7038008626021791392
+    second: silueta256_6
+  - first:
+      213: 7066095330650839232
+    second: silueta256_7
+  - first:
+      213: -1419557944239354579
+    second: silueta256_8
+  - first:
+      213: -265863027348434461
+    second: silueta256_9
+  - first:
+      213: -4164560564708813131
+    second: silueta256_10
+  - first:
+      213: 1479921352753382770
+    second: silueta256_11
+  - first:
+      213: -6722709279972324315
+    second: silueta256_12
+  - first:
+      213: 3872058062904250543
+    second: silueta256_13
+  - first:
+      213: -911135947502453155
+    second: silueta256_14
+  - first:
+      213: -4842288873487199523
+    second: silueta256_15
+  - first:
+      213: -939869537731963581
+    second: silueta256_16
+  - first:
+      213: 6702282943713146451
+    second: silueta256_17
+  - first:
+      213: 1418531076339661527
+    second: silueta256_18
+  - first:
+      213: 3499617448853693413
+    second: silueta256_19
+  - first:
+      213: 7565768732720005207
+    second: silueta256_20
+  - first:
+      213: 760842011893460483
+    second: silueta256_21
+  - first:
+      213: 2456849514475463464
+    second: silueta256_22
+  - first:
+      213: -8916942072140369184
+    second: silueta256_23
+  - first:
+      213: -2184176723541580979
+    second: silueta256_24
+  - first:
+      213: -4525431216745664096
+    second: silueta256_25
+  - first:
+      213: -9039145453112658757
+    second: silueta256_26
+  - first:
+      213: 5308996471181004603
+    second: silueta256_27
+  - first:
+      213: -5296109739371795545
+    second: silueta256_28
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: silueta256_0
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 210
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d39af56c3214f4b0800000000000000
+      internalID: -5407677201946864683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_1
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 209
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55316c2d1957bc020800000000000000
+      internalID: 2363111698652861269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_2
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 209
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a98feb0f397c29b0800000000000000
+      internalID: -5103570966027466331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_3
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 200
+        width: 18
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f0bee1ff14bff490800000000000000
+      internalID: -7710245987739062025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_4
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 166
+        width: 13
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b11ce8cc6ec537e0800000000000000
+      internalID: -1786294710559829576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_5
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 185
+        width: 11
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ac9e2f9800776480800000000000000
+      internalID: -8906026555769185119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_6
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 176
+        width: 17
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06906df8178f35e90800000000000000
+      internalID: -7038008626021791392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_7
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 145
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c85d74f340df0260800000000000000
+      internalID: 7066095330650839232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_8
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 153
+        width: 13
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2d87832297bc4ce0800000000000000
+      internalID: -1419557944239354579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_9
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 128
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e19cf73cf67f4cf0800000000000000
+      internalID: -265863027348434461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_10
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 129
+        width: 15
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b65eee2b328436c0800000000000000
+      internalID: -4164560564708813131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_11
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 106
+        width: 14
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 275816e11acb98410800000000000000
+      internalID: 1479921352753382770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_12
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 103
+        width: 12
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52c070f378324b2a0800000000000000
+      internalID: -6722709279972324315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_13
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 80
+        width: 39
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa0581d0b405cb530800000000000000
+      internalID: 3872058062904250543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_14
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 85
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5ef603eeaefa53f0800000000000000
+      internalID: -911135947502453155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_15
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 71
+        width: 11
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd218f3dcebbcccb0800000000000000
+      internalID: -4842288873487199523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_16
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 61
+        width: 11
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 345964492a9e4f2f0800000000000000
+      internalID: -939869537731963581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_17
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 50
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3567e2cb3da430d50800000000000000
+      internalID: 6702282943713146451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_18
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 42
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7daf31c8f72afa310800000000000000
+      internalID: 1418531076339661527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_19
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 31
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e3eea82783219030800000000000000
+      internalID: 3499617448853693413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_20
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 27
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7508886c3920ff860800000000000000
+      internalID: 7565768732720005207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_21
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 15
+        width: 26
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30e6a1957cd0f8a00800000000000000
+      internalID: 760842011893460483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_22
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 22
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 823a6e0dd9b781220800000000000000
+      internalID: 2456849514475463464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_23
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 34
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e2765bed68a04480800000000000000
+      internalID: -8916942072140369184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_24
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 32
+        width: 17
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d43a0aa97de30b1e0800000000000000
+      internalID: -2184176723541580979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_25
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 22
+        width: 19
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a1396ef8407231c0800000000000000
+      internalID: -4525431216745664096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_26
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 27
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb4f1221a118e8280800000000000000
+      internalID: -9039145453112658757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_27
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 14
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3fcb8a89285da940800000000000000
+      internalID: 5308996471181004603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: silueta256_28
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 21
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7abe14580407086b0800000000000000
+      internalID: -5296109739371795545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      silueta256_0: -5407677201946864683
+      silueta256_1: 2363111698652861269
+      silueta256_10: -4164560564708813131
+      silueta256_11: 1479921352753382770
+      silueta256_12: -6722709279972324315
+      silueta256_13: 3872058062904250543
+      silueta256_14: -911135947502453155
+      silueta256_15: -4842288873487199523
+      silueta256_16: -939869537731963581
+      silueta256_17: 6702282943713146451
+      silueta256_18: 1418531076339661527
+      silueta256_19: 3499617448853693413
+      silueta256_2: -5103570966027466331
+      silueta256_20: 7565768732720005207
+      silueta256_21: 760842011893460483
+      silueta256_22: 2456849514475463464
+      silueta256_23: -8916942072140369184
+      silueta256_24: -2184176723541580979
+      silueta256_25: -4525431216745664096
+      silueta256_26: -9039145453112658757
+      silueta256_27: 5308996471181004603
+      silueta256_28: -5296109739371795545
+      silueta256_3: -7710245987739062025
+      silueta256_4: -1786294710559829576
+      silueta256_5: -8906026555769185119
+      silueta256_6: -7038008626021791392
+      silueta256_7: 7066095330650839232
+      silueta256_8: -1419557944239354579
+      silueta256_9: -265863027348434461
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -30,6 +30,8 @@ namespace IdleFrogs.UI
         [Header("Bombolla de text (al Canvas)")]
         [SerializeField] private GameObject arrel;
         [SerializeField] private TMP_Text text;
+        [Tooltip("Amaga la bombolla i la fletxa fins al pas següent")]
+        [SerializeField] private Button botoSaltar;
 
         [Header("Fletxa al món (opcional)")]
         [Tooltip("Un sprite qualsevol. Es col·loca damunt del que s'ha de tocar.")]
@@ -57,6 +59,7 @@ namespace IdleFrogs.UI
 
         private Pas[] _passos;
         private float _finalFins = -1f;
+        private int _pasSaltat = -1;    // el pas que el jugador ha amagat amb "Saltar"
         private readonly List<ControladorGranota> _granotes = new List<ControladorGranota>();
 
         // ---------------------------------------------------------------
@@ -126,9 +129,9 @@ namespace IdleFrogs.UI
             return GranotaQuieta;
         }
 
-        private string Falten(double preu, string perQue) =>
-            $"Necessites {FormatadorDeNombres.Doblers(preu)} per {perQue} " +
-            $"(tens {FormatadorDeNombres.Doblers(Doblers)}).\nFes voltes: granota → tren → tenda.";
+        // "Estalvia 100 per millorar el pantà."
+        private static string Falten(double preu, string clauDelPerQue) =>
+            Textos.F("guia.estalvia", FormatadorDeNombres.Doblers(preu) + Icones.Moneda, Textos.T(clauDelPerQue));
 
         // ---------------------------------------------------------------
         // Els passos
@@ -140,87 +143,90 @@ namespace IdleFrogs.UI
             {
                 arrel.SetActive(false);
                 // La bombolla és només informativa: no ha de tapar mai els tocs
-                // al món, que és el que impedia comprar el pantà.
-                foreach (Graphic g in arrel.GetComponentsInChildren<Graphic>(true)) g.raycastTarget = false;
+                // al món, que és el que impedia comprar el pantà. Menys el botó
+                // de saltar, que sí que s'ha de poder tocar.
+                foreach (Graphic g in arrel.GetComponentsInChildren<Graphic>(true))
+                    if (botoSaltar == null || !g.transform.IsChildOf(botoSaltar.transform)) g.raycastTarget = false;
             }
             if (fletxa != null) fletxa.gameObject.SetActive(false);
+            if (botoSaltar != null) botoSaltar.onClick.AddListener(Saltar);
 
             _passos = new[]
             {
                 new Pas {
-                    text = () => "Compra el teu primer pantà: toca el cartell.",
+                    text = () => Textos.T("guia.comprar"),
                     fet = () => PrimerPanta != null && PrimerPanta.EstaComprat,
                     objectiu = () => Fill<BotoDeCompra>(PrimerPanta)
                 },
                 new Pas {
-                    text = () => "Toca una granota perquè caci mosques.",
+                    text = () => Textos.T("guia.granota"),
                     fet = () => PrimerPanta != null && PrimerPanta.DoblersALaCapsa > 0,
                     enCurs = () => AlgunaGranotaTreballa,
-                    textEnCurs = () => "La granota s'omple de mosques i les porta a la capsa…",
+                    textEnCurs = () => Textos.T("guia.granota.espera"),
                     objectiu = () => GranotaQuieta
                 },
                 new Pas {
-                    text = () => "Toca el tren perquè reculli el que hi ha a la capsa.",
+                    text = () => Textos.T("guia.tren"),
                     fet = () => (estacio != null && estacio.DoblersEmmagatzemats > 0) ||
                                 (tenda != null && tenda.TotalVenut > 0),
                     enCurs = () => tren != null && (tren.estatActual != EstatTren.Esperant || tren.CarregaActual > 0),
-                    textEnCurs = () => "El tren ho recull i ho porta a l'estació…",
+                    textEnCurs = () => Textos.T("guia.tren.espera"),
                     objectiu = () => tren != null ? tren.transform : null
                 },
                 new Pas {
-                    text = () => "Toca un client perquè entri a menjar al restaurant.",
+                    text = () => Textos.T("guia.client"),
                     fet = () => tenda != null && tenda.TotalVenut > 0,
                     enCurs = () => tenda != null && tenda.AlgunClientMenja,
-                    textEnCurs = () => "El client menja i, en acabar, paga…",
+                    textEnCurs = () => Textos.T("guia.client.espera"),
                     objectiu = () => ClientQueEspera != null ? ClientQueEspera.transform : null
                 },
                 new Pas {
                     text = () => Doblers < CostDeMillorarElPanta
-                        ? Falten(CostDeMillorarElPanta, "millorar el pantà")
-                        : "Ja pots millorar el pantà: toca el botó de nivell.",
+                        ? Falten(CostDeMillorarElPanta, "guia.per_millorar")
+                        : Textos.T("guia.millora"),
                     fet = () => PrimerPanta != null && PrimerPanta.Nivell >= 2,
                     enCurs = () => PanellDeMilloraObert && Doblers >= CostDeMillorarElPanta,
-                    textEnCurs = () => "Toca Millorar.",
+                    textEnCurs = () => Textos.T("guia.millora.espera"),
                     objectiu = () => Doblers < CostDeMillorarElPanta
                         ? SeguentDelCicle()
                         : Fill<BotoDeMillora>(PrimerPanta)
                 },
                 new Pas {
-                    text = () =>
-                    {
-                        int falta = Gestor != null ? Gestor.NivellDeDesbloqueig : 5;
-                        string meta = $"Puja el pantà fins al nivell {falta} per desbloquejar els encarregats " +
-                                      $"(ara és {(PrimerPanta != null ? PrimerPanta.Nivell : 0)}).";
-                        return Doblers < CostDeMillorarElPanta
-                            ? meta + "\n" + Falten(CostDeMillorarElPanta, "la propera millora")
-                            : meta + "\nToca el botó de nivell.";
-                    },
+                    text = () => Textos.F("guia.nivell", Gestor != null ? Gestor.NivellDeDesbloqueig : 5),
                     fet = () => Gestor != null && Gestor.EstanDesbloquejats,
                     enCurs = () => PanellDeMilloraObert && Doblers >= CostDeMillorarElPanta,
-                    textEnCurs = () => "Toca Millorar. Amb x10 o Max en pots pujar uns quants de cop.",
+                    textEnCurs = () => Textos.T("guia.nivell.espera"),
                     objectiu = () => Doblers < CostDeMillorarElPanta
                         ? SeguentDelCicle()
                         : Fill<BotoDeMillora>(PrimerPanta)
                 },
                 new Pas {
                     text = () => Doblers < PreuDelPrimerEncarregat
-                        ? Falten(PreuDelPrimerEncarregat, "contractar un encarregat")
-                        : "Ja tens els encarregats! Toca la silueta del pantà per contractar-ne un.",
+                        ? Falten(PreuDelPrimerEncarregat, "guia.per_contractar")
+                        : Textos.T("guia.contractar"),
                     fet = () => Gestor != null && Gestor.Posseits.Count > 0,
                     enCurs = () => PanellDEncarregatsObert && Doblers >= PreuDelPrimerEncarregat,
-                    textEnCurs = () => "Toca Contractar.",
+                    textEnCurs = () => Textos.T("guia.contractar.espera"),
                     objectiu = () => Doblers < PreuDelPrimerEncarregat
                         ? SeguentDelCicle()
                         : Fill<SiluetaDEncarregat>(PrimerPanta)
                 },
                 new Pas {
-                    text = () => "Assigna'l al pantà: toca la silueta i després Assignar.",
+                    text = () => Textos.T("guia.assignar"),
                     fet = () => Gestor != null && Gestor.HiHaAlgunAssignat,
                     enCurs = () => PanellDEncarregatsObert,
-                    textEnCurs = () => "Toca Assignar a la fitxa del teu encarregat.",
+                    textEnCurs = () => Textos.T("guia.assignar.espera"),
                     objectiu = () => Fill<SiluetaDEncarregat>(PrimerPanta)
                 },
             };
+        }
+
+        // Amaga el pas d'ara. Quan el joc passi al següent, la guia torna.
+        private void Saltar()
+        {
+            if (_finalFins > 0f) { _finalFins = -1f; Amagar(); return; }
+            if (GameManager.Instancia != null) _pasSaltat = GameManager.Instancia.PasDeLaGuia;
+            Amagar();
         }
 
         private static Transform Fill<T>(Component pare) where T : Component
@@ -266,6 +272,9 @@ namespace IdleFrogs.UI
                 }
             }
 
+            // Amagat amb "Saltar": fins que no s'arribi al pas següent, res.
+            if (nou == _pasSaltat) { Amagar(); return; }
+
             Ensenyar(_passos[nou]);
         }
 
@@ -296,7 +305,7 @@ namespace IdleFrogs.UI
         private void EnsenyarFinal()
         {
             if (arrel != null) arrel.SetActive(true);
-            if (text != null) text.text = "Ja va sol! Contracta encarregats per al tren i la tenda i guanyaràs doblers fins i tot amb el joc tancat.";
+            if (text != null) text.text = Textos.T("guia.final");
             if (fletxa != null) fletxa.gameObject.SetActive(false);
             _finalFins = Time.unscaledTime + segonsDelMissatgeFinal;
         }

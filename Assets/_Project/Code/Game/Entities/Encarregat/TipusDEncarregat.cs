@@ -32,10 +32,10 @@ namespace IdleFrogs.Game
 
         public static string Nom(Raresa raresa) => raresa switch
         {
-            Raresa.Rar => "Rare",
-            Raresa.Epic => "Epic",
-            Raresa.Llegendari => "Legendary",
-            _ => "Common"
+            Raresa.Rar => Textos.T("raresa.rar"),
+            Raresa.Epic => Textos.T("raresa.epic"),
+            Raresa.Llegendari => Textos.T("raresa.llegendari"),
+            _ => Textos.T("raresa.comu")
         };
     }
 

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b1c13e3700965ff4880835af4ea598e, type: 3}
+  m_Name: CovesDeLapislatzuli
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PaisSO
+  nom:
+    angles: "Lapis Lazuli Caves"
+    castella: "Cuevas de Lapislázuli"
+    catala: "Coves de Lapislàtzuli"
+  nomVisible: "Lapis Lazuli Caves"
+  esCiutatComercial: 0
+  preuDeDesbloqueig: 1000000000
+  colorDeFons: {r: 0.2, g: 0.21, b: 0.25, a: 1}
+  aspecteDelsPantans: {fileID: 0}
+  spriteDeMoneda: moneda_minerals
+  iconaDeMoneda: {fileID: 21300000, guid: 9234a933512ffaeb3a1c684532b5c22c, type: 3}

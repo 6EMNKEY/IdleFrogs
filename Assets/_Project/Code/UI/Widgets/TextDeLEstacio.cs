@@ -4,24 +4,26 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    // Mateix patró que TextDeLaCapsa: va en un TMP_Text penjant de l'estació
-    // i ensenya el que el tren hi ha descarregat i encara no s'ha recollit.
+    // Mateix patró que TextDeLaCapsa: ensenya el que el tren ha descarregat a
+    // l'estació i els clients encara no han pagat. Pot anar penjant de
+    // l'estació o a qualsevol lloc (damunt del restaurant) amb el camp omplert.
     public class TextDeLEstacio : MonoBehaviour
     {
-        private Estacio _estacio;
+        [Tooltip("Buit: es busca pujant per la jerarquia. Omple'l si el text és al restaurant")]
+        [SerializeField] private Estacio _estacio;
         private TMP_Text _text;
 
         private void Awake()
         {
             _text = GetComponent<TMP_Text>();
-            _estacio = GetComponentInParent<Estacio>();
+            if (_estacio == null) _estacio = GetComponentInParent<Estacio>();
         }
 
         private void Start()
         {
             if (_estacio == null || _text == null)
             {
-                Debug.LogError("TextDeLEstacio: ha d'anar en un TMP_Text penjant de l'Estacio", this);
+                Debug.LogError("TextDeLEstacio: necessita un TMP_Text i l'Estacio (al camp o com a pare)", this);
                 enabled = false;
                 return;
             }

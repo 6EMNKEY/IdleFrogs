@@ -34,12 +34,14 @@ namespace IdleFrogs.UI
             }
 
             unitat.EnCanviDeNivell += Refrescar;
+            Textos.EnCanviDIdioma += Refrescar;
             Refrescar();
         }
 
         private void OnDestroy()
         {
             if (unitat != null) unitat.EnCanviDeNivell -= Refrescar;
+            Textos.EnCanviDIdioma -= Refrescar;
         }
 
         public void EnTocar()
@@ -49,6 +51,6 @@ namespace IdleFrogs.UI
                 PanellDeMillora.Instancia.Obrir(unitat);
         }
 
-        private void Refrescar() => _textNivell.text = $"Nivell {unitat.Nivell}";
+        private void Refrescar() => _textNivell.text = Textos.F("mon.nivell", unitat.Nivell);
     }
 }
