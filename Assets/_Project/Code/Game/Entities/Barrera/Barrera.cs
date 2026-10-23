@@ -3,8 +3,12 @@ using UnityEngine;
 
 namespace IdleFrogs.Game
 {
-    // Una barrera no es "compra": es trenca esperant. Es toca per començar
-    // el temporitzador i a partir d'aquí corre sola, també amb el joc tancat.
+    // Una barrera es salta un pantà: costa el que costaria aquell pantà i, a
+    // més, s'ha d'esperar. Quan has comprat l'últim pantà del tram surt el
+    // botó d'Unlock; pagant-lo comença el temporitzador, que corre sol també
+    // amb el joc tancat. En acabar, la barrera desapareix. És un frenazo, però
+    // el pantà de darrere produeix com el de la seva posició: en surts amb
+    // més empenta.
     //
     // Guardem l'hora de venciment en UTC i no els segons que queden: si
     // guardéssim "queden 240s", tancar l'app congelaria el rellotge i el
@@ -12,19 +16,25 @@ namespace IdleFrogs.Game
     public class Barrera : MonoBehaviour
     {
         [Header("Temporitzador")]
-        [SerializeField] private double segonsTotals = 300;
-
-        [Header("Preu per trencar-la a l'instant")]
-        [Tooltip("Entra a la mateixa seqüència ×20 que els pantans. 0 = només s'obre esperant.")]
-        [SerializeField] private double preu;
+        [Tooltip("Només si LlistaDePantans no en té per a aquesta barrera (Hores De Cada Barrera)")]
+        [SerializeField] private double segonsTotals = 3600;
 
         [Header("Arrels visuals")]
-        [Tooltip("La roca, el cartell... tot el que desapareix en obrir-se")]
+        [Tooltip("La roca, el cartell... tot el que desapareix en obrir-se. Buit: tots els fills")]
         [SerializeField] private GameObject contingut;
 
         [SerializeField] private bool iniciada;
         [SerializeField] private bool oberta;
         private DateTime _venciment;
+
+        // El preu el posa LlistaDePantans: el del pantà que es salta.
+        private double _preu;
+
+        public void Configurar(double segons, double preu)
+        {
+            if (segons > 0) segonsTotals = segons;
+            _preu = preu;
+        }
 
         public bool EstaIniciada => iniciada;
         public bool EstaOberta => oberta;
@@ -34,7 +44,15 @@ namespace IdleFrogs.Game
         // davant. Ho decideix LlistaDePantans, igual que l'estat dels pantans.
         private bool _disponible;
         public bool EsPotIniciar => _disponible && !iniciada && !oberta;
-        public void AplicarDisponibilitat(bool disponible) => _disponible = disponible;
+        public void AplicarDisponibilitat(bool disponible)
+        {
+            if (_disponible == disponible) return;
+            _disponible = disponible;
+            EnCanviDeDisponibilitat?.Invoke();
+        }
+
+        // Comprar l'últim pantà del tram fa sortir el botó.
+        public event Action EnCanviDeDisponibilitat;
 
         public double SegonsRestants
         {
@@ -77,15 +95,25 @@ namespace IdleFrogs.Game
             else EnCanviDeTemps?.Invoke();
         }
 
-        public void Iniciar()
+        public double Preu => _preu;
+
+        public bool PucPagar =>
+            _preu <= 0 || (CurrencyManager.Instancia != null && CurrencyManager.Instancia.doblersActuals >= _preu);
+
+        // Pagar i començar a esperar.
+        public bool Iniciar()
         {
-            if (oberta || iniciada) return;
+            if (!EsPotIniciar) return false;
+            if (_preu > 0 && (CurrencyManager.Instancia == null || !CurrencyManager.Instancia.GastarDoblers(_preu)))
+                return false;
+
             iniciada = true;
             _venciment = DateTime.UtcNow.AddSeconds(segonsTotals);
             EnCanviDeTemps?.Invoke();
+            return true;
         }
 
-        // Sortida 1: veure un anunci
+        // Escurçar l'espera: un anunci, gemes...
         public void ReduirTemps(double segons)
         {
             if (oberta || !iniciada || segons <= 0) return;
@@ -94,25 +122,7 @@ namespace IdleFrogs.Game
             else EnCanviDeTemps?.Invoke();
         }
 
-        // Sortida 2: pagar doblers. No cal haver iniciat el temporitzador.
-        public double Preu => preu;
-
-        public bool PucPagarLaTrencada =>
-            preu > 0 && CurrencyManager.Instancia != null &&
-            CurrencyManager.Instancia.doblersActuals >= preu;
-
-        public bool TrencarPagant()
-        {
-            if (oberta || preu <= 0) return false;
-            if (CurrencyManager.Instancia == null) return false;
-            if (!CurrencyManager.Instancia.GastarDoblers(preu)) return false;
-
-            iniciada = true;
-            Obrir();
-            return true;
-        }
-
-        // Sortida 3: premium, sense pagar doblers
+        // Obrir-la del tot sense esperar (premium).
         public void ObrirAlInstant()
         {
             if (oberta) return;
@@ -127,9 +137,17 @@ namespace IdleFrogs.Game
             EnCanviDeTemps?.Invoke();
         }
 
+        // Oberta, no en queda res. Sense Contingut s'apaguen tots els fills i no
+        // l'objecte mateix: LlistaDePantans encara la mira.
         private void Refrescar()
         {
-            if (contingut != null) contingut.SetActive(!oberta);
+            if (contingut != null)
+            {
+                contingut.SetActive(!oberta);
+                return;
+            }
+            foreach (Transform fill in transform)
+                fill.gameObject.SetActive(!oberta);
         }
 
         // ---------------------------------------------------------------

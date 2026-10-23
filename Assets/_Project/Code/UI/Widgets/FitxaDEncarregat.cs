@@ -19,8 +19,10 @@ namespace IdleFrogs.UI
         [Tooltip("El quadrat de darrere del retrat: es pinta del color de la raresa")]
         [SerializeField] private Image fonsDelRetrat;
         [SerializeField] private Image retrat;
-        [Tooltip("\"3m\"")]
+        [Tooltip("La durada (\"3m\"); mentre està encesa, el que li queda, i mentre recarrega, el que falta")]
         [SerializeField] private TMP_Text duracio;
+        [Tooltip("Mentre recarrega, el text es multiplica per això: 1 = igual, 0 = negre")]
+        [Range(0f, 1f)] [SerializeField] private float clarorEnRecarregar = 0.6f;
         [Tooltip("L'habilitat activa, curta: \"5x Vel\"")]
         [SerializeField] private TMP_Text efecte;
         [Tooltip("Opcional: l'efecte passiu, el que fa sempre mentre treballa: \"+5% Velocitat\"")]
@@ -30,6 +32,7 @@ namespace IdleFrogs.UI
         [SerializeField] private Button botoVendre;
 
         private EncarregatPosseit _encarregat;
+        private readonly ColorDelTemps _colorDelTemps = new ColorDelTemps();
         private System.Action<EncarregatPosseit> _enSeleccionar;
         private System.Action<EncarregatPosseit> _enVendre;
 
@@ -62,7 +65,12 @@ namespace IdleFrogs.UI
                 retrat.sprite = s;
                 retrat.enabled = s != null;
             }
-            if (duracio != null) duracio.text = d.DuracioCurta;
+            // El panell la torna a omplir cada segon: així el compte enrere avança.
+            if (duracio != null)
+            {
+                duracio.text = encarregat.TempsDeLHabilitat;
+                _colorDelTemps.Pintar(duracio, encarregat.Estat == EstatDHabilitat.Recarregant, clarorEnRecarregar);
+            }
             if (efecte != null) efecte.text = d.DescripcioCurtaDeLHabilitat;
             if (passiu != null) passiu.text = d.DescripcioDeLEfecte;
         }

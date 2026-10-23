@@ -60,16 +60,32 @@ namespace IdleFrogs.Game
         // Profunditat
         // ---------------------------------------------------------------
 
-        public void AssignarIndex(int index) => _index = index;
+        // L'índex és el lloc a la fila (nom, ranura, guardat). La posició és la
+        // de l'economia: el mateix índex més una per cada barrera de davant,
+        // perquè cada barrera ocupa el lloc d'un pantà.
+        private int _posicio;
+        // Les barreres de davant l'abarateixen (vegeu TramsDePantans.FactorDePreu).
+        private double _factorDePreu = 1;
+
+        public void AssignarIndex(int index) => AssignarIndex(index, index, 1);
+
+        public void AssignarIndex(int index, int posicio, double factorDePreu)
+        {
+            _index = index;
+            _posicio = posicio;
+            _factorDePreu = factorDePreu;
+        }
+
+        public double PreuALaPosicio(int posicio) => config.PreuDeCompraAlIndex(posicio);
 
         // Un pantà neix per comprar, no comprat. El tren sí que neix a
         // nivell 1, per això el valor per defecte del camp heretat és 1
         // i aquí el corregim quan s'autora el prefab.
         private void Reset() => nivell = 0;
 
-        private double MultiplicadorDeProfunditat => config.MultiplicadorDeProfunditat(_index);
+        private double MultiplicadorDeProfunditat => config.MultiplicadorDeProfunditat(_posicio);
 
-        public double PreuDeCompra => config.PreuDeCompraAlIndex(_index);
+        public double PreuDeCompra => config.PreuDeCompraAlIndex(_posicio) * _factorDePreu;
 
         // ---------------------------------------------------------------
         // UnitatMillorable

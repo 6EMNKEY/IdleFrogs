@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using IdleFrogs.Game;
 
@@ -33,12 +34,20 @@ namespace IdleFrogs.UI
         [Tooltip("S'encén mentre l'habilitat està activa. Opcional: hi pots posar una llum, un halo...")]
         [SerializeField] private GameObject indicadorDHabilitat;
 
+        [Header("Temps de l'habilitat")]
+        [Tooltip("Opcional: un text del món (TextMeshPro, no UGUI) a sobre del sprite. Només es veu " +
+                 "mentre l'habilitat està encesa (el que li queda) o recarregant (el que falta)")]
+        [SerializeField] private TMP_Text textDelTemps;
+        [Tooltip("Mentre recarrega, el text es multiplica per això: 1 = igual, 0 = negre")]
+        [Range(0f, 1f)] [SerializeField] private float clarorEnRecarregar = 0.6f;
+
         [Header("Partícules de l'habilitat")]
         [Tooltip("Es pinten del color de la raresa i sonen mentre l'habilitat està encesa. " +
                  "Buit: es busca entre els fills")]
         [SerializeField] private ParticleSystem particules;
 
         private Collider2D _collider;
+        private readonly ColorDelTemps _colorDelTemps = new ColorDelTemps();
 
         private void Awake()
         {
@@ -102,6 +111,7 @@ namespace IdleFrogs.UI
             {
                 if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(false);
                 Particules(false, Color.white);
+                PintarTemps(null);
                 return;
             }
 
@@ -115,6 +125,7 @@ namespace IdleFrogs.UI
                 retrat.color = colorBuit;
                 if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(false);
                 Particules(false, Color.white);
+                PintarTemps(null);
                 return;
             }
 
@@ -129,6 +140,20 @@ namespace IdleFrogs.UI
             retrat.color = Color.white;
             if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(assignat.HabilitatActiva);
             Particules(assignat.HabilitatActiva, ColorsDeRaresa.Per(assignat.definicio.raresa));
+            PintarTemps(assignat);
+        }
+
+        // Es crida cada segon amb la resta: així el compte enrere avança.
+        private void PintarTemps(EncarregatPosseit e)
+        {
+            if (textDelTemps == null) return;
+            bool cal = e != null && e.definicio != null && e.Estat != EstatDHabilitat.Llesta;
+            // El component i no el GameObject: si el text fos al mateix objecte
+            // que la silueta, apagar-lo l'aturaria a ella també.
+            textDelTemps.enabled = cal;
+            if (!cal) return;
+            textDelTemps.text = e.TempsDeLHabilitat;
+            _colorDelTemps.Pintar(textDelTemps, e.Estat == EstatDHabilitat.Recarregant, clarorEnRecarregar);
         }
 
         // Es crida cada segon: només s'arrenca o s'atura quan canvia, perquè

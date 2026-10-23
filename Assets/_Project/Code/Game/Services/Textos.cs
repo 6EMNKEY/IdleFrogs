@@ -127,6 +127,7 @@ namespace IdleFrogs.Game
             // ---- Encarregats ----
             ["enc.cap"]               = new[] { "No boss",                  "Sin encargado",              "Sense encarregat" },
             ["enc.durada"]            = new[] { "Effect: {0}",              "Efecto: {0}",                "Efecte: {0}" },
+            ["enc.recarrega"]         = new[] { "Recharge: {0}",            "Recarga: {0}",               "Recàrrega: {0}" },
             ["enc.passiu"]            = new[] { "Passive: {0}",             "Pasiva: {0}",                "Passiva: {0}" },
             ["enc.actiu"]             = new[] { "Active: {0}",              "Activa: {0}",                "Activa: {0}" },
             ["enc.contractat"]        = new[] { "You hired {0} · {1}",      "Has contratado a {0} · {1}", "Has contractat {0} · {1}" },
@@ -157,19 +158,14 @@ namespace IdleFrogs.Game
 
             // ---- Món ----
             ["mon.nivell"]            = new[] { "Lvl {0}",                  "Nv. {0}",                    "Nivell {0}" },
+            ["mon.desbloquejar"]      = new[] { "Unlock",                   "Desbloquear",                "Desbloquejar" },
             ["mon.comprar"]           = new[] { "Buy\n{0}",                 "Comprar\n{0}",               "Comprar\n{0}" },
-            ["mon.trencar"]           = new[] { "Break\n{0}",               "Romper\n{0}",                "Trencar\n{0}" },
-            ["mon.o"]                 = new[] { "{0}\nor {1}",              "{0}\no {1}",                 "{0}\no {1}" },
-            ["mon.bloquejat"]         = new[] { "Locked",                   "Bloqueado",                  "Bloquejat" },
 
             // ---- Guia inicial ----
             ["guia.comprar"]          = new[] { "Tap the sign to buy your first swamp.", "Toca el cartel para comprar tu primer pantano.", "Toca el cartell per comprar el teu primer pantà." },
             ["guia.granota"]          = new[] { "Tap a frog to catch flies.",            "Toca una rana para cazar moscas.",              "Toca una granota perquè caci mosques." },
-            ["guia.granota.espera"]   = new[] { "Catching flies…",                       "Cazando moscas…",                               "Caçant mosques…" },
             ["guia.tren"]             = new[] { "Tap the train to collect the flies.",   "Toca el tren para recoger las moscas.",         "Toca el tren per recollir les mosques." },
-            ["guia.tren.espera"]      = new[] { "On its way to the station…",            "De camino a la estación…",                      "Camí de l'estació…" },
             ["guia.client"]           = new[] { "Tap a customer to let them in.",        "Toca un cliente para que entre.",               "Toca un client perquè entri." },
-            ["guia.client.espera"]    = new[] { "Eating… they pay when done.",           "Comiendo… pagará al terminar.",                 "Menjant… pagarà en acabar." },
             ["guia.estalvia"]         = new[] { "Save {0} to {1}.",                      "Ahorra {0} para {1}.",                          "Estalvia {0} per {1}." },
             ["guia.per_millorar"]     = new[] { "upgrade the swamp",                     "mejorar el pantano",                            "millorar el pantà" },
             ["guia.per_contractar"]   = new[] { "hire a manager",                        "contratar un encargado",                        "contractar un encarregat" },

@@ -40,8 +40,10 @@ namespace IdleFrogs.UI
         [SerializeField] private TMP_Text nomActual;
         [Tooltip("\"Epic\", del color de la raresa")]
         [SerializeField] private TMP_Text raresaActual;
-        [Tooltip("\"Efecte : 3m\"")]
+        [Tooltip("\"Efecte: 3m\"; encesa, el que li queda; recarregant, \"Recàrrega: 2m 10s\"")]
         [SerializeField] private TMP_Text duracioActual;
+        [Tooltip("Mentre recarrega, el text es multiplica per això: 1 = igual, 0 = negre")]
+        [Range(0f, 1f)] [SerializeField] private float clarorEnRecarregar = 0.6f;
         [Tooltip("L'habilitat activa: \"5x Velocitat de recol·lecció\"")]
         [SerializeField] private TMP_Text habilitatActual;
         [Tooltip("Opcional: l'efecte passiu, el que fa sempre mentre treballa")]
@@ -81,6 +83,7 @@ namespace IdleFrogs.UI
         private EncarregatPosseit _seleccionat;
         private readonly List<EncarregatPosseit> _dades = new List<EncarregatPosseit>();
         private readonly List<FitxaDEncarregat> _fitxes = new List<FitxaDEncarregat>();
+        private readonly ColorDelTemps _colorDelTemps = new ColorDelTemps();
 
         private void Awake()
         {
@@ -199,7 +202,10 @@ namespace IdleFrogs.UI
                 raresaActual.text = hiEs ? ColorsDeRaresa.Nom(d.raresa) : string.Empty;
                 if (hiEs) raresaActual.color = ColorsDeRaresa.Per(d.raresa);
             }
-            if (duracioActual != null) duracioActual.text = hiEs ? Textos.F("enc.durada", d.DuracioCurta) : string.Empty;
+            if (duracioActual != null)
+                duracioActual.text = !hiEs ? string.Empty
+                    : Textos.F(actual.Estat == EstatDHabilitat.Recarregant ? "enc.recarrega" : "enc.durada", actual.TempsDeLHabilitat);
+            _colorDelTemps.Pintar(duracioActual, hiEs && actual.Estat == EstatDHabilitat.Recarregant, clarorEnRecarregar);
             if (habilitatActual != null) habilitatActual.text = hiEs ? Textos.F("enc.actiu", d.DescripcioDeLHabilitat) : string.Empty;
             if (passiuActual != null) passiuActual.text = hiEs ? Textos.F("enc.passiu", d.DescripcioDeLEfecte) : string.Empty;
 

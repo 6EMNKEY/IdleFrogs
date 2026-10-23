@@ -18,6 +18,68 @@ namespace IdleFrogs.Game
         }
 
         public static int Total(int[] trams) => UltimDelTram(trams, int.MaxValue) + 1;
+
+        // Cada barrera "es menja" una posició: costa el que costaria el pantà
+        // que hi aniria, i els que hi ha darrere produeixen i costen com si
+        // aquell pantà existís. La posició econòmica d'un pantà és el seu
+        // índex més les barreres que té davant.
+        public static int BarreresAbans(int[] trams, int index, int barreres)
+        {
+            int quantes = 0;
+            for (int n = 0; n < barreres; n++)
+            {
+                int ultim = UltimDelTram(trams, n);
+                if (ultim >= 0 && ultim < index) quantes++;
+            }
+            return quantes;
+        }
+
+        public static int PosicioDelPanta(int[] trams, int index, int barreres) =>
+            index + BarreresAbans(trams, index, barreres);
+
+        // La posició que es menja la barrera n: la del que seria el pantà
+        // just després de l'últim del seu tram.
+        public static int PosicioDeLaBarrera(int[] trams, int barrera) =>
+            UltimDelTram(trams, barrera) + barrera + 1;
+
+        // El preu no segueix la posició del tot: el salt de la barrera al
+        // pantà de darrere és petit (×1,5 en lloc del ×20 de sempre) i la
+        // resta continua des d'aquí amb els salts normals. Cada barrera
+        // passada abarateix tot el que ve darrere pel mateix factor.
+        //
+        // preuBase(posicio) és el preu de la configuració sense barreres.
+        public static double FactorDePreu(int[] trams, int index, int barreres,
+                                          System.Func<int, double> preuBase, double saltDespresDeBarrera)
+        {
+            double factor = 1;
+            for (int n = 0; n < barreres; n++)
+            {
+                int ultim = UltimDelTram(trams, n);
+                if (ultim < 0 || ultim >= index) continue;
+                factor *= Rebaixa(trams, n, preuBase, saltDespresDeBarrera);
+            }
+            return factor;
+        }
+
+        // La barrera n paga les rebaixes de les d'abans, no la seva.
+        public static double FactorDePreuDeLaBarrera(int[] trams, int barrera,
+                                                     System.Func<int, double> preuBase, double saltDespresDeBarrera)
+        {
+            double factor = 1;
+            for (int n = 0; n < barrera; n++) factor *= Rebaixa(trams, n, preuBase, saltDespresDeBarrera);
+            return factor;
+        }
+
+        // Quant més barat surt el pantà de darrere de la barrera n que si
+        // seguís el salt normal.
+        private static double Rebaixa(int[] trams, int barrera, System.Func<int, double> preuBase, double salt)
+        {
+            int posicio = PosicioDeLaBarrera(trams, barrera);
+            double deLaBarrera = preuBase(posicio);
+            double delSeguent = preuBase(posicio + 1);
+            if (deLaBarrera <= 0 || delSeguent <= 0 || salt <= 0) return 1;
+            return salt * deLaBarrera / delSeguent;
+        }
     }
 
     public class LlistaDePantans : MonoBehaviour
@@ -32,6 +94,14 @@ namespace IdleFrogs.Game
         [Header("Una barrera entre cada dos trams, en el mateix ordre")]
         [SerializeField] private Barrera[] barreres;
 
+        [Header("Hores que tarda cada barrera a obrir-se, en el mateix ordre")]
+        [Tooltip("El preu no es posa: és el del pantà que la barrera es salta")]
+        [SerializeField] private float[] horesDeCadaBarrera = { 1, 3, 8, 16, 24 };
+
+        [Tooltip("El pantà de darrere d'una barrera costa el preu de la barrera per això " +
+                 "(en lloc del salt normal). Els següents continuen des d'aquí. Produeixen igual")]
+        [Min(0.01f)] [SerializeField] private float saltDePreuDespresDeBarrera = 1.5f;
+
         public int Quantitat => pantans != null ? pantans.Length : 0;
         public int QuantitatDeBarreres => barreres != null ? barreres.Length : 0;
         public Panta Obtenir(int index) => pantans[index];
@@ -45,7 +115,8 @@ namespace IdleFrogs.Game
             for (int i = 0; i < Quantitat; i++)
             {
                 if (pantans[i] == null) continue;
-                pantans[i].AssignarIndex(i);
+                pantans[i].AssignarIndex(i, TramsDePantans.PosicioDelPanta(pantansPerTram, i, QuantitatDeBarreres),
+                    TramsDePantans.FactorDePreu(pantansPerTram, i, QuantitatDeBarreres, pantans[i].PreuALaPosicio, saltDePreuDespresDeBarrera));
                 // Comprar un pantà desbloqueja el següent, i obrir una
                 // barrera desbloqueja tot un tram: ho recalculem tot.
                 // Els prefabs no poden referenciar-nos, així que som
@@ -54,7 +125,25 @@ namespace IdleFrogs.Game
             }
 
             for (int n = 0; n < QuantitatDeBarreres; n++)
-                if (barreres[n] != null) barreres[n].EnCanviDeTemps += ActualitzarEstats;
+            {
+                if (barreres[n] == null) continue;
+                barreres[n].Configurar(SegonsDeLaBarrera(n), PreuDeLaBarrera(n));
+                barreres[n].EnCanviDeTemps += ActualitzarEstats;
+            }
+        }
+
+        // Si la llista d'hores és més curta, la barrera es queda amb el seu temps.
+        private double SegonsDeLaBarrera(int n) =>
+            horesDeCadaBarrera != null && n < horesDeCadaBarrera.Length ? horesDeCadaBarrera[n] * 3600.0 : -1;
+
+        // El preu del pantà que es salta, amb la configuració del de davant.
+        private double PreuDeLaBarrera(int n)
+        {
+            int ultim = TramsDePantans.UltimDelTram(pantansPerTram, n);
+            if (ultim < 0 || ultim >= Quantitat || pantans[ultim] == null) return 0;
+            Panta p = pantans[ultim];
+            return p.PreuALaPosicio(TramsDePantans.PosicioDeLaBarrera(pantansPerTram, n)) *
+                   TramsDePantans.FactorDePreuDeLaBarrera(pantansPerTram, n, p.PreuALaPosicio, saltDePreuDespresDeBarrera);
         }
 
         private void OnDestroy()

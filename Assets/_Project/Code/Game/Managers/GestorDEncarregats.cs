@@ -44,7 +44,32 @@ namespace IdleFrogs.Game
                 return queden < 0 ? 0 : queden;
             }
         }
+
+        // Encesa mana: si la recàrrega fos més curta que la durada, mentre
+        // dura segueix sent "encesa".
+        public EstatDHabilitat Estat =>
+            HabilitatActiva ? EstatDHabilitat.Activa
+            : HabilitatLlesta ? EstatDHabilitat.Llesta
+            : EstatDHabilitat.Recarregant;
+
+        // El temps que s'ensenya: la durada si està llesta, el que li queda si
+        // està encesa i el que falta per tornar-la a fer servir si recarrega.
+        public string TempsDeLHabilitat
+        {
+            get
+            {
+                if (definicio == null) return string.Empty;
+                switch (Estat)
+                {
+                    case EstatDHabilitat.Activa: return FormatadorDeNombres.TempsCurt(SegonsDHabilitatRestants);
+                    case EstatDHabilitat.Recarregant: return FormatadorDeNombres.TempsCurt(SegonsFinsLlesta);
+                    default: return definicio.DuracioCurta;
+                }
+            }
+        }
     }
+
+    public enum EstatDHabilitat { Llesta, Activa, Recarregant }
 
     // Qui té quins encarregats i on estan posats. Els efectes i l'automatisme
     // encara no hi són: això només compra, guarda i assigna.

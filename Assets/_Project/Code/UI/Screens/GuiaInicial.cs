@@ -53,7 +53,7 @@ namespace IdleFrogs.UI
             public Func<string> text;
             public Func<bool> fet;
             public Func<bool> enCurs;        // null = el pas no té espera
-            public Func<string> textEnCurs;
+            public Func<string> textEnCurs;  // null = mentre espera, la bombolla s'amaga
             public Func<Transform> objectiu;
         }
 
@@ -162,7 +162,6 @@ namespace IdleFrogs.UI
                     text = () => Textos.T("guia.granota"),
                     fet = () => PrimerPanta != null && PrimerPanta.DoblersALaCapsa > 0,
                     enCurs = () => AlgunaGranotaTreballa,
-                    textEnCurs = () => Textos.T("guia.granota.espera"),
                     objectiu = () => GranotaQuieta
                 },
                 new Pas {
@@ -170,14 +169,12 @@ namespace IdleFrogs.UI
                     fet = () => (estacio != null && estacio.DoblersEmmagatzemats > 0) ||
                                 (tenda != null && tenda.TotalVenut > 0),
                     enCurs = () => tren != null && (tren.estatActual != EstatTren.Esperant || tren.CarregaActual > 0),
-                    textEnCurs = () => Textos.T("guia.tren.espera"),
                     objectiu = () => tren != null ? tren.transform : null
                 },
                 new Pas {
                     text = () => Textos.T("guia.client"),
                     fet = () => tenda != null && tenda.TotalVenut > 0,
                     enCurs = () => tenda != null && tenda.AlgunClientMenja,
-                    textEnCurs = () => Textos.T("guia.client.espera"),
                     objectiu = () => ClientQueEspera != null ? ClientQueEspera.transform : null
                 },
                 new Pas {
@@ -280,11 +277,14 @@ namespace IdleFrogs.UI
 
         private void Ensenyar(Pas pas)
         {
-            if (arrel != null && !arrel.activeSelf) arrel.SetActive(true);
-
             // Acció feta, esperant el resultat: la fletxa fora, perquè ja no
-            // hi ha res a tocar, i el text diu què està passant.
+            // hi ha res a tocar. Si es veu què passa (la granota caçant, el
+            // tren anant, el client menjant) no cal dir-ho: la bombolla
+            // s'amaga fins que torni a tocar fer alguna cosa.
             bool esperant = pas.enCurs != null && pas.enCurs();
+            if (esperant && pas.textEnCurs == null) { Amagar(); return; }
+
+            if (arrel != null && !arrel.activeSelf) arrel.SetActive(true);
             if (text != null)
                 text.text = esperant && pas.textEnCurs != null ? pas.textEnCurs() : pas.text();
 
