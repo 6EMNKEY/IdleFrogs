@@ -111,7 +111,7 @@ namespace IdleFrogs.UI
 
             if (assignat == null || assignat.definicio == null)
             {
-                if (spriteBuit != null) retrat.sprite = spriteBuit;
+                if (spriteBuit != null) retrat.sprite = SpritesDelPais.Substituir(spriteBuit);
                 retrat.color = colorBuit;
                 if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(false);
                 Particules(false, Color.white);
@@ -124,7 +124,7 @@ namespace IdleFrogs.UI
             Sprite s = GestorDEncarregats.Instancia != null
                 ? GestorDEncarregats.Instancia.SpriteAlMonDe(assignat.definicio)
                 : assignat.definicio.spriteAlMon;
-            if (s == null) s = spriteAssignat;
+            if (s == null) s = SpritesDelPais.Substituir(spriteAssignat);
             if (s != null) retrat.sprite = s;
             retrat.color = Color.white;
             if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(assignat.HabilitatActiva);

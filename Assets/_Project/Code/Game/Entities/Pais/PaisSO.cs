@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace IdleFrogs.Game
@@ -40,5 +41,39 @@ namespace IdleFrogs.Game
         public string spriteDeMoneda = "moneda";
         [Tooltip("La icona que vola cap al comptador i la del HUD. Buit: la de sempre")]
         public Sprite iconaDeMoneda;
+
+        // Cada fila: el sprite del primer país i el que el substitueix aquí.
+        // El que no hi sigui es queda com al primer país. Les llistes només
+        // serveixen per endreçar: totes funcionen igual i un sprite que surt
+        // a diversos llocs (la mosca) es canvia a tot arreu amb una fila.
+        [Header("Sprites del país — buit: els del primer país")]
+        [Tooltip("El tren, el recipient i el que porti a sobre")]
+        public CanviDeSprite[] tren;
+        [Tooltip("El restaurant, l'estació, la botiga i els clients")]
+        public CanviDeSprite[] restaurantIEstacio;
+        [Tooltip("Les herbes i flors de la decoració. Es queden al mateix lloc (la mateixa llavor): " +
+                 "si el dibuix nou és molt més gran, pot tocar els pantans")]
+        public CanviDeSprite[] herbesIFlors;
+        [Tooltip("La de l'eixam, la del tren, la de la llengua...")]
+        public CanviDeSprite[] mosques;
+        [Tooltip("Els retrats del panell i els sprites al món (també la silueta buida)")]
+        public CanviDeSprite[] encarregats;
+        [Tooltip("Fons, capsa, nenúfars... S'aplica també damunt d'Aspecte Dels Pantans")]
+        public CanviDeSprite[] pantans;
+        [Tooltip("El cos normal i el de la boca oberta")]
+        public CanviDeSprite[] granotes;
+        [Tooltip("Els botons de millorar i el cartell de comprar, al món i als panells")]
+        public CanviDeSprite[] botons;
+        public CanviDeSprite[] barreres;
+
+        public IEnumerable<CanviDeSprite> CanvisDeSprites()
+        {
+            CanviDeSprite[][] llistes = { tren, restaurantIEstacio, herbesIFlors, mosques, encarregats, pantans, granotes, botons, barreres };
+            foreach (CanviDeSprite[] llista in llistes)
+            {
+                if (llista == null) continue;
+                foreach (CanviDeSprite c in llista) yield return c;
+            }
+        }
     }
 }

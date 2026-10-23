@@ -68,8 +68,11 @@ namespace IdleFrogs.Game
 
         // Les dues imatges que toca ensenyar: la seva, la del seu tipus o la de
         // per defecte. El retrat és el del panell; el sprite al món, la silueta.
-        public Sprite RetratDe(EncarregatSO e) => cataleg != null ? cataleg.RetratDe(e) : (e != null ? e.retrat : null);
-        public Sprite SpriteAlMonDe(EncarregatSO e) => cataleg != null ? cataleg.SpriteAlMonDe(e) : (e != null ? e.spriteAlMon : null);
+        // Amb els canvis de sprites del país al damunt.
+        public Sprite RetratDe(EncarregatSO e) =>
+            SpritesDelPais.Substituir(cataleg != null ? cataleg.RetratDe(e) : (e != null ? e.retrat : null));
+        public Sprite SpriteAlMonDe(EncarregatSO e) =>
+            SpritesDelPais.Substituir(cataleg != null ? cataleg.SpriteAlMonDe(e) : (e != null ? e.spriteAlMon : null));
 
         public double PreuDeLaSeguentCompra(TipusDeLloc lloc) =>
             cataleg != null ? cataleg.PreuDeLaCompra(Comprats(lloc)) : 0;

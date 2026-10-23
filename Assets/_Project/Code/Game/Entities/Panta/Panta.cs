@@ -348,7 +348,8 @@ namespace IdleFrogs.Game
         private static void PosarSprite(SpriteRenderer renderitzador, Sprite sprite, Color? tint)
         {
             if (renderitzador == null) return;
-            if (sprite != null) renderitzador.sprite = sprite;
+            // Damunt de l'aspecte, els canvis de sprites del país.
+            if (sprite != null) renderitzador.sprite = SpritesDelPais.Substituir(sprite);
             if (tint.HasValue) renderitzador.color = tint.Value;
         }
 

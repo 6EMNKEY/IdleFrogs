@@ -309,9 +309,10 @@ namespace IdleFrogs.Game
 
         public void SpriteALAtzar(SpriteRenderer sr)
         {
-            if (aspectes == null || aspectes.Length == 0 || sr == null) return;
-            Sprite s = aspectes[Random.Range(0, aspectes.Length)];
-            if (s != null) sr.sprite = s;
+            if (sr == null) return;
+            Sprite s = aspectes != null && aspectes.Length > 0 ? aspectes[Random.Range(0, aspectes.Length)] : null;
+            // Sense aspectes, el del prefab; i tant l'un com l'altre, el del país si en té.
+            sr.sprite = SpritesDelPais.Substituir(s != null ? s : sr.sprite);
         }
 
         // Per a la guia inicial: el primer que espera a la porta sense encarregat.

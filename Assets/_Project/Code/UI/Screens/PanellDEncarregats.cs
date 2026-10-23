@@ -242,7 +242,11 @@ namespace IdleFrogs.UI
             if (contenidorDeFitxes == null || prefabDeFitxa == null) return;
 
             while (_fitxes.Count < _dades.Count)
-                _fitxes.Add(Instantiate(prefabDeFitxa, contenidorDeFitxes, false));
+            {
+                FitxaDEncarregat fitxa = Instantiate(prefabDeFitxa, contenidorDeFitxes, false);
+                AspecteDelPais.Aplicar(fitxa.gameObject);
+                _fitxes.Add(fitxa);
+            }
 
             for (int i = 0; i < _fitxes.Count; i++)
             {

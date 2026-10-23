@@ -78,7 +78,8 @@ namespace IdleFrogs.Game
         {
             _momentDelPic = MomentDelPic();
             // La boca tancada és el que tingui posat el cos d'entrada.
-            if (cos != null) _bocaTancada = cos.sprite;
+            if (cos != null) _bocaTancada = SpritesDelPais.Substituir(cos.sprite);
+            bocaOberta = SpritesDelPais.Substituir(bocaOberta);
             Amagar();
         }
 

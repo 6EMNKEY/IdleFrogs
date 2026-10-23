@@ -233,7 +233,7 @@ namespace IdleFrogs.UI
         {
             if (retrat != null)
             {
-                retrat.sprite = _unitat.RetratDelPanell;
+                retrat.sprite = SpritesDelPais.Substituir(_unitat.RetratDelPanell);
                 retrat.enabled = retrat.sprite != null;
             }
             if (nom != null) nom.text = _unitat.NomVisible;
@@ -262,7 +262,11 @@ namespace IdleFrogs.UI
             if (contenidorDeFiles == null || prefabDeFila == null) return;
 
             while (_files.Count < _dades.Count)
-                _files.Add(Instantiate(prefabDeFila, contenidorDeFiles));
+            {
+                FilaDEstadistica fila = Instantiate(prefabDeFila, contenidorDeFiles);
+                AspecteDelPais.Aplicar(fila.gameObject);
+                _files.Add(fila);
+            }
 
             for (int i = 0; i < _files.Count; i++)
             {
