@@ -15,8 +15,13 @@ namespace IdleFrogs.Game
         public static GestorDeBotiga Instancia { get; private set; }
 
         [SerializeField] private CatalegDeBotiga cataleg;
+        [Header("Pagar amb gemes el que falta")]
         [Tooltip("Gemes que costa una hora d'ingressos quan falten monedes (igual que a la botiga)")]
         [Min(1)] [SerializeField] private float gemesPerHoraDIngressos = 60f;
+        [Tooltip("El mínim: el que falta, per poc que sigui, no costa menys")]
+        [Min(1)] [SerializeField] private int minimDeGemes = 5;
+        [Tooltip("Per sobre d'això no s'ofereix pagar amb gemes: només \"Et falten X\"")]
+        [Min(1)] [SerializeField] private int maximDeGemes = 100000;
 
         public CatalegDeBotiga Cataleg => cataleg;
 
@@ -271,21 +276,31 @@ namespace IdleFrogs.Game
         }
 
         // Temps d'ingressos = el ritme de tota la cadena del país on ets (el
-        // coll d'ampolla) pel temps, amb el x2 permanent si el tens.
+        // coll d'ampolla) pel temps, amb el x2 permanent si el tens. Sense les
+        // habilitats enceses: si no, encendre-les abans de cobrar o de pagar
+        // amb gemes sortiria a compte.
         public double DoblersDeTemps(double segons)
         {
             if (GameManager.Instancia == null) return 0;
-            return GameManager.Instancia.Mesures().CollDAmpolla * segons * FactorPermanent;
+            return GameManager.Instancia.Mesures(senseHabilitats: true).CollDAmpolla * segons * FactorPermanent;
         }
 
         // Les gemes que valen uns doblers que falten: el temps que trigaries a
-        // guanyar-los al ritme de la cadena, al preu de la botiga. Mínim 1.
-        public int GemesPer(double doblers)
+        // guanyar-los al ritme de la cadena (sense habilitats), al preu de la
+        // botiga. 0 = no s'ofereix pagar amb gemes.
+        public int GemesPer(double doblers) =>
+            CalcularGemes(doblers, DoblersDeTemps(3600), gemesPerHoraDIngressos, minimDeGemes, maximDeGemes);
+
+        // Separat per poder-ho provar. Sense ritme (un país acabat d'obrir) no
+        // se sap quant val el temps: no s'ofereix. Massa gemes (o un número
+        // que no cap en un int) tampoc.
+        public static int CalcularGemes(double doblers, double perHora, double gemesPerHora, int minim, int maxim)
         {
-            if (doblers <= 0) return 0;
-            double perHora = DoblersDeTemps(3600);
-            if (perHora <= 0) return Mathf.CeilToInt(gemesPerHoraDIngressos);
-            return Math.Max(1, (int)Math.Ceiling(doblers / perHora * gemesPerHoraDIngressos));
+            if (!(doblers > 0)) return 0;
+            if (!(perHora > 0) || double.IsInfinity(perHora)) return 0;
+            double gemes = Math.Ceiling(doblers / perHora * gemesPerHora);
+            if (double.IsNaN(gemes) || gemes > maxim) return 0;
+            return Math.Max(minim, (int)gemes);
         }
 
         // ---------------------------------------------------------------

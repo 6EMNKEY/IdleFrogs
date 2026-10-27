@@ -361,16 +361,17 @@ namespace IdleFrogs.Game
             if (!_unitats.TryGetValue(ranura, out UnitatMillorable unitat) || unitat == null) return;
 
             EncarregatPosseit e = ALaRanura(ranura);
-            unitat.AplicarBonificacions(CalcularBonificacions(e), e != null);
+            unitat.AplicarBonificacions(CalcularBonificacions(e, true), CalcularBonificacions(e, false), e != null);
         }
 
-        private static Bonificacions CalcularBonificacions(EncarregatPosseit e)
+        // ambHabilitat = false: només la passiva, encara que l'habilitat estigui encesa.
+        private static Bonificacions CalcularBonificacions(EncarregatPosseit e, bool ambHabilitat)
         {
             Bonificacions b = Bonificacions.Cap;
             if (e == null || e.definicio == null) return b;
 
             double magnitud = e.definicio.magnitud;
-            if (e.HabilitatActiva)
+            if (ambHabilitat && e.HabilitatActiva)
                 magnitud = e.definicio.EsReduccioDeCost ? e.definicio.RebaixaDeLHabilitat
                                                        : magnitud * e.definicio.magnitudDeLHabilitat;
 

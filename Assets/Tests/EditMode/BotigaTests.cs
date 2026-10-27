@@ -141,5 +141,39 @@ namespace IdleFrogs.Tests.EditMode
             Assert.AreEqual(Raresa.Llegendari, cofre.TirarRaresa(0.98));
             Assert.AreEqual(Raresa.Llegendari, cofre.TirarRaresa(0.99999));
         }
+            // ---- Pagar amb gemes el que falta ----
+
+        [Test]
+        public void Gemes_TempsAlPreuDeLaBotiga()
+        {
+            // 10.000 que falten a 10.000/h = 1 h = 60 gemes.
+            Assert.AreEqual(60, GestorDeBotiga.CalcularGemes(10000, 10000, 60, 5, 100000));
+        }
+
+        [Test]
+        public void Gemes_ElMinim()
+        {
+            Assert.AreEqual(5, GestorDeBotiga.CalcularGemes(10, 100000, 60, 5, 100000));
+        }
+
+        // Sense ritme no se sap quant val el temps: no s'ofereix.
+        [Test]
+        public void Gemes_SenseRitme_NoSOfereix()
+        {
+            Assert.AreEqual(0, GestorDeBotiga.CalcularGemes(1e6, 0, 60, 5, 100000));
+            Assert.AreEqual(0, GestorDeBotiga.CalcularGemes(1e6, double.NaN, 60, 5, 100000));
+            Assert.AreEqual(0, GestorDeBotiga.CalcularGemes(1e6, double.PositiveInfinity, 60, 5, 100000));
+        }
+
+        // El que abans desbordava l'int i sortia a 1 gema.
+        [Test]
+        public void Gemes_MassaCar_NoSOfereix()
+        {
+            Assert.AreEqual(0, GestorDeBotiga.CalcularGemes(1e26, 18000, 60, 5, 100000));
+            Assert.AreEqual(0, GestorDeBotiga.CalcularGemes(1e300, 1e-300, 60, 5, 100000));
+        }
+
+        [Test]
+        public void Gemes_NoFaltaRes() => Assert.AreEqual(0, GestorDeBotiga.CalcularGemes(0, 1000, 60, 5, 100000));
     }
 }

@@ -88,17 +88,34 @@ namespace IdleFrogs.Game
         public abstract Ranura Ranura { get; }
 
         public Bonificacions Bonus { get; private set; } = Bonificacions.Cap;
+        // El mateix sense les habilitats actives: només les passives. Per
+        // mesurar el que la unitat fa de normal (el preu en gemes no ha de
+        // baixar perquè hi hagi una habilitat encesa).
+        public Bonificacions BonusPassiu { get; private set; } = Bonificacions.Cap;
         public bool EstaAutomatitzada { get; private set; }
         public event System.Action EnCanviDeBonificacions;
 
         // La crida el GestorDEncarregats quan canvia una assignació o quan
         // s'encén o s'apaga una habilitat.
-        public void AplicarBonificacions(Bonificacions bonus, bool automatitzada)
+        public void AplicarBonificacions(Bonificacions bonus, bool automatitzada) =>
+            AplicarBonificacions(bonus, bonus, automatitzada);
+
+        public void AplicarBonificacions(Bonificacions bonus, Bonificacions passiu, bool automatitzada)
         {
             Bonus = bonus;
+            BonusPassiu = passiu;
             EstaAutomatitzada = automatitzada;
             EnCanviDeBonificacions?.Invoke();
             AvisarCanviDeNivell();   // les estadístiques mostrades han canviat
+        }
+
+        // Per mesurar sense habilitats: canvia el bonus un moment sense avisar
+        // ningú (no és un canvi de debò) i torna l'anterior per restaurar-lo.
+        public Bonificacions CanviarBonusEnSilenci(Bonificacions bonus)
+        {
+            Bonificacions abans = Bonus;
+            Bonus = bonus;
+            return abans;
         }
 
         public abstract string NomVisible { get; }

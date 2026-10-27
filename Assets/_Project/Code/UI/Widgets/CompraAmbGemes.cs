@@ -27,7 +27,12 @@ namespace IdleFrogs.UI
 
             double falta = preu - c.doblersActuals;
             int gemes = GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.GemesPer(falta) : 0;
-            if (gemes <= 0) return;
+            if (gemes <= 0)
+            {
+                // No es pot pagar amb gemes (sense ritme o massa car): només s'avisa.
+                FinestraDeConfirmacio.Preguntar(titol, Textos.F("conf.falten", FormatadorDeNombres.Doblers(falta) + Icones.Moneda), null);
+                return;
+            }
 
             string enGemes = FormatadorDeNombres.Doblers(gemes) + Icones.Gema;
             FinestraDeConfirmacio.Preguntar(

@@ -249,6 +249,7 @@ namespace IdleFrogs.Game
             ["conf.comprar.text"] = new[] { "Buy {0} for {1}", "Comprar {0} por {1}", "Comprar {0} per {1}" },
             ["conf.contractar.titol"] = new[] { "Hire", "Contratar", "Contractar" },
             ["conf.contractar.text"] = new[] { "Hire a manager for {0}", "Contratar un encargado por {0}", "Contractar un encarregat per {0}" },
+            ["conf.falten"]           = new[] { "You need {0} more",        "Te faltan {0}",              "Et falten {0}" },
             ["conf.barrera.text"] = new[] { "Unlock the barrier for {0}", "Desbloquear la barrera por {0}", "Desbloquejar la barrera per {0}" },
             ["ui.saltar"]             = new[] { "Skip",                     "Saltar",                     "Saltar" },
             ["ui.mapa"]               = new[] { "Map",                      "Mapa",                       "Mapa" },

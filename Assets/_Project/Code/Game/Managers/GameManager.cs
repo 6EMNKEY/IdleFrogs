@@ -203,7 +203,30 @@ namespace IdleFrogs.Game
         //
         // Amb 'nomesAutomatitzat' compta només el que va sol: un pantà sense
         // encarregat no suma, i un tren o un restaurant sense encarregat valen 0.
-        public MesuresDeLaCadena Mesures(bool nomesAutomatitzat = false)
+        // Amb 'senseHabilitats' es mesura amb els bonus passius dels encarregats,
+        // sense les habilitats que estiguin enceses: el ritme de sempre, que no
+        // es pot inflar un moment per pagar menys gemes.
+        public MesuresDeLaCadena Mesures(bool nomesAutomatitzat = false, bool senseHabilitats = false)
+        {
+            if (!senseHabilitats) return MesurarAra(nomesAutomatitzat);
+
+            var unitats = new System.Collections.Generic.List<UnitatMillorable>();
+            if (llistaDePantans != null)
+                for (int i = 0; i < llistaDePantans.Quantitat; i++)
+                    if (llistaDePantans.Obtenir(i) != null) unitats.Add(llistaDePantans.Obtenir(i));
+            if (tren != null) unitats.Add(tren);
+            if (tenda != null) unitats.Add(tenda);
+
+            var abans = new Bonificacions[unitats.Count];
+            for (int i = 0; i < unitats.Count; i++) abans[i] = unitats[i].CanviarBonusEnSilenci(unitats[i].BonusPassiu);
+            try { return MesurarAra(nomesAutomatitzat); }
+            finally
+            {
+                for (int i = 0; i < unitats.Count; i++) unitats[i].CanviarBonusEnSilenci(abans[i]);
+            }
+        }
+
+        private MesuresDeLaCadena MesurarAra(bool nomesAutomatitzat)
         {
             double pantans = 0;
             if (llistaDePantans != null)
