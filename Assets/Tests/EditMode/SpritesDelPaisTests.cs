@@ -54,7 +54,7 @@ namespace IdleFrogs.Tests.EditMode
 
             PaisSO p = NouPais();
             p.tren = new[] { new CanviDeSprite { original = tren, perAquestPais = trenFoc } };
-            p.herbesIFlors = new[] { new CanviDeSprite { original = herba, perAquestPais = herbaFoc } };
+            p.botons = new[] { new CanviDeSprite { original = herba, perAquestPais = herbaFoc } };
             p.granotes = new[]
             {
                 new CanviDeSprite { original = granota, perAquestPais = null },

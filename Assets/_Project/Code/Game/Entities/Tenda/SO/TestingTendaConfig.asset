@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.TendaConfigSO
   tempsDeMenjar: 4
   capacitatBase: 250
-  creixementDeCapacitat: 1.3
+  creixementDeCapacitat: 1.12
   velocitatBase: 1.6
   creixementDeVelocitat: 1
   velocitatMaxima: 20
@@ -33,5 +33,5 @@ MonoBehaviour:
   - 200
   - 400
   costBase: 1250
-  creixementDeCost: 1.42
+  creixementDeCost: 1.12
   nivellMaxim: 1500

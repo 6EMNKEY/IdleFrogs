@@ -16,11 +16,20 @@ namespace IdleFrogs.Game
         public double ritmeDeDescarregaBase = 40;
         public double creixementDeRitme = 1.33;
 
-        [Header("Velocitat (puja amb el nivell)")]
+        // Corba de potència i no exponencial: puja de pressa als primers
+        // nivells, quan s'obren pantans, i cada cop més a poc a poc, fins a
+        // tocar la màxima al nivell que diguis. La suavitat frena només el
+        // principi. Amb 3 → 40 al 800 i suavitat 2,2: 5,2 al nivell 8,
+        // 15 al 100, 29 al 400.
+        [Header("Velocitat (puja amb el nivell, cada cop més a poc a poc)")]
         [FormerlySerializedAs("velocitatDeMoviment")]
         public float velocitatBase = 3.0f;
-        public float creixementDeVelocitat = 1.01f;
-        public float velocitatMaxima = 30f;
+        public float velocitatMaxima = 40f;
+        [Tooltip("El nivell on arriba a la velocitat màxima")]
+        [Min(2)] public int nivellDeVelocitatMaxima = 800;
+        [Tooltip("Com més alta, més a poc a poc puja als primers nivells (0 = sense frenar el principi). " +
+                 "No canvia ni la base ni on s'arriba a la màxima")]
+        [Min(0)] public float suavitatInicial = 2.2f;
 
         [Header("Capacitat del tren (puja amb el nivell)")]
         [FormerlySerializedAs("capacitat")]
@@ -44,6 +53,18 @@ namespace IdleFrogs.Game
         // rodó que hi cap amb marge.
         [Header("Límit")]
         public int nivellMaxim = 2000;
+
+        // velocitatBase × ((n + s) / (1 + s))^p: al nivell 1 dona la base, i p
+        // és tal que al nivell de la màxima hi arribi just.
+        public float VelocitatAlNivell(int n)
+        {
+            if (n < 1) n = 1;
+            if (velocitatBase <= 0 || velocitatMaxima <= velocitatBase || nivellDeVelocitatMaxima < 2)
+                return Mathf.Max(0f, velocitatBase);
+            float s = Mathf.Max(0f, suavitatInicial);
+            float p = Mathf.Log(velocitatMaxima / velocitatBase) / Mathf.Log((nivellDeVelocitatMaxima + s) / (1f + s));
+            return Mathf.Min(velocitatMaxima, velocitatBase * Mathf.Pow((n + s) / (1f + s), p));
+        }
 
 #if UNITY_EDITOR
         private void OnValidate()

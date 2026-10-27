@@ -36,6 +36,10 @@ namespace IdleFrogs.Game
         [Tooltip("Buit: els pantans fan servir el seu propi aspecte")]
         public AspectePantaSO aspecteDelsPantans;
 
+        [Tooltip("Les herbes, flors i arbres d'aquest país, per capes. Es prova i es desa des de " +
+                 "l'objecte de decoració de l'escena. Buit: el perfil que tingui aquell objecte")]
+        public PerfilDeDecoracio decoracio;
+
         [Header("Moneda")]
         [Tooltip("El nom del sprite de la moneda dins del Sprite Asset de TextMeshPro")]
         public string spriteDeMoneda = "moneda";
@@ -51,9 +55,6 @@ namespace IdleFrogs.Game
         public CanviDeSprite[] tren;
         [Tooltip("El restaurant, l'estació, la botiga i els clients")]
         public CanviDeSprite[] restaurantIEstacio;
-        [Tooltip("Les herbes i flors de la decoració. Es queden al mateix lloc (la mateixa llavor): " +
-                 "si el dibuix nou és molt més gran, pot tocar els pantans")]
-        public CanviDeSprite[] herbesIFlors;
         [Tooltip("La de l'eixam, la del tren, la de la llengua...")]
         public CanviDeSprite[] mosques;
         [Tooltip("Els retrats del panell i els sprites al món (també la silueta buida)")]
@@ -68,7 +69,7 @@ namespace IdleFrogs.Game
 
         public IEnumerable<CanviDeSprite> CanvisDeSprites()
         {
-            CanviDeSprite[][] llistes = { tren, restaurantIEstacio, herbesIFlors, mosques, encarregats, pantans, granotes, botons, barreres };
+            CanviDeSprite[][] llistes = { tren, restaurantIEstacio, mosques, encarregats, pantans, granotes, botons, barreres };
             foreach (CanviDeSprite[] llista in llistes)
             {
                 if (llista == null) continue;

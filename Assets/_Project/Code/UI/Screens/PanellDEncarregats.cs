@@ -58,6 +58,10 @@ namespace IdleFrogs.UI
         [Tooltip("El botó vermell UNASSIGN")]
         [SerializeField] private Button botoTreure;
 
+        [Header("Vendre")]
+        [Tooltip("A partir d'aquesta raresa, vendre demana confirmació. Els comuns es venen d'un toc")]
+        [SerializeField] private Raresa preguntarEnVendreAPartirDe = Raresa.Rar;
+
         [Header("Carta buida")]
         [SerializeField] private Color colorDelRetratBuit = new Color(0.35f, 0.25f, 0.18f);
 
@@ -273,6 +277,25 @@ namespace IdleFrogs.UI
         }
 
         private void Vendre(EncarregatPosseit e)
+        {
+            if (GestorDEncarregats.Instancia == null || e == null || e.definicio == null) return;
+
+            if (e.definicio.raresa < preguntarEnVendreAPartirDe)
+            {
+                VendreJa(e);
+                return;
+            }
+
+            EncarregatSO d = e.definicio;
+            FinestraDeConfirmacio.Preguntar(
+                Textos.F("conf.vendre.titol", d.nomVisible, ColorsDeRaresa.Nom(d.raresa)),
+                Textos.F("conf.vendre.text", FormatadorDeNombres.Doblers(GestorDEncarregats.PreuDeVenda(e)) + Icones.Moneda),
+                () => VendreJa(e),
+                textAcceptar: Textos.T("conf.vendre.boto"),
+                perillosa: true);
+        }
+
+        private void VendreJa(EncarregatPosseit e)
         {
             if (GestorDEncarregats.Instancia == null) return;
             if (_seleccionat == e) _seleccionat = null;

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4dfbee84588afb498a9982dee20b056, type: 3}
-  m_Name: TestingAspectePanta
+  m_Name: Panta Verd
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.AspectePantaSO
   fons: {fileID: 1771050413662363984, guid: b9e78579f0ccb034c965cbd1c4124d64, type: 3}
   capsa: {fileID: -114935848254530312, guid: 6970e457f41f6c1999f2d4429116913a, type: 3}

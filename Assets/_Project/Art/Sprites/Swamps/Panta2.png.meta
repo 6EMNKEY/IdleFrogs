@@ -129,10 +129,10 @@ TextureImporter:
       name: Panta2_0
       rect:
         serializedVersion: 2
-        x: 56
-        y: 148
-        width: 903
-        height: 795
+        x: 28
+        y: 73
+        width: 452
+        height: 399
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

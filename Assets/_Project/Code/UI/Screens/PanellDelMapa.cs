@@ -26,17 +26,10 @@ namespace IdleFrogs.UI
         [SerializeField] private TMP_Text textMissatge;
         [SerializeField] private float segonsDelMissatge = 2f;
 
-        [Header("Confirmació de compra")]
-        [SerializeField] private GameObject arrelDeLaConfirmacio;
-        [SerializeField] private TMP_Text textDeLaConfirmacio;
-        [SerializeField] private Button botoSi;
-        [SerializeField] private Button botoCancellar;
-
         [Header("Ciutat comercial")]
         [Tooltip("El panell de la botiga. Buit de moment: surt un avís a la consola")]
         [SerializeField] private GameObject panellDeLaBotiga;
 
-        private PaisSO _perComprar;
         private Coroutine _amagarMissatge;
 
         public bool EstaObert => arrel != null && arrel.activeSelf;
@@ -52,15 +45,12 @@ namespace IdleFrogs.UI
 
             if (botoObrir != null) botoObrir.onClick.AddListener(Obrir);
             if (botoTancar != null) botoTancar.onClick.AddListener(Tancar);
-            if (botoSi != null) botoSi.onClick.AddListener(Confirmar);
-            if (botoCancellar != null) botoCancellar.onClick.AddListener(TancarConfirmacio);
 
             if (paisos != null)
                 foreach (BotoDePais b in paisos)
                     if (b != null) b.Inicialitzar(this);
 
             if (arrel != null) arrel.SetActive(false);
-            TancarConfirmacio();
             if (textMissatge != null) textMissatge.gameObject.SetActive(false);
         }
 
@@ -80,13 +70,11 @@ namespace IdleFrogs.UI
             if (PanellDEncarregats.Instancia != null) PanellDEncarregats.Instancia.Tancar();
 
             if (arrel != null) arrel.SetActive(true);
-            TancarConfirmacio();
             Refrescar();
         }
 
         public void Tancar()
         {
-            TancarConfirmacio();
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -129,35 +117,38 @@ namespace IdleFrogs.UI
                 return;
             }
 
-            // El següent: pregunta.
-            _perComprar = pais;
-            if (textDeLaConfirmacio != null)
-                textDeLaConfirmacio.text = Textos.F("mapa.confirmar", pais.NomVisible,
-                    FormatadorDeNombres.Doblers(pais.preuDeDesbloqueig) + Icones.Moneda);
-            if (botoSi != null) botoSi.interactable = gestor.PucComprar(pais);
-            if (arrelDeLaConfirmacio != null) arrelDeLaConfirmacio.SetActive(true);
+            // El següent. Si no t'arriba no cal preguntar: et diem quant falta.
+            if (!gestor.PucComprar(pais))
+            {
+                Missatge(Falten(pais));
+                return;
+            }
+
+            FinestraDeConfirmacio.Preguntar(
+                Textos.F("conf.pais.titol", pais.NomVisible),
+                Textos.F("conf.pais.text", FormatadorDeNombres.Doblers(pais.preuDeDesbloqueig) + Icones.Moneda),
+                () => Comprar(pais),
+                textAcceptar: Textos.T("mon.desbloquejar"));
         }
 
-        private void Confirmar()
+        private static string Falten(PaisSO pais)
+        {
+            double falten = pais.preuDeDesbloqueig - (CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0);
+            return Textos.F("mapa.falten", FormatadorDeNombres.Doblers(System.Math.Max(0, falten)) + Icones.Moneda);
+        }
+
+        // Entre preguntar i acceptar poden haver canviat els doblers.
+        private void Comprar(PaisSO pais)
         {
             GestorDePaisos gestor = GestorDePaisos.Instancia;
-            PaisSO pais = _perComprar;
-            TancarConfirmacio();
             if (gestor == null || pais == null) return;
 
             if (!gestor.Comprar(pais))
             {
-                double falten = pais.preuDeDesbloqueig - (CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0);
-                Missatge(Textos.F("mapa.falten", FormatadorDeNombres.Doblers(System.Math.Max(0, falten)) + Icones.Moneda));
+                Missatge(Falten(pais));
                 return;
             }
             Refrescar();
-        }
-
-        private void TancarConfirmacio()
-        {
-            _perComprar = null;
-            if (arrelDeLaConfirmacio != null) arrelDeLaConfirmacio.SetActive(false);
         }
 
         private void Missatge(string text)

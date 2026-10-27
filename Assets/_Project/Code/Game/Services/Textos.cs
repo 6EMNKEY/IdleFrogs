@@ -154,7 +154,6 @@ namespace IdleFrogs.Game
             ["mapa.abans"]            = new[] { "Unlock {0} first",         "Desbloquea {0} antes",       "Desbloqueja {0} abans" },
             ["mapa.anterior"]         = new[] { "the previous one",         "el anterior",                "l'anterior" },
             ["mapa.falten"]           = new[] { "You need {0} more",        "Te faltan {0}",              "Et falten {0}" },
-            ["mapa.confirmar"]        = new[] { "Unlock {0} for {1}?",      "¿Desbloquear {0} por {1}?",  "Vols desbloquejar {0} per {1}?" },
 
             // ---- Món ----
             ["mon.nivell"]            = new[] { "Lvl {0}",                  "Nv. {0}",                    "Nivell {0}" },
@@ -198,6 +197,22 @@ namespace IdleFrogs.Game
             ["ui.comprar"]            = new[] { "Buy",                      "Comprar",                    "Comprar" },
             ["ui.si"]                 = new[] { "Yes",                      "Sí",                         "Sí" },
             ["ui.cancellar"]          = new[] { "Cancel",                   "Cancelar",                   "Cancel·lar" },
+            ["ui.reiniciar"]          = new[] { "Restart game",             "Reiniciar partida",          "Reiniciar partida" },
+            // ---- Confirmacions ----
+            ["conf.pais.titol"]       = new[] { "Unlock {0}?",              "¿Desbloquear {0}?",          "Desbloquejar {0}?" },
+            ["conf.pais.text"]        = new[] { "It costs {0}. You start there from scratch, and your swamps here keep earning while you're away.",
+                                                "Cuesta {0}. Allí empiezas de cero, y tus pantanos de aquí siguen ganando mientras no estás.",
+                                                "Costa {0}. Allà comences de zero, i els teus pantans d'aquí continuen guanyant mentre no hi ets." },
+            ["conf.vendre.titol"]     = new[] { "Sell {0} ({1})?",          "¿Vender a {0} ({1})?",       "Vendre {0} ({1})?" },
+            ["conf.vendre.text"]      = new[] { "You get {0} back. You can't undo this.",
+                                                "Recuperas {0}. No se puede deshacer.",
+                                                "Recuperes {0}. No es pot desfer." },
+            ["conf.vendre.boto"]      = new[] { "Sell",                     "Vender",                     "Vendre" },
+            ["conf.reiniciar.titol"]  = new[] { "Restart the game?",        "¿Reiniciar la partida?",     "Reiniciar la partida?" },
+            ["conf.reiniciar.text"]   = new[] { "You'll lose everything: countries, swamps, managers and gems. You can't undo this.",
+                                                "Perderás todo: países, pantanos, encargados y gemas. No se puede deshacer.",
+                                                "Ho perdràs tot: països, pantans, encarregats i gemes. No es pot desfer." },
+            ["conf.reiniciar.boto"]   = new[] { "Restart",                  "Reiniciar",                  "Reiniciar" },
             ["ui.saltar"]             = new[] { "Skip",                     "Saltar",                     "Saltar" },
             ["ui.mapa"]               = new[] { "Map",                      "Mapa",                       "Mapa" },
         };

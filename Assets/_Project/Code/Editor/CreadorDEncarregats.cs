@@ -54,6 +54,9 @@ namespace IdleFrogs.EditorTools
         private static readonly float[] Duracio  = { 30f, 60f, 180f, 600f };
         private static readonly float[] Recarrega = { 180f, 300f, 900f, 3000f };
         private static readonly double[] MagnitudHabilitat = { 2, 3, 5, 8 };
+        // La rebaixa de cost és diferent: la passiva és petita i l'habilitat
+        // és la rebaixa total mentre dura.
+        private static readonly double[] RebaixaDeLHabilitat = { 0.30, 0.40, 0.55, 0.70 };
 
         [MenuItem("IdleFrogs/Crear encarregats de prova")]
         public static void Crear()
@@ -80,7 +83,8 @@ namespace IdleFrogs.EditorTools
                     actiu.raresa = raresa;
                     actiu.efecte = r.efecte;
                     actiu.magnitud = r.perRaresa[i];
-                    actiu.magnitudDeLHabilitat = MagnitudHabilitat[i];
+                    actiu.magnitudDeLHabilitat = r.efecte == TipusDEfecte.ReduccioDeCost
+                        ? RebaixaDeLHabilitat[i] : MagnitudHabilitat[i];
                     actiu.segonsDeDuracio = Duracio[i];
                     actiu.segonsDeRecarrega = Recarrega[i];
 

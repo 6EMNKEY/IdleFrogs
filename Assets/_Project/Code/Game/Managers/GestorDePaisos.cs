@@ -15,6 +15,9 @@ namespace IdleFrogs.Game
 
         public event System.Action EnCanviDePaisos;
 
+        // En l'ordre del mapa, amb la ciutat comercial si hi és.
+        public System.Collections.Generic.IReadOnlyList<PaisSO> Paisos => paisos;
+
         private void Awake()
         {
             if (Instancia != null && Instancia != this)

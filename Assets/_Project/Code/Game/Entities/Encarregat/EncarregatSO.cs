@@ -31,7 +31,8 @@ namespace IdleFrogs.Game
         public double magnitud = 2;
 
         [Header("Habilitat activa")]
-        [Tooltip("Multiplicador extra mentre l'habilitat està encesa")]
+        [Tooltip("Multiplicador extra mentre l'habilitat està encesa. Per a ReduccioDeCost és la " +
+                 "rebaixa total mentre dura, en fracció: 0.3 = −30% (no multiplica la passiva)")]
         public double magnitudDeLHabilitat = 3;
         [Tooltip("Com més rar, més llarga")]
         public float segonsDeDuracio = 60;
@@ -51,10 +52,12 @@ namespace IdleFrogs.Game
         };
 
         // L'habilitat multiplica l'efecte passiu pel seu factor mentre dura.
-        // Per a la rebaixa de cost el que compta és el total, amb el mateix
-        // topall del 95% que aplica el gestor.
+        // La rebaixa de cost no: mentre dura, la rebaixa és la de l'habilitat
+        // (−30%, −70%...), amb el mateix topall del 95% que aplica el gestor.
+        public double RebaixaDeLHabilitat => System.Math.Min(0.95, System.Math.Max(magnitud, magnitudDeLHabilitat));
+
         private string ValorDeLHabilitat => EsReduccioDeCost
-            ? $"-{FormatadorDeNombres.Factor(System.Math.Min(0.95, magnitud * magnitudDeLHabilitat) * 100)}%"
+            ? $"-{FormatadorDeNombres.Factor(RebaixaDeLHabilitat * 100)}%"
             : $"{FormatadorDeNombres.Factor(magnitudDeLHabilitat)}x";
 
         // "5x Velocitat de recol·lecció" — la targeta de l'encarregat assignat.

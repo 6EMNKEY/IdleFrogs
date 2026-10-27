@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c3e9a1f5b2d4e6a8f0c1d2e3b4a5968, type: 3}
+  m_Name: Decoracio_Pais1
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PerfilDeDecoracio
+  capes:
+  - nom: Gespa
+    variants:
+    - sprite: {fileID: 21300000, guid: df60f4fb23e47cc799ae77e5b044dbba, type: 3}
+      pes: 3
+      escalaMinima: 0.3
+      escalaMaxima: 0.4
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: f67c20c6302a2fa26a6a03bc79e3cea8, type: 3}
+      pes: 3
+      escalaMinima: 0.3
+      escalaMaxima: 0.4
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: a19afa0f6bfe2ff48b77bb10e19e84ae, type: 3}
+      pes: 3
+      escalaMinima: 0.5
+      escalaMaxima: 0.6
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: 43a62276936b57fb8941da56ae10008c, type: 3}
+      pes: 3
+      escalaMinima: 0.4
+      escalaMaxima: 0.4
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: b2f7f2cf737f6c5adb408c14dda0fccb, type: 3}
+      pes: 1
+      escalaMinima: 0.6
+      escalaMaxima: 0.8
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: 84cee9b334bd379acb9c998a0d7a4cc6, type: 3}
+      pes: 1
+      escalaMinima: 0.6
+      escalaMaxima: 0.8
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: caaf4f0a2348a679a896ad1f6caa968b, type: 3}
+      pes: 1
+      escalaMinima: 0.6
+      escalaMaxima: 0.8
+      girarALAtzar: 1
+    llavor: 1582930372
+    llavorsDesades:
+    - llavor: 1582930372
+      nota: 
+    densitat: 0.1
+    distanciaMinima: 0.2
+    nomsAEvitar:
+    - Fons
+    marge: 0
+    capaDeDibuix: Default
+    ordreDeDibuix: -100
+  - nom: Arbres i canyes
+    variants: []
+    llavor: 913284716
+    llavorsDesades: []
+    densitat: 0.02
+    distanciaMinima: 1
+    nomsAEvitar:
+    - Fons
+    marge: 0
+    capaDeDibuix: Default
+    ordreDeDibuix: -40
+  campFornejat: {fileID: 0}

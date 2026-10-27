@@ -13,13 +13,28 @@ MonoBehaviour:
   m_Name: PantaProfund
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PaisSO
   nom:
-    angles: "Deep Swamp"
-    castella: "Pantano Profundo"
-    catala: "Pantà Profund"
-  nomVisible: "Deep Swamp"
+    angles: Deep Swamp
+    castella: Pantano Profundo
+    catala: "Pant\xE0 Profund"
+  nomVisible: Deep Swamp
   esCiutatComercial: 0
   preuDeDesbloqueig: 10000000
-  colorDeFons: {r: 0.16, g: 0.27, b: 0.15, a: 1}
-  aspecteDelsPantans: {fileID: 0}
-  spriteDeMoneda: moneda_pantafosc
-  iconaDeMoneda: {fileID: 21300000, guid: b4fbb457a38efc21fb33bfd694f74af1, type: 3}
+  colorDeFons: {r: 0, g: 0.3137255, b: 0.13333334, a: 1}
+  aspecteDelsPantans: {fileID: 11400000, guid: 5be5a72683c5b3bef95f871843c9151e, type: 2}
+  decoracio: {fileID: 11400000, guid: 0a5ab2f9594d40018f848a679f6ca065, type: 2}
+  spriteDeMoneda: pocio
+  iconaDeMoneda: {fileID: 21300000, guid: e9d552e26a69417e68051f0f934085ff, type: 3}
+  tren: []
+  restaurantIEstacio: []
+  mosques:
+  - original: {fileID: 1277535868799009592, guid: 5f6775432e6801135a399978b9879327, type: 3}
+    perAquestPais: {fileID: -6795006422368103098, guid: e9a072cfbb60364afb44a9c6045ca754, type: 3}
+  encarregats: []
+  pantans:
+  - original: {fileID: 1771050413662363984, guid: b9e78579f0ccb034c965cbd1c4124d64, type: 3}
+    perAquestPais: {fileID: -1343316514904561230, guid: 38fac91b3218d419fb4e8bdd25994f26, type: 3}
+  granotes:
+  - original: {fileID: 3130673264700469227, guid: f2229975ebd5976f2a23873380ced102, type: 3}
+    perAquestPais: {fileID: -3184893551486452137, guid: ca7b37e29703922d598529d7cb535caf, type: 3}
+  botons: []
+  barreres: []

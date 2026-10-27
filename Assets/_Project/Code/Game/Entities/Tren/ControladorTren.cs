@@ -40,16 +40,14 @@ namespace IdleFrogs.Game
 
         // Floor als stats de cabal, com al pantà: números enters i el temps
         // de càrrega (capacitat/ritme) oscil·la una mica en comptes de
-        // quedar-se clavat. La velocitat de moviment no es toca: creix
-        // a l'1% i arrodonida es quedaria congelada trenta nivells.
+        // quedar-se clavat. La velocitat de moviment no es toca: puja a poc
+        // a poc i arrodonida es quedaria congelada molts nivells.
         public double CapacitatAlNivell(int n) =>
             System.Math.Max(1, System.Math.Floor(
                 config.capacitatBase * System.Math.Pow(config.creixementDeCapacitat, n - 1)
                 * Fites.Acumulat(config.fites, n)));
 
-        public float VelocitatAlNivell(int n) =>
-            Mathf.Min(config.velocitatMaxima,
-                      config.velocitatBase * Mathf.Pow(config.creixementDeVelocitat, n - 1));
+        public float VelocitatAlNivell(int n) => config.VelocitatAlNivell(n);
 
         public double RitmeDeCarregaAlNivell(int n) =>
             System.Math.Max(1, System.Math.Floor(

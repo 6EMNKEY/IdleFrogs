@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c3e9a1f5b2d4e6a8f0c1d2e3b4a5968, type: 3}
+  m_Name: Decoracio_PantaProfund
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PerfilDeDecoracio
+  capes:
+  - nom: Gespa
+    variants:
+    - sprite: {fileID: 21300000, guid: ea49e5b58f5fed1db8d061dc551ddf32, type: 3}
+      pes: 3
+      escalaMinima: 0.3
+      escalaMaxima: 0.4
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: 9595878425ca86cf7b82f9e4fc928273, type: 3}
+      pes: 3
+      escalaMinima: 0.3
+      escalaMaxima: 0.4
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: 36c140afca2c62b81a615f9363ff5723, type: 3}
+      pes: 3
+      escalaMinima: 0.5
+      escalaMaxima: 0.6
+      girarALAtzar: 1
+    - sprite: {fileID: 21300000, guid: ebaba87eae4d5f415b4c9d6c2c0e93ff, type: 3}
+      pes: 3
+      escalaMinima: 0.4
+      escalaMaxima: 0.4
+      girarALAtzar: 1
+    llavor: 243511816
+    llavorsDesades:
+    - llavor: 2092988977
+      nota: 
+    densitat: 0.1
+    distanciaMinima: 0.2
+    nomsAEvitar:
+    - Fons
+    marge: 0
+    capaDeDibuix: Default
+    ordreDeDibuix: -100
+  - nom: Arbres i canyes
+    variants:
+    - sprite: {fileID: 4773710020502725665, guid: 92fd9e556ae74f76183ec5139c5aa202, type: 3}
+      pes: 1
+      escalaMinima: 0.6
+      escalaMaxima: 0.8
+      girarALAtzar: 0
+    llavor: 1705160111
+    llavorsDesades:
+    - llavor: 1351948411
+      nota: 
+    - llavor: 32717438
+      nota: 
+    densitat: 0.015
+    distanciaMinima: 1.4
+    nomsAEvitar:
+    - Fons
+    - CamiTerra_0
+    - Estacio
+    - RestaurantSprite
+    - Via1
+    marge: 0
+    capaDeDibuix: Default
+    ordreDeDibuix: 0
+  campFornejat: {fileID: 3524469888779222626, guid: ebb79f3874d4e8e84a8c850688c12922, type: 3}

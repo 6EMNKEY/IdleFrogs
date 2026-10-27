@@ -41,16 +41,17 @@ namespace IdleFrogs.Tests.EditMode
             Assert.AreEqual(curta, _e.DescripcioCurtaDeLHabilitat);
         }
 
-        // La rebaixa de cost ensenya el total, amb el topall del 95%.
+        // L'habilitat de rebaixa és la rebaixa total mentre dura, no un
+        // multiplicador de la passiva, amb el topall del 95%.
         [Test]
         public void ReduccioDeCost_EnPercentatge()
         {
             _e.efecte = TipusDEfecte.ReduccioDeCost;
-            _e.magnitud = 0.1;
-            _e.magnitudDeLHabilitat = 4;
+            _e.magnitud = 0.02;
+            _e.magnitudDeLHabilitat = 0.4;
             Assert.AreEqual("-40% cost", _e.DescripcioCurtaDeLHabilitat);
 
-            _e.magnitud = 0.4;
+            _e.magnitudDeLHabilitat = 1.5;
             Assert.AreEqual("-95% Cost de millora", _e.DescripcioDeLHabilitat);
         }
     }

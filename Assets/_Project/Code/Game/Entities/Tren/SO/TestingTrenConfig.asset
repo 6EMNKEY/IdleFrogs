@@ -14,17 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.TrenConfigSO
   ritmeDeCarregaBase: 150
   ritmeDeDescarregaBase: 150
-  creixementDeRitme: 1.33
-  velocitatBase: 2.5
-  creixementDeVelocitat: 1.026
-  velocitatMaxima: 30
+  creixementDeRitme: 1.12
+  velocitatBase: 3
+  nivellDeVelocitatMaxima: 800
+  suavitatInicial: 2.2
+  velocitatMaxima: 40
   capacitatBase: 600
-  creixementDeCapacitat: 1.33
+  creixementDeCapacitat: 1.12
   fites:
   - nivell: 10
     multiplicador: 2
-  - nivell: 40
-    multiplicador: 1.21
+  - nivell: 25
+    multiplicador: 2
+  - nivell: 50
+    multiplicador: 2
+  - nivell: 100
+    multiplicador: 2
+  - nivell: 200
+    multiplicador: 2
+  - nivell: 400
+    multiplicador: 2
+  - nivell: 800
+    multiplicador: 2
   costBase: 1250
-  creixementDeCost: 1.45
+  creixementDeCost: 1.12
   nivellMaxim: 1500

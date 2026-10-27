@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 648a8da904f02cd9487c9f42c7c4f5c6
+guid: b917e28bcd749e4b4a1fd118c4e296e1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6536055178750685753
-    second: moneda_marbre_0
+      213: -2685262039597777599
+    second: Gemini_Generated_Image_ji7sy7ji7sy7ji7s_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: moneda_marbre_0
+      name: Gemini_Generated_Image_ji7sy7ji7sy7ji7s_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 128
-        height: 128
+        x: 306
+        y: 165
+        width: 620
+        height: 535
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 93279c93e8bb4ba50800000000000000
-      internalID: 6536055178750685753
+      spriteID: 14dfee0f6680cbad0800000000000000
+      internalID: -2685262039597777599
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      moneda_marbre_0: 6536055178750685753
+      Gemini_Generated_Image_ji7sy7ji7sy7ji7s_0: -2685262039597777599
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

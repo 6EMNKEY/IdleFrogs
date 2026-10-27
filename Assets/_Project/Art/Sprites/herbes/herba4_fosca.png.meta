@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: b4fbb457a38efc21fb33bfd694f74af1
+guid: ebaba87eae4d5f415b4c9d6c2c0e93ff
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6050692649858288525
-    second: moneda_pantafosc_0
+      213: 1950706937399227207
+    second: herba4_fosca_0
+  - first:
+      213: -1717302379564982299
+    second: herba4_fosca_1
+  - first:
+      213: 59144833184480665
+    second: herba4_fosca_2
+  - first:
+      213: 2054594986907219472
+    second: herba4_fosca_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +135,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: moneda_pantafosc_0
+      name: herba4_fosca_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 128
-        height: 128
+        x: 13
+        y: 39
+        width: 21
+        height: 31
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +150,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3743128c71f970ca0800000000000000
-      internalID: -6050692649858288525
+      spriteID: 7433290df9d421b10800000000000000
+      internalID: 1950706937399227207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: herba4_fosca_1
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 42
+        width: 13
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ef981e959aea28e0800000000000000
+      internalID: -1717302379564982299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: herba4_fosca_2
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 47
+        width: 23
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99db24499ef12d000800000000000000
+      internalID: 59144833184480665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: herba4_fosca_3
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 47
+        width: 32
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01637ef3143638c10800000000000000
+      internalID: 2054594986907219472
       vertices: []
       indices: 
       edges: []
@@ -161,7 +236,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      moneda_pantafosc_0: -6050692649858288525
+      herba4_fosca_0: 1950706937399227207
+      herba4_fosca_1: -1717302379564982299
+      herba4_fosca_2: 59144833184480665
+      herba4_fosca_3: 2054594986907219472
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

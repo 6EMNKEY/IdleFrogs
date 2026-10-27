@@ -344,7 +344,9 @@ namespace IdleFrogs.Game
             if (e == null || e.definicio == null) return b;
 
             double magnitud = e.definicio.magnitud;
-            if (e.HabilitatActiva) magnitud *= e.definicio.magnitudDeLHabilitat;
+            if (e.HabilitatActiva)
+                magnitud = e.definicio.EsReduccioDeCost ? e.definicio.RebaixaDeLHabilitat
+                                                       : magnitud * e.definicio.magnitudDeLHabilitat;
 
             switch (e.definicio.efecte)
             {
@@ -353,8 +355,8 @@ namespace IdleFrogs.Game
                 case TipusDEfecte.Capacitat: b.capacitat = magnitud; break;
 
                 case TipusDEfecte.ReduccioDeCost:
-                    // Topall al 95%: 0.8 × 8 de l'habilitat passaria de 1 i
-                    // les millores sortirien gratis o a preu negatiu.
+                    // Topall al 95%: a 1 o més les millores sortirien
+                    // gratis o a preu negatiu.
                     b.reduccioDeCost = System.Math.Min(0.95, magnitud);
                     break;
             }

@@ -16,6 +16,7 @@ MonoBehaviour:
   esCiutatComercial: 0
   preuDeDesbloqueig: 1000000
   colorDeFons: {r: 0.549, g: 0.773, b: 0.165, a: 1}
+  decoracio: {fileID: 11400000, guid: 3cb2751285344848ac59064d5bb56a28, type: 2}
   aspecteDelsPantans: {fileID: 0}
   spriteDeMoneda: moneda
   iconaDeMoneda: {fileID: 0}

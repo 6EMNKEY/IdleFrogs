@@ -38,7 +38,7 @@ namespace IdleFrogs.UI
         [Tooltip("Opcional: un text del món (TextMeshPro, no UGUI) a sobre del sprite. Només es veu " +
                  "mentre l'habilitat està encesa (el que li queda) o recarregant (el que falta)")]
         [SerializeField] private TMP_Text textDelTemps;
-        [Tooltip("Mentre recarrega, el text es multiplica per això: 1 = igual, 0 = negre")]
+        [Tooltip("Mentre recarrega, el sprite i el text es multipliquen per això: 1 = igual, 0 = negre")]
         [Range(0f, 1f)] [SerializeField] private float clarorEnRecarregar = 0.6f;
 
         [Header("Partícules de l'habilitat")]
@@ -137,7 +137,9 @@ namespace IdleFrogs.UI
                 : assignat.definicio.spriteAlMon;
             if (s == null) s = SpritesDelPais.Substituir(spriteAssignat);
             if (s != null) retrat.sprite = s;
-            retrat.color = Color.white;
+            // Recarregant: el sprite més fosc, com el text del temps.
+            float f = assignat.Estat == EstatDHabilitat.Recarregant ? Mathf.Clamp01(clarorEnRecarregar) : 1f;
+            retrat.color = new Color(f, f, f, 1f);
             if (indicadorDHabilitat != null) indicadorDHabilitat.SetActive(assignat.HabilitatActiva);
             Particules(assignat.HabilitatActiva, ColorsDeRaresa.Per(assignat.definicio.raresa));
             PintarTemps(assignat);
