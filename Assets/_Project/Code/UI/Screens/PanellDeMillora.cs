@@ -209,9 +209,13 @@ namespace IdleFrogs.UI
                 textDoblers.text = Textos.F("millora.diners", FormatadorDeNombres.Doblers(doblers) + Icones.Moneda);
             if (textCostDeMillora != null)
                 textCostDeMillora.text = alMaxim ? Textos.T("millora.max") : FormatadorDeNombres.Doblers(cost) + Icones.Moneda;
-            // No interactuable = el Disabled Color del botó: és el que el fa més fosc.
+            // Sense monedes es pot tocar igualment (ofereix pagar-ho amb gemes),
+            // però es veu del Disabled Color. Al màxim, no es pot tocar.
             if (botoMillorar != null)
-                botoMillorar.interactable = !provarSenseDiners && !alMaxim && k > 0 && doblers >= cost;
+            {
+                botoMillorar.interactable = !alMaxim && k > 0;
+                CompraAmbGemes.Pintar(botoMillorar, alMaxim || (!provarSenseDiners && doblers >= cost));
+            }
         }
 
         private void AplicarColorSenseDiners()
@@ -286,6 +290,14 @@ namespace IdleFrogs.UI
         }
 
         private void Millorar()
+        {
+            if (_unitat == null) return;
+            UnitatMillorable u = _unitat;
+            CompraAmbGemes.Intentar(u.CostDeMillora(QuantitatActual()), Textos.T("conf.millorar.titol"),
+                preu => Textos.F("conf.millorar.text", u.NomVisible, preu), FerLaMillora);
+        }
+
+        private void FerLaMillora()
         {
             if (_unitat == null) return;
 

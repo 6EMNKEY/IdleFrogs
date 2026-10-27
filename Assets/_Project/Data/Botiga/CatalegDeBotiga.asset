@@ -1,0 +1,608 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d37543dcb302f9cba6015ad0253af4, type: 3}
+  m_Name: CatalegDeBotiga
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.CatalegDeBotiga
+  productes:
+  - {fileID: 11400000, guid: 6672b2590ea771bb8a1d67d101745380, type: 2}
+  - {fileID: 11400000, guid: c1535ba1389c2ac988417d6df016adca, type: 2}
+  - {fileID: 11400000, guid: d1b9957ee15399c5fb9ecd8d8f5f0f71, type: 2}
+  - {fileID: 11400000, guid: ed378a2d53dab71839d71a92efb6d941, type: 2}
+  - {fileID: 11400000, guid: a2afd692793e1cc8da2ff8a5a66432fc, type: 2}
+  - {fileID: 11400000, guid: 5ab2e9cf808e4766bae65ed4b967cbdc, type: 2}
+  - {fileID: 11400000, guid: 1b9e59be38ee77d10909742dea99c27c, type: 2}
+  - {fileID: 11400000, guid: 932f4b0559efbc4bd9382124f7cd97fb, type: 2}
+  - {fileID: 11400000, guid: 591819fa379d98e0b89edcb13351b670, type: 2}
+  - {fileID: 11400000, guid: 2609613c89195edcc9bc3808d4f6e2c7, type: 2}
+  - {fileID: 11400000, guid: da504670e6fd6ac54850ad99956243e0, type: 2}
+  - {fileID: 11400000, guid: c7df238266b504ebc80c86c9680192d9, type: 2}
+  - {fileID: 11400000, guid: 2154776454ddb33a7ab4b50c759f934b, type: 2}
+  - {fileID: 11400000, guid: ce000da9c6eb8b00e9d7658fa8bf44a5, type: 2}
+  - {fileID: 11400000, guid: a86ebf907a8d2886b866c4df2d0349db, type: 2}
+  - {fileID: 11400000, guid: 539eb0f3026e95303a905a3315f9b896, type: 2}
+  - {fileID: 11400000, guid: 2277de1334bf39a2bb3cdc8a6f7aa8de, type: 2}
+  - {fileID: 11400000, guid: 275cc9948a5031a2a9b2c7728ecc4cc6, type: 2}
+  - {fileID: 11400000, guid: 3ce2a3009fbf8e88e95eb9a75c8a0eb5, type: 2}
+  - {fileID: 11400000, guid: a3a672cfcf5ed7e16ae0b1547ebcd0a1, type: 2}
+  - {fileID: 11400000, guid: e4822a6feb545dac6b0d82f112a5acb0, type: 2}
+  - {fileID: 11400000, guid: 575c1b4e2ed603f84b717ccf491c9e9e, type: 2}
+  mesInicial:
+  - recompenses:
+    - tipus: 0
+      quantitat: 2
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 30
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 2
+      minuts: 120
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 5
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 60
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 5
+      minuts: 20
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 4
+      quantitat: 0
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 0
+      - 75
+      - 22
+      - 3
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 4
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 120
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 8
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 120
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 5
+      minuts: 20
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 3
+      quantitat: 0
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 6
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 240
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 12
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 240
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 1000
+      minuts: 1
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 50
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 10
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 360
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 2
+      minuts: 480
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 15
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 480
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 4
+      quantitat: 0
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 0
+      - 75
+      - 22
+      - 3
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 1000
+      minuts: 1
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 240
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 3
+      quantitat: 0
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 3
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  cicle:
+  - recompenses:
+    - tipus: 1
+      quantitat: 30
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 2
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 2
+      minuts: 120
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 1
+      quantitat: 60
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 4
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 2
+      quantitat: 0
+      multiplicador: 5
+      minuts: 20
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+  - recompenses:
+    - tipus: 0
+      quantitat: 10
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1
+    - tipus: 4
+      quantitat: 0
+      multiplicador: 2
+      minuts: 240
+      minutsMaxims: 0
+      raresa: 2
+      probabilitats:
+      - 70
+      - 25
+      - 4.5
+      - 0.5
+      efectePermanent: 0
+      dies: 30
+      pes: 1

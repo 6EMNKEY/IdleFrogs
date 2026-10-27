@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7caf62c616440a4bbb3285455332091d, type: 3}
+  m_Name: offline_x2
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.ProducteDeBotiga
+  id: offline_x2
+  nom:
+    angles: Offline x2
+    castella: Offline x2
+    catala: Offline x2
+  icona: {fileID: -2212947531511984321, guid: 5a4bc3524a9fec05f9575cd7c536e051, type: 3}
+  etiqueta:
+    angles: 
+    castella: 
+    catala: 
+  seccio: 0
+  mida: 0
+  pagament: 3
+  preuEnGemes: 0
+  idDeCompra: idlefrogs.offline_x2
+  preuDeMostra: "4,99 \u20AC"
+  recompenses:
+  - tipus: 5
+    quantitat: 0
+    multiplicador: 2
+    minuts: 240
+    minutsMaxims: 0
+    raresa: 2
+    probabilitats:
+    - 70
+    - 25
+    - 4.5
+    - 0.5
+    efectePermanent: 2
+    dies: 30
+    pes: 1
+  unaAlAtzar: 0
+  doblePrimeraCompra: 0
+  limit: 0
+  limitAlDia: 0
+  horesEntreUsos: 0
+  horesDOferta: 0

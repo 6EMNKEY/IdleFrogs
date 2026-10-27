@@ -34,6 +34,9 @@ namespace IdleFrogs.UI
         {
             _boto = GetComponent<Button>();
             if (dibuix == null) dibuix = GetComponent<Image>();
+            // Només respon on hi ha país, no a tot el rectangle. Cal que la
+            // textura tingui Read/Write activat i Mesh Type = Full Rect.
+            if (dibuix != null) dibuix.alphaHitTestMinimumThreshold = 0.5f;
             _boto.onClick.AddListener(() => { if (_mapa != null) _mapa.EnTocarPais(this); });
         }
 

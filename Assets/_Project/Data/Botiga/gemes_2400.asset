@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7caf62c616440a4bbb3285455332091d, type: 3}
+  m_Name: gemes_2400
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.ProducteDeBotiga
+  id: gemes_2400
+  nom:
+    angles: 2400 gems
+    castella: 2400 gemas
+    catala: 2400 gemes
+  icona: {fileID: 2074675288211923396, guid: fc0306beb55b3cbd5b9ebd96354b5df6, type: 3}
+  etiqueta:
+    angles: Popular
+    castella: Popular
+    catala: Popular
+  seccio: 3
+  mida: 0
+  pagament: 3
+  preuEnGemes: 0
+  idDeCompra: idlefrogs.gemes_2400
+  preuDeMostra: "19,99 \u20AC"
+  recompenses:
+  - tipus: 0
+    quantitat: 2400
+    multiplicador: 2
+    minuts: 240
+    minutsMaxims: 0
+    raresa: 2
+    probabilitats:
+    - 70
+    - 25
+    - 4.5
+    - 0.5
+    efectePermanent: 0
+    dies: 30
+    pes: 1
+  unaAlAtzar: 0
+  doblePrimeraCompra: 1
+  limit: 0
+  limitAlDia: 0
+  horesEntreUsos: 0
+  horesDOferta: 0

@@ -118,18 +118,19 @@ namespace IdleFrogs.UI
                 return;
             }
 
-            // El següent. Si no t'arriba no cal preguntar: et diem quant falta.
+            // El següent. Si no t'arriba, la mateixa finestra ofereix pagar el
+            // que falta amb gemes.
             if (!gestor.PucComprar(pais))
             {
-                Missatge(Falten(pais));
+                CompraAmbGemes.Intentar(pais.preuDeDesbloqueig, Textos.T("conf.pais.titol"),
+                    preu => Textos.F("conf.pais.text", pais.NomVisible, preu), () => Comprar(pais));
                 return;
             }
 
             FinestraDeConfirmacio.Preguntar(
-                Textos.F("conf.pais.titol", pais.NomVisible),
-                Textos.F("conf.pais.text", FormatadorDeNombres.Doblers(pais.preuDeDesbloqueig) + Icones.Moneda),
-                () => Comprar(pais),
-                textAcceptar: Textos.T("mon.desbloquejar"));
+                Textos.T("conf.pais.titol"),
+                Textos.F("conf.pais.text", pais.NomVisible, FormatadorDeNombres.Doblers(pais.preuDeDesbloqueig) + Icones.Moneda),
+                () => Comprar(pais));
         }
 
         private static string Falten(PaisSO pais)

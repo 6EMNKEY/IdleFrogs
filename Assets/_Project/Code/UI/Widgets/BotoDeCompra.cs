@@ -58,7 +58,8 @@ namespace IdleFrogs.UI
         public void EnTocar()
         {
             if (!enabled || _panta == null) return;
-            _panta.Comprar();
+            CompraAmbGemes.Intentar(_panta.PreuDeCompra, Textos.T("conf.comprar.titol"),
+                preu => Textos.F("conf.comprar.text", _panta.NomVisible, preu), () => _panta.Comprar());
         }
 
         private void RefrescarPerDoblers(double _) => Refrescar();

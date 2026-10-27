@@ -7,11 +7,12 @@ using IdleFrogs.Game;
 namespace IdleFrogs.UI
 {
     // La finestra de "N'estàs segur?" de tot el joc. N'hi ha una sola, per
-    // sobre de tots els panells; qui la necessita la crida amb el títol,
-    // l'explicació i el que s'ha de fer si s'accepta:
+    // sobre de tots els panells; qui la necessita la crida amb el títol (només
+    // l'acció: "Vendre"), l'explicació (la frase sencera: "Vendre X per 50K")
+    // i el que s'ha de fer si s'accepta:
     //
-    //     FinestraDeConfirmacio.Preguntar(titol, explicacio, () => Vendre(e),
-    //         textAcceptar: Textos.T("conf.vendre.boto"), perillosa: true);
+    //     FinestraDeConfirmacio.Preguntar(Textos.T("conf.vendre.titol"),
+    //         Textos.F("conf.vendre.text", nom, preu), () => Vendre(e), perillosa: true);
     //
     // Cancel·lar, la X i tocar el fons no fan mai l'acció. Només hi ha una
     // pregunta alhora: si n'arriba una altra amb aquesta oberta, la primera

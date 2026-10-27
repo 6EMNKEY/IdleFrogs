@@ -20,7 +20,6 @@ namespace IdleFrogs.UI
                 Textos.T("conf.reiniciar.titol"),
                 Textos.T("conf.reiniciar.text"),
                 Reiniciar,
-                textAcceptar: Textos.T("conf.reiniciar.boto"),
                 perillosa: true);
         }
 

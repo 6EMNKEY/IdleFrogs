@@ -11,6 +11,8 @@ namespace IdleFrogs.EditorTools
     public static class CreadorDeLaBotiga
     {
         private const string Carpeta = "Assets/_Project/Data/Botiga";
+        // Icones provisionals: una per producte, amb el seu id com a nom.
+        private const string CarpetaDIcones = "Assets/_Project/Art/Botiga/Icones";
 
         // ---- Recompenses ----
         private static Recompensa Gemes(double n, float pes = 1) => new Recompensa { tipus = TipusDeRecompensa.Gemes, quantitat = n, pes = pes };
@@ -42,6 +44,8 @@ namespace IdleFrogs.EditorTools
                 p.etiqueta = default; p.preuEnGemes = 0; p.idDeCompra = string.Empty; p.preuDeMostra = string.Empty;
                 p.unaAlAtzar = false; p.doblePrimeraCompra = false;
                 p.limit = 0; p.limitAlDia = 0; p.horesEntreUsos = 0; p.horesDOferta = 0;
+                // La icona que ja hi hagis posat es respecta; si no en té, la provisional.
+                if (p.icona == null) p.icona = AssetDatabase.LoadAssetAtPath<Sprite>($"{CarpetaDIcones}/{id}.png");
                 if (nou) AssetDatabase.CreateAsset(p, ruta);
                 productes.Add(p);
                 return p;

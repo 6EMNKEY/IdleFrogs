@@ -181,8 +181,13 @@ namespace IdleFrogs.UI
             if (textPreuDeContractar != null)
                 textPreuDeContractar.text = FormatadorDeNombres.Doblers(preu) + Icones.Moneda;
 
-            // No interactuable = el Disabled Color de cada botó.
-            if (botoContractar != null) botoContractar.interactable = doblers >= preu;
+            // Sense monedes es pot tocar (ofereix pagar-ho amb gemes) però es
+            // veu del Disabled Color.
+            if (botoContractar != null)
+            {
+                botoContractar.interactable = true;
+                CompraAmbGemes.Pintar(botoContractar, doblers >= preu);
+            }
             if (botoAssignar != null) botoAssignar.interactable = _seleccionat != null;
         }
 
@@ -289,10 +294,10 @@ namespace IdleFrogs.UI
 
             EncarregatSO d = e.definicio;
             FinestraDeConfirmacio.Preguntar(
-                Textos.F("conf.vendre.titol", d.nomVisible, ColorsDeRaresa.Nom(d.raresa)),
-                Textos.F("conf.vendre.text", FormatadorDeNombres.Doblers(GestorDEncarregats.PreuDeVenda(e)) + Icones.Moneda),
+                Textos.T("conf.vendre.titol"),
+                Textos.F("conf.vendre.text", $"{d.nomVisible} ({ColorsDeRaresa.Nom(d.raresa)})",
+                    FormatadorDeNombres.Doblers(GestorDEncarregats.PreuDeVenda(e)) + Icones.Moneda),
                 () => VendreJa(e),
-                textAcceptar: Textos.T("conf.vendre.boto"),
                 perillosa: true);
         }
 
@@ -334,6 +339,13 @@ namespace IdleFrogs.UI
         }
 
         private void Contractar()
+        {
+            if (_unitat == null || GestorDEncarregats.Instancia == null) return;
+            CompraAmbGemes.Intentar(GestorDEncarregats.Instancia.PreuDeLaSeguentCompra(_unitat.Ranura.tipus),
+                Textos.T("conf.contractar.titol"), preu => Textos.F("conf.contractar.text", preu), FerElContracte);
+        }
+
+        private void FerElContracte()
         {
             if (_unitat == null || GestorDEncarregats.Instancia == null) return;
 

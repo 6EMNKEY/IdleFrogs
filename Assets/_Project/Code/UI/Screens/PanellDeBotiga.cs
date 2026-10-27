@@ -131,6 +131,12 @@ namespace IdleFrogs.UI
             AnarA(g != null && g.HiHaGratisPerRecollir ? SeccioDeBotiga.Gratis : SeccioDeBotiga.Ofertes, false);
         }
 
+        public void ObrirA(SeccioDeBotiga seccio)
+        {
+            Obrir();
+            AnarA(seccio, false);
+        }
+
         public void Tancar()
         {
             if (arrel != null) arrel.SetActive(false);

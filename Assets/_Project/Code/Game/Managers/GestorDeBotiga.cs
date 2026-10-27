@@ -15,6 +15,8 @@ namespace IdleFrogs.Game
         public static GestorDeBotiga Instancia { get; private set; }
 
         [SerializeField] private CatalegDeBotiga cataleg;
+        [Tooltip("Gemes que costa una hora d'ingressos quan falten monedes (igual que a la botiga)")]
+        [Min(1)] [SerializeField] private float gemesPerHoraDIngressos = 60f;
 
         public CatalegDeBotiga Cataleg => cataleg;
 
@@ -274,6 +276,16 @@ namespace IdleFrogs.Game
         {
             if (GameManager.Instancia == null) return 0;
             return GameManager.Instancia.Mesures().CollDAmpolla * segons * FactorPermanent;
+        }
+
+        // Les gemes que valen uns doblers que falten: el temps que trigaries a
+        // guanyar-los al ritme de la cadena, al preu de la botiga. Mínim 1.
+        public int GemesPer(double doblers)
+        {
+            if (doblers <= 0) return 0;
+            double perHora = DoblersDeTemps(3600);
+            if (perHora <= 0) return Mathf.CeilToInt(gemesPerHoraDIngressos);
+            return Math.Max(1, (int)Math.Ceiling(doblers / perHora * gemesPerHoraDIngressos));
         }
 
         // ---------------------------------------------------------------

@@ -76,8 +76,9 @@ namespace IdleFrogs.UI
 
         public void EnTocar()
         {
-            if (!enabled || _barrera == null) return;
-            if (_barrera.Iniciar()) Refrescar();
+            if (!enabled || _barrera == null || !_barrera.EsPotIniciar) return;
+            CompraAmbGemes.Intentar(_barrera.Preu, Textos.T("conf.pais.titol"),
+                preu => Textos.F("conf.barrera.text", preu), () => { if (_barrera.Iniciar()) Refrescar(); });
         }
 
         private void RefrescarPerDoblers(double _) => Refrescar();
