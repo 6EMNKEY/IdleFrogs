@@ -140,6 +140,20 @@ namespace IdleFrogs.Game
 
         private readonly List<EncarregatSO> _candidats = new List<EncarregatSO>();
 
+        // Un de la raresa en qualsevol lloc on n'hi hagi (regals de la botiga).
+        public EncarregatSO TriarDeRaresa(Raresa raresa)
+        {
+            var llocs = new List<TipusDeLloc>((TipusDeLloc[])System.Enum.GetValues(typeof(TipusDeLloc)));
+            while (llocs.Count > 0)
+            {
+                int i = Random.Range(0, llocs.Count);
+                EncarregatSO e = TriarAlAtzar(llocs[i], raresa);
+                if (e != null) return e;
+                llocs.RemoveAt(i);
+            }
+            return null;
+        }
+
         private EncarregatSO TriarAlAtzar(TipusDeLloc lloc, Raresa? raresa)
         {
             _candidats.Clear();

@@ -115,6 +115,7 @@ namespace IdleFrogs.UI
 
             // Dos panells oberts alhora es trepitgen; el d'encarregats surt.
             if (PanellDEncarregats.Instancia != null) PanellDEncarregats.Instancia.Tancar();
+            if (PanellDeBotiga.Instancia != null) PanellDeBotiga.Instancia.Tancar();
 
             Desubscriure();
             _unitat = unitat;

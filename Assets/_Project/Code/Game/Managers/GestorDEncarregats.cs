@@ -190,6 +190,32 @@ namespace IdleFrogs.Game
             return triat;
         }
 
+        // Un regal de la botiga: no es paga ni encareix els que es compren
+        // amb monedes. preuPagat gairebé zero i no zero: amb 0 el guardat el
+        // reconstruiria com si s'hagués comprat, i vendre'l donaria diners.
+        public EncarregatSO Regalar(Raresa raresa)
+        {
+            if (cataleg == null) return null;
+            EncarregatSO triat = cataleg.TriarDeRaresa(raresa);
+            if (triat == null)
+            {
+                Debug.LogWarning($"GestorDEncarregats: el catàleg no té cap encarregat {raresa}", this);
+                return null;
+            }
+
+            _posseits.Add(new EncarregatPosseit
+            {
+                definicio = triat,
+                id = _seguentId++,
+                assignat = false,
+                preuPagat = 1e-6,
+                fiDeLHabilitat = System.DateTime.MinValue,
+                fiDeRecarrega = System.DateTime.MinValue
+            });
+            EnCanviDEncarregats?.Invoke();
+            return triat;
+        }
+
         // ---------------------------------------------------------------
         // Assignació
         // ---------------------------------------------------------------

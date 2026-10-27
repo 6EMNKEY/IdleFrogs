@@ -82,6 +82,10 @@ namespace IdleFrogs.Game
         public RecompensaOffline offlinePendent;
         public int pasDeLaGuia;
 
+        // La botiga: compres, calendari, pase, multiplicadors i permanents.
+        // Les partides d'abans no en tenen i comencen de zero.
+        public DadesDeBotiga botiga;
+
         // La zona on era el jugador l'últim cop, per tornar-hi en obrir.
         public int zonaActual;
         public ZonaGuardada[] zones;

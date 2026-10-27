@@ -224,7 +224,9 @@ namespace IdleFrogs.Game
         }
 
         // Només la producció automàtica: el coll d'ampolla del que va sol, entre deu.
-        public double IngresIdlePerSegon() => Mesures(nomesAutomatitzat: true).Idle;
+        // Amb el x2 permanent de la botiga, si el tens.
+        public double IngresIdlePerSegon() =>
+            Mesures(nomesAutomatitzat: true).Idle * (GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorPermanent : 1);
 
         // Idle × temps fora, amb el tope d'hores. No es dona: queda pendent
         // fins que el jugador l'accepta al panell. Una absència curta es dona
@@ -242,7 +244,9 @@ namespace IdleFrogs.Game
             double segons = (DateTime.UtcNow - desDe).TotalSeconds;
             if (segons <= 1) return;
 
-            RecompensaOffline r = RecompensaOffline.Calcular(segons, horesMaximesOffline * 3600.0, IngresIdlePerSegon());
+            // L'offline x2 de la botiga dobla el que es guanya fora.
+            double offlineX2 = GestorDeBotiga.Instancia != null && GestorDeBotiga.Instancia.OfflineX2 ? 2 : 1;
+            RecompensaOffline r = RecompensaOffline.Calcular(segons, horesMaximesOffline * 3600.0, IngresIdlePerSegon() * offlineX2);
             if (!r.HiHaRecompensa) return;
 
             Debug.Log($"GameManager: offline {FormatadorDeNombres.Temps(r.segonsComptats)} × " +
@@ -283,6 +287,12 @@ namespace IdleFrogs.Game
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.EstablirGemes(_dades.gemes);
             PasDeLaGuia = _dades.pasDeLaGuia;
+            if (GestorDeBotiga.Instancia != null)
+            {
+                double fora = _dades.marcaDeTempsUtc != 0
+                    ? (DateTime.UtcNow - DateTime.FromBinary(_dades.marcaDeTempsUtc)).TotalSeconds : 0;
+                GestorDeBotiga.Instancia.Carregar(_dades.botiga, fora);
+            }
 
             // La zona d'aquesta escena. Si encara no s'hi ha jugat mai, comença
             // de zero encara que la partida en tingui d'altres.
@@ -350,6 +360,7 @@ namespace IdleFrogs.Game
                 CurrencyManager.Instancia.EstablirGemes(0);
             _dades.paisosDesbloquejats = 1;
             PasDeLaGuia = 0;
+            if (GestorDeBotiga.Instancia != null) GestorDeBotiga.Instancia.Carregar(null, 0);
             Debug.Log("GameManager: partida nova");
         }
 
@@ -381,6 +392,7 @@ namespace IdleFrogs.Game
             _dades.gemes = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0;
             _dades.pasDeLaGuia = PasDeLaGuia;
             _dades.zonaActual = zona;
+            if (GestorDeBotiga.Instancia != null) _dades.botiga = GestorDeBotiga.Instancia.Guardar();
 
             ZonaGuardada z = _dades.Zona(zona);
             z.doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0;

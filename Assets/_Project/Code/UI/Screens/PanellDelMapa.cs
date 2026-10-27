@@ -68,6 +68,7 @@ namespace IdleFrogs.UI
             // Un panell alhora.
             if (PanellDeMillora.Instancia != null) PanellDeMillora.Instancia.Tancar();
             if (PanellDEncarregats.Instancia != null) PanellDEncarregats.Instancia.Tancar();
+            if (PanellDeBotiga.Instancia != null) PanellDeBotiga.Instancia.Tancar();
 
             if (arrel != null) arrel.SetActive(true);
             Refrescar();

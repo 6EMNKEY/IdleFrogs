@@ -58,6 +58,14 @@ namespace IdleFrogs.Game
             EnCanviDeGemes?.Invoke(gemesActuals);
         }
 
+        public bool GastarGemes(int quantitat)
+        {
+            if (quantitat < 0 || gemesActuals < quantitat) return false;
+            gemesActuals -= quantitat;
+            EnCanviDeGemes?.Invoke(gemesActuals);
+            return true;
+        }
+
         public void EstablirGemes(int quantitat)
         {
             gemesActuals = quantitat < 0 ? 0 : quantitat;
