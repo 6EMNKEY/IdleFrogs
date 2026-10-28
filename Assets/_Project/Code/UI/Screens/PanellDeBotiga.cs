@@ -13,8 +13,8 @@ namespace IdleFrogs.UI
     // la secció que es veu.
     //
     // Les targetes es munten soles a partir del catàleg, en columnes de dues
-    // files: dues petites apilades, o una gran que ocupa tota la columna (o
-    // dues columnes, la doble).
+    // files: dues petites apilades en una columna, o una gran (també la del
+    // calendari) que ocupa l'alçada sencera i l'amplada de dues columnes.
     public class PanellDeBotiga : MonoBehaviour
     {
         public static PanellDeBotiga Instancia { get; private set; }
@@ -182,7 +182,7 @@ namespace IdleFrogs.UI
 
                 if (ambCalendari)
                 {
-                    RectTransform col = Columna(seccio, 1);
+                    RectTransform col = Columna(seccio, ColumnesDeGran);
                     _calendari = Instantiate(prefabCalendari, col);
                     _calendari.Inicialitzar(this);
                 }
@@ -197,12 +197,15 @@ namespace IdleFrogs.UI
                         continue;
                     }
                     pendent = null;
-                    Targeta(prefabGran != null ? prefabGran : prefabPetita, p, Columna(seccio, p.mida == MidaDeTargeta.GranDoble ? 2 : 1));
+                    Targeta(prefabGran != null ? prefabGran : prefabPetita, p, Columna(seccio, ColumnesDeGran));
                 }
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(contingut);
         }
+
+        // Totes les grans (Gran i GranDoble) ocupen dues columnes d'amplada.
+        private const int ColumnesDeGran = 2;
 
         // Una columna de dues files; les targetes de dins es reparteixen l'alçada.
         private RectTransform Columna(RectTransform seccio, int columnes)

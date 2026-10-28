@@ -4137,12 +4137,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46
+  m_fontSize: 40.35
   m_fontSizeBase: 46
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 46
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
@@ -4176,7 +4176,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 1.1480713, z: 1.9567871, w: 0}
+  m_margin: {x: 0, y: 1.1480713, z: 72.690186, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4364,7 +4364,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4707,7 +4707,7 @@ MonoBehaviour:
   - {fileID: 1793551928}
   textMissatge: {fileID: 0}
   segonsDelMissatge: 2
-  panellDeLaBotiga: {fileID: 0}
+  panellDeLaBotiga: {fileID: 603027028}
 --- !u!1 &356260509
 GameObject:
   m_ObjectHideFlags: 0
@@ -8760,8 +8760,8 @@ MonoBehaviour:
   scroll: {fileID: 330108160}
   contingut: {fileID: 624509218}
   pestanyes: []
-  prefabPetita: {fileID: 0}
-  prefabGran: {fileID: 0}
+  prefabPetita: {fileID: 4375647076639799158, guid: f7abc8dae73e9578bb114025c89c8e8d, type: 3}
+  prefabGran: {fileID: 7919977853800642996, guid: be1a92674601d884fb2c4b83e72bdac5, type: 3}
   prefabCalendari: {fileID: 0}
   ampladaDeColumna: 300
   espai: 16
@@ -9283,11 +9283,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 258585464}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 300}
-  m_Pivot: {x: 0, y: 1}
+  m_SizeDelta: {x: 1800, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!1001 &629978942
 PrefabInstance:
   m_ObjectHideFlags: 0

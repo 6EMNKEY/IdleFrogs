@@ -60,6 +60,51 @@ namespace IdleFrogs.UI
             return text;
         }
 
+        // El panell (i): tot el que dona i les condicions, línia a línia.
+        public static string Detall(ProducteDeBotiga p)
+        {
+            if (p == null) return string.Empty;
+            var linies = new List<string>();
+
+            if (p.unaAlAtzar)
+            {
+                linies.Add(Textos.T("botiga.info.atzar"));
+                float total = 0;
+                foreach (Recompensa r in p.recompenses) if (r != null) total += UnityEngine.Mathf.Max(0, r.pes);
+                foreach (Recompensa r in p.recompenses)
+                    if (r != null && total > 0)
+                        linies.Add($"• {Descripcio(r)}  ({FormatadorDeNombres.Factor(UnityEngine.Mathf.Max(0, r.pes) / total * 100)}%)");
+            }
+            else
+            {
+                if (p.recompenses.Count > 1) linies.Add(Textos.T("botiga.info.inclou"));
+                foreach (Recompensa r in p.recompenses)
+                {
+                    if (r == null) continue;
+                    linies.Add((p.recompenses.Count > 1 ? "• " : string.Empty) + Descripcio(r));
+                    if (r.tipus == TipusDeRecompensa.Cofre && r.probabilitats != null && r.probabilitats.Length >= 4)
+                    {
+                        linies.Add(Textos.T("botiga.info.cofre"));
+                        for (int i = 0; i < 4; i++)
+                            if (r.probabilitats[i] > 0)
+                                linies.Add($"• {ColorsDeRaresa.Nom((Raresa)i)}  {FormatadorDeNombres.Factor(r.probabilitats[i])}%");
+                    }
+                    if (r.tipus == TipusDeRecompensa.Permanent) linies.Add(Textos.T("botiga.info.permanent"));
+                    if (r.tipus == TipusDeRecompensa.PaseMensual) linies.Add(Textos.T("botiga.info.pase"));
+                }
+            }
+
+            linies.Add(string.Empty);
+            if (p.doblePrimeraCompra) linies.Add(Textos.T("botiga.info.primera"));
+            if (p.limit == 1) linies.Add(Textos.T("botiga.info.una_vegada"));
+            else if (p.limit > 1) linies.Add(Textos.F("botiga.info.limit", p.limit));
+            if (p.limitAlDia > 0) linies.Add(Textos.F("botiga.info.limit_dia", p.limitAlDia));
+            if (p.horesEntreUsos > 0) linies.Add(Textos.F("botiga.info.cada", FormatadorDeNombres.TempsCurt(p.horesEntreUsos * 3600)));
+            if (p.horesDOferta > 0) linies.Add(Textos.F("botiga.info.oferta", FormatadorDeNombres.TempsCurt(p.horesDOferta * 3600)));
+
+            return string.Join("\n", linies).TrimEnd('\n');
+        }
+
         public static string Nom(ProducteDeBotiga p)
         {
             if (p == null) return string.Empty;

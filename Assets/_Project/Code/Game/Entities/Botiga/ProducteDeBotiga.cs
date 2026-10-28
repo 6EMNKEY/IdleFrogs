@@ -6,10 +6,14 @@ namespace IdleFrogs.Game
     public enum SeccioDeBotiga { Ofertes, Pase, Gratis, Gemes, Millores }
 
     // En una botiga horitzontal amb columnes de dues files: la petita ocupa
-    // mitja columna, la gran una columna sencera i la doble dues columnes.
+    // mitja columna; la gran, l'alçada sencera i dues columnes d'amplada.
+    // GranDoble és el mateix que Gran (es manté pels assets que ja la fan servir).
     public enum MidaDeTargeta { Petita, Gran, GranDoble }
 
     public enum TipusDePagament { Gratis, Anunci, Gemes, DinerReal }
+
+    // Automàtic: senzill si dona una sola cosa i no és cap oferta.
+    public enum InformacioDelProducte { Automatica, Senzill, AmbInformacio }
 
     // Un producte de la botiga. La botiga es munta sola amb tots els del
     // catàleg: afegir una oferta és crear un asset, sense tocar l'escena.
@@ -23,6 +27,9 @@ namespace IdleFrogs.Game
         public Sprite icona;
         [Tooltip("Opcional: \"Popular\", \"Millor valor\", \"+25%\"")]
         public TextTraduit etiqueta;
+        [Tooltip("Senzill: la targeta només diu què dona i el preu. Amb informació: el nom i un botó (i) " +
+                 "amb tot el detall. Automàtica: amb informació si dona més d'una cosa o és una oferta")]
+        public InformacioDelProducte informacio;
 
         [Header("On surt")]
         public SeccioDeBotiga seccio;
@@ -52,6 +59,19 @@ namespace IdleFrogs.Game
         [Min(0)] public float horesEntreUsos;
         [Tooltip("Hores que dura l'oferta des de la primera vegada que el jugador la veu. 0 = sempre")]
         [Min(0)] public float horesDOferta;
+
+        // Si la targeta porta el botó (i) amb el detall.
+        public bool TeInformacio
+        {
+            get
+            {
+                if (informacio != InformacioDelProducte.Automatica) return informacio == InformacioDelProducte.AmbInformacio;
+                if (recompenses.Count != 1 || unaAlAtzar) return true;
+                if (seccio == SeccioDeBotiga.Ofertes || horesDOferta > 0) return true;
+                Recompensa r = recompenses[0];
+                return r == null || r.tipus == TipusDeRecompensa.Cofre || r.tipus == TipusDeRecompensa.PaseMensual;
+            }
+        }
 
         public bool EsPermanent
         {
