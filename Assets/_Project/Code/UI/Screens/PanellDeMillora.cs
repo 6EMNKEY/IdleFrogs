@@ -123,6 +123,7 @@ namespace IdleFrogs.UI
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.EnCanviDeDoblers += RefrescarPerDoblers;
 
+            if (arrel != null && !arrel.activeSelf) GestorDAudio.Sonar(So.Obrir);
             if (arrel != null) arrel.SetActive(true);
             Refrescar();
         }
@@ -131,6 +132,7 @@ namespace IdleFrogs.UI
         {
             Desubscriure();
             _unitat = null;
+            if (arrel != null && arrel.activeSelf) GestorDAudio.Sonar(So.Tancar);
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -254,7 +256,9 @@ namespace IdleFrogs.UI
             FitaDeMultiplicador seguent = Fites.Seguent(fites, ara);
 
             if (textSeguentBoost != null)
-                textSeguentBoost.text = seguent != null ? Textos.F("millora.boost", seguent.nivell) : Textos.T("millora.tots_boosts");
+                // Una fita sense multiplicador només dona gemes: "Recompensa", no "Boost".
+                textSeguentBoost.text = seguent == null ? Textos.T("millora.tots_boosts")
+                    : Textos.F(seguent.multiplicador > 1.0001 ? "millora.boost" : "millora.recompensa", seguent.nivell);
             if (barraDeBoost != null) barraDeBoost.fillAmount = Fites.Progres(fites, ara);
             if (textRecompensa != null)
                 textRecompensa.text = seguent != null && seguent.gemes > 0 ? $"+{seguent.gemes}{Icones.Gema}" : string.Empty;
@@ -302,7 +306,8 @@ namespace IdleFrogs.UI
             if (_unitat == null) return;
 
             int gemesAbans = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0;
-            if (!_unitat.Millorar(QuantitatActual())) return;
+            if (!_unitat.Millorar(QuantitatActual())) { GestorDAudio.Sonar(So.Error); return; }
+            GestorDAudio.Sonar(So.Millorar);
 
             // Si ha passat una fita, les gemes surten del "+20" de la barra.
             int guanyades = (CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0) - gemesAbans;

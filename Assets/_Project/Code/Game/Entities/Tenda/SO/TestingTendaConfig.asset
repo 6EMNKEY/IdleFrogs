@@ -14,15 +14,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.TendaConfigSO
   tempsDeMenjar: 4
   capacitatBase: 250
-  creixementDeCapacitat: 1.12
+  creixementDeCapacitat: 1.11
   velocitatBase: 1.6
   creixementDeVelocitat: 1
   velocitatMaxima: 20
   fites:
-  - nivell: 20
-    multiplicador: 1.3
+  - nivell: 10
+    multiplicador: 1.5
+    gemes: 2
+  - nivell: 25
+    multiplicador: 1.5
+    gemes: 5
   - nivell: 50
-    multiplicador: 1.2
+    multiplicador: 1.5
+    gemes: 10
+  - nivell: 100
+    multiplicador: 1.5
+    gemes: 15
+  - nivell: 200
+    multiplicador: 1.5
+    gemes: 20
+  - nivell: 400
+    multiplicador: 1.5
+    gemes: 30
+  - nivell: 800
+    multiplicador: 1.5
+    gemes: 50
   clientsInicials: 4
   clientsPerFita: 4
   nivellsDeClientsExtra:
@@ -33,5 +50,5 @@ MonoBehaviour:
   - 200
   - 400
   costBase: 1250
-  creixementDeCost: 1.12
+  creixementDeCost: 1.11
   nivellMaxim: 1500

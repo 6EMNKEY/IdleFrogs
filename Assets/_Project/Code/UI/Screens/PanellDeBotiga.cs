@@ -118,6 +118,7 @@ namespace IdleFrogs.UI
             if (PanellDEncarregats.Instancia != null) PanellDEncarregats.Instancia.Tancar();
             if (PanellDelMapa.Instancia != null) PanellDelMapa.Instancia.Tancar();
 
+            if (arrel != null && !arrel.activeSelf) GestorDAudio.Sonar(So.Obrir);
             if (arrel != null) arrel.SetActive(true);
             if (!_muntada) Muntar();
 
@@ -139,6 +140,7 @@ namespace IdleFrogs.UI
 
         public void Tancar()
         {
+            if (arrel != null && arrel.activeSelf) GestorDAudio.Sonar(So.Tancar);
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -331,9 +333,12 @@ namespace IdleFrogs.UI
         {
             if (donades == null || donades.Count == 0)
             {
+                GestorDAudio.Sonar(So.Error);
                 Missatge(Textos.T("botiga.no_compra"));
                 return;
             }
+            bool potenciador = donades.Exists(r => r.tipus == TipusDeRecompensa.Multiplicador);
+            GestorDAudio.Sonar(potenciador ? So.Potenciador : So.Recompensa);
 
             EfecteDeRecompensa efecte = EfecteDeRecompensa.Instancia;
             if (efecte != null && origen != null)

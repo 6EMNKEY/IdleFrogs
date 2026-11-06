@@ -137,6 +137,7 @@ namespace IdleFrogs.UI
                 GameManager.Instancia.EnTickDeSegon += Refrescar;   // els cooldowns
 
             if (textDeResultat != null) textDeResultat.text = string.Empty;
+            if (arrel != null && !arrel.activeSelf) GestorDAudio.Sonar(So.Obrir);
             if (arrel != null) arrel.SetActive(true);
             Refrescar();
         }
@@ -146,6 +147,7 @@ namespace IdleFrogs.UI
             Desubscriure();
             _unitat = null;
             _seleccionat = null;
+            if (arrel != null && arrel.activeSelf) GestorDAudio.Sonar(So.Tancar);
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -303,6 +305,7 @@ namespace IdleFrogs.UI
 
         private void VendreJa(EncarregatPosseit e)
         {
+            GestorDAudio.Sonar(So.Vendre);
             if (GestorDEncarregats.Instancia == null) return;
             if (_seleccionat == e) _seleccionat = null;
 
@@ -319,6 +322,7 @@ namespace IdleFrogs.UI
 
         private void AssignarElSeleccionat()
         {
+            if (_seleccionat != null) GestorDAudio.Sonar(So.Acceptar);
             if (_unitat == null || _seleccionat == null || GestorDEncarregats.Instancia == null) return;
             EncarregatPosseit e = _seleccionat;
             _seleccionat = null;
@@ -334,6 +338,7 @@ namespace IdleFrogs.UI
 
         private void ActivarHabilitat()
         {
+            GestorDAudio.Sonar(So.Potenciador);
             if (_unitat == null || GestorDEncarregats.Instancia == null) return;
             GestorDEncarregats.Instancia.ActivarHabilitat(GestorDEncarregats.Instancia.ALaRanura(_unitat.Ranura));
         }
@@ -350,7 +355,8 @@ namespace IdleFrogs.UI
             if (_unitat == null || GestorDEncarregats.Instancia == null) return;
 
             EncarregatSO rebut = GestorDEncarregats.Instancia.Comprar(_unitat.Ranura.tipus);
-            if (rebut == null) return;
+            if (rebut == null) { GestorDAudio.Sonar(So.Error); return; }
+            GestorDAudio.Sonar(So.Comprar);
 
             if (textDeResultat != null)
                 textDeResultat.text = Textos.F("enc.contractat", rebut.nomVisible, rebut.DescripcioDeLHabilitat);

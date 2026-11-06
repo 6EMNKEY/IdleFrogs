@@ -25,7 +25,7 @@ MonoBehaviour:
   seccio: 4
   mida: 1
   pagament: 2
-  preuEnGemes: 500
+  preuEnGemes: 1000
   idDeCompra: 
   preuDeMostra: 
   recompenses:

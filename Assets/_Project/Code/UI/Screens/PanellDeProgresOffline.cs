@@ -82,6 +82,7 @@ namespace IdleFrogs.UI
             if (GameManager.Instancia == null) return;
 
             double cobrat = GameManager.Instancia.CobrarRecompensaOffline();
+            if (cobrat > 0) GestorDAudio.Sonar(So.Recompensa);
             if (cobrat > 0 && origen != null && EfecteDeRecompensa.Instancia != null)
                 EfecteDeRecompensa.Instancia.Llancar(TipusDeMoneda.Doblers, punt, cobrat);
         }

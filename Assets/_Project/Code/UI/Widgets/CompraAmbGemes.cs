@@ -15,7 +15,10 @@ namespace IdleFrogs.UI
         // qual si n'hi ha prou, o després de posar-hi el que falta amb gemes.
         // titol: l'acció ("Millorar"); explicacio: la frase sencera amb el
         // preu en gemes que li passem ("Millorar Pantà 3 per 25 gemes").
-        public static void Intentar(double preu, string titol, Func<string, string> explicacio, Action comprar)
+        // ambGemes = false: si no arriben les monedes, només s'avisa (sense
+        // oferir de pagar-ho amb gemes).
+        public static void Intentar(double preu, string titol, Func<string, string> explicacio, Action comprar,
+                                    bool ambGemes = true)
         {
             CurrencyManager c = CurrencyManager.Instancia;
             if (c == null || comprar == null) return;
@@ -26,10 +29,11 @@ namespace IdleFrogs.UI
             }
 
             double falta = preu - c.doblersActuals;
-            int gemes = GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.GemesPer(falta) : 0;
+            int gemes = ambGemes && GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.GemesPer(falta) : 0;
             if (gemes <= 0)
             {
                 // No es pot pagar amb gemes (sense ritme o massa car): només s'avisa.
+                GestorDAudio.Sonar(So.Error);
                 FinestraDeConfirmacio.Preguntar(titol, Textos.F("conf.falten", FormatadorDeNombres.Doblers(falta) + Icones.Moneda), null);
                 return;
             }

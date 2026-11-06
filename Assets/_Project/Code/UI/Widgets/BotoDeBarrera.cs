@@ -78,7 +78,12 @@ namespace IdleFrogs.UI
         {
             if (!enabled || _barrera == null || !_barrera.EsPotIniciar) return;
             CompraAmbGemes.Intentar(_barrera.Preu, Textos.T("conf.pais.titol"),
-                preu => Textos.F("conf.barrera.text", preu), () => { if (_barrera.Iniciar()) Refrescar(); });
+                preu => Textos.F("conf.barrera.text", preu), () =>
+                {
+                    bool fet = _barrera.Iniciar();
+                    GestorDAudio.Sonar(fet ? So.Comprar : So.Error);
+                    if (fet) Refrescar();
+                });
         }
 
         private void RefrescarPerDoblers(double _) => Refrescar();

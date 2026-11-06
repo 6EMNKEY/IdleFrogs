@@ -197,6 +197,10 @@ namespace IdleFrogs.Game
                 EstatDePanta estat;
                 if (pantans[i].EstaComprat) estat = EstatDePanta.Comprat;
                 else if (i > maxim) estat = EstatDePanta.Bloquejat;
+                // El segon pantà no surt a la venda fins que s'acaba la guia:
+                // la guia ensenya a treure profit del primer.
+                else if (i == 1 && GameManager.Instancia != null && !GameManager.Instancia.GuiaAcabada)
+                    estat = EstatDePanta.Bloquejat;
                 else if (i == 0 || (pantans[i - 1] != null && pantans[i - 1].EstaComprat))
                     estat = EstatDePanta.EnVenda;
                 else estat = EstatDePanta.Bloquejat;

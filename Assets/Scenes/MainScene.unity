@@ -11730,7 +11730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.11372549}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13878,8 +13878,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.GestorDeBotiga
   cataleg: {fileID: 11400000, guid: 1170764f4f17b8d61ae2b978b8818d22, type: 2}
-  gemesPerHoraDIngressos: 60
-  minimDeGemes: 5
+  gemesPerHoraDIngressos: 120
+  minimDeGemes: 10
   maximDeGemes: 100000
 --- !u!1 &868145132
 GameObject:
@@ -13946,15 +13946,31 @@ MonoBehaviour:
   - tipus: 0
     icona: {fileID: -3232510099193956884, guid: b27c53a3100f84d9084232260294523d, type: 3}
   - tipus: 1
-    icona: {fileID: 6180045742389370376, guid: 5fb1972711c605fe298e294965239925, type: 3}
+    icona: {fileID: -3422504037874055868, guid: b367cd569deac142c9f7ba1d634e7940, type: 3}
   - tipus: 4
-    icona: {fileID: -6509393115162083350, guid: a6c674ab305406613bde9e5e7e9ce489, type: 3}
+    icona: {fileID: 507322318559588236, guid: 54df6dd3beb30037383b9c53f9801fb4, type: 3}
   - tipus: 2
-    icona: {fileID: 8272909821239870988, guid: 34d2588e6a4e9d4879c5a078225ca9c1, type: 3}
+    icona: {fileID: 21300000, guid: 6a789444fb47cd10185fd3dd3c30a713, type: 3}
   - tipus: 8
-    icona: {fileID: -6509393115162083350, guid: a6c674ab305406613bde9e5e7e9ce489, type: 3}
+    icona: {fileID: -2208392304517204237, guid: 03d6fadbc1f160aa999e18ad7e05a0bb, type: 3}
   - tipus: 12
-    icona: {fileID: -6509393115162083350, guid: a6c674ab305406613bde9e5e7e9ce489, type: 3}
+    icona: {fileID: 507322318559588236, guid: 54df6dd3beb30037383b9c53f9801fb4, type: 3}
+  - tipus: 3
+    icona: {fileID: 7630867377054405387, guid: f2284ac92233d26369aa0d630e10527e, type: 3}
+  - tipus: 5
+    icona: {fileID: -3422504037874055868, guid: b367cd569deac142c9f7ba1d634e7940, type: 3}
+  - tipus: 6
+    icona: {fileID: 7630867377054405387, guid: f2284ac92233d26369aa0d630e10527e, type: 3}
+  - tipus: 7
+    icona: {fileID: 7630867377054405387, guid: f2284ac92233d26369aa0d630e10527e, type: 3}
+  - tipus: 9
+    icona: {fileID: 21300000, guid: 6a789444fb47cd10185fd3dd3c30a713, type: 3}
+  - tipus: 10
+    icona: {fileID: -3422504037874055868, guid: b367cd569deac142c9f7ba1d634e7940, type: 3}
+  - tipus: 11
+    icona: {fileID: 7630867377054405387, guid: f2284ac92233d26369aa0d630e10527e, type: 3}
+  - tipus: 12
+    icona: {fileID: 507322318559588236, guid: 54df6dd3beb30037383b9c53f9801fb4, type: 3}
   botoX1: {fileID: 780874549}
   botoX10: {fileID: 459023399}
   botoX50: {fileID: 1921683837}
@@ -18172,7 +18188,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3978219182746546512, guid: 1aba4fb78d21e7d988d79b4fcaa72885, type: 3}
+  m_Sprite: {fileID: -3887268158252863649, guid: 7e5027a6437da5934beca07677f52b47, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -21987,6 +22003,7 @@ Transform:
   - {fileID: 951396468}
   - {fileID: 1153057230}
   - {fileID: 867806702}
+  - {fileID: 1326321035}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1302772210
@@ -22383,6 +22400,139 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!1 &1326321034
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1326321035}
+  - component: {fileID: 1326321036}
+  m_Layer: 0
+  m_Name: Audio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1326321035
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1326321034}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1301222549}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1326321036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1326321034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d48640f9eec9a32aab88d84cc3b66b0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.GestorDAudio
+  musicaPerDefecte: {fileID: 8300000, guid: b22cd203e85071de48245399912af4e0, type: 3}
+  volumMaximDeLaMusica: 0.5
+  segonsDeFosa: 1.2
+  efectes:
+  - so: 0
+    clips:
+    - {fileID: 8300000, guid: 1190a5d8b763e1c91887b502189e53e8, type: 3}
+    volum: 0.6
+    variacioDeTo: 0.06
+    intervalMinim: 0
+  - so: 1
+    clips:
+    - {fileID: 8300000, guid: 566db7564fc874fadbd5d272e6b92cb7, type: 3}
+    volum: 0.55
+    variacioDeTo: 0.03
+    intervalMinim: 0
+  - so: 2
+    clips:
+    - {fileID: 8300000, guid: 74d4ca41abba8045d9c4f964e55aaebf, type: 3}
+    volum: 0.5
+    variacioDeTo: 0.03
+    intervalMinim: 0
+  - so: 3
+    clips:
+    - {fileID: 8300000, guid: 1650d205f9143450192015638613d754, type: 3}
+    volum: 0.8
+    variacioDeTo: 0.02
+    intervalMinim: 0
+  - so: 4
+    clips:
+    - {fileID: 8300000, guid: ba2334d752bc3126cba0aecd8b690b07, type: 3}
+    volum: 0.7
+    variacioDeTo: 0.02
+    intervalMinim: 0
+  - so: 5
+    clips:
+    - {fileID: 8300000, guid: e9d3a45824e34a3e799748fcd1191927, type: 3}
+    volum: 0.55
+    variacioDeTo: 0.02
+    intervalMinim: 0.15
+  - so: 6
+    clips:
+    - {fileID: 8300000, guid: f642204192f84b8e9a3c384679c92709, type: 3}
+    volum: 0.85
+    variacioDeTo: 0.03
+    intervalMinim: 0
+  - so: 7
+    clips:
+    - {fileID: 8300000, guid: 4873ccfc92466a71691fe8713d98f02d, type: 3}
+    volum: 0.8
+    variacioDeTo: 0.04
+    intervalMinim: 0.05
+  - so: 8
+    clips:
+    - {fileID: 8300000, guid: 7db6a73dd223abebb8aced540da56846, type: 3}
+    volum: 0.8
+    variacioDeTo: 0.03
+    intervalMinim: 0
+  - so: 9
+    clips:
+    - {fileID: 8300000, guid: aa3f6559eebe7d9d6b7e133a36143a7a, type: 3}
+    volum: 0.9
+    variacioDeTo: 0
+    intervalMinim: 0
+  - so: 10
+    clips:
+    - {fileID: 8300000, guid: 104f1dc7e905278578e1618374949f69, type: 3}
+    volum: 0.45
+    variacioDeTo: 0.08
+    intervalMinim: 0.05
+  - so: 11
+    clips:
+    - {fileID: 8300000, guid: c14f3e6aca8977464bf11d88a4e66367, type: 3}
+    volum: 0.5
+    variacioDeTo: 0.08
+    intervalMinim: 0.05
+  - so: 12
+    clips:
+    - {fileID: 8300000, guid: 709511c386047ea7e88114a1971e3c2a, type: 3}
+    volum: 0.85
+    variacioDeTo: 0
+    intervalMinim: 0.2
+  - so: 13
+    clips:
+    - {fileID: 8300000, guid: d82a1b0c346b2035ba9cf8e1f7839f17, type: 3}
+    volum: 0.6
+    variacioDeTo: 0
+    intervalMinim: 0.2
+  veus: 8
 --- !u!1001 &1328479316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28459,10 +28609,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

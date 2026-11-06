@@ -247,6 +247,7 @@ namespace IdleFrogs.UI
 
         private void Copejar(TipusDeMoneda tipus)
         {
+            GestorDAudio.Sonar(tipus == TipusDeMoneda.Gemes ? So.Gema : So.Moneda);
             if (tipus == TipusDeMoneda.Gemes) _copGemes = duracioDelCop;
             else _copDoblers = duracioDelCop;
         }

@@ -63,6 +63,7 @@ namespace IdleFrogs.UI
             if (textComprar != null) textComprar.text = targeta != null ? targeta.TextDelBoto : string.Empty;
             if (arrel != null)
             {
+                if (!arrel.activeSelf) GestorDAudio.Sonar(So.Obrir);
                 arrel.SetActive(true);
                 arrel.transform.SetAsLastSibling();
             }
@@ -71,6 +72,7 @@ namespace IdleFrogs.UI
         public void Tancar()
         {
             _targeta = null;
+            if (arrel != null && arrel.activeSelf) GestorDAudio.Sonar(So.Tancar);
             if (arrel != null) arrel.SetActive(false);
         }
 

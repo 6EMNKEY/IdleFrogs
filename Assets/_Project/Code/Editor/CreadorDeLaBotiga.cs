@@ -98,9 +98,9 @@ namespace IdleFrogs.EditorTools
 
             // ---- Millores ----
             ProducteDeBotiga G(ProducteDeBotiga p, int gemes) { p.preuEnGemes = gemes; return p; }
-            G(P("temps_1h", T("1 h of income", "1 h de ingresos", "1 h d'ingressos"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Ingressos(60)), 60);
-            G(P("temps_4h", T("4 h of income", "4 h de ingresos", "4 h d'ingressos"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Ingressos(240)), 200);
-            G(P("temps_12h", T("12 h of income", "12 h de ingresos", "12 h d'ingressos"), SeccioDeBotiga.Millores, MidaDeTargeta.Gran, TipusDePagament.Gemes, Ingressos(720)), 500);
+            G(P("temps_1h", T("1 h of income", "1 h de ingresos", "1 h d'ingressos"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Ingressos(60)), 120);
+            G(P("temps_4h", T("4 h of income", "4 h de ingresos", "4 h d'ingressos"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Ingressos(240)), 400);
+            G(P("temps_12h", T("12 h of income", "12 h de ingresos", "12 h d'ingressos"), SeccioDeBotiga.Millores, MidaDeTargeta.Gran, TipusDePagament.Gemes, Ingressos(720)), 1000);
             G(P("x2_4h", T("x2 for 4 h", "x2 durante 4 h", "x2 durant 4 h"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Mult(2, 240)), 150);
             G(P("x3_1h", T("x3 for 1 h", "x3 durante 1 h", "x3 durant 1 h"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Mult(3, 60)), 120);
             G(P("cofre", T("Manager chest", "Cofre de encargado", "Cofre d'encarregat"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Cofre(70, 25, 4.5f, 0.5f)), 150);

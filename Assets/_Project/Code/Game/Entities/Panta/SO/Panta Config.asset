@@ -19,17 +19,29 @@ MonoBehaviour:
   capacitatBase: 20
   creixementDeCapacitat: 1.1
   fites:
-  - nivell: 25
-    multiplicador: 2.1
-    gemes: 20
-  - nivell: 50
-    multiplicador: 2.1
-    gemes: 20
   - nivell: 10
     multiplicador: 2.1
+    gemes: 2
+  - nivell: 25
+    multiplicador: 2.1
+    gemes: 5
+  - nivell: 50
+    multiplicador: 2.1
     gemes: 10
+  - nivell: 100
+    multiplicador: 2
+    gemes: 15
+  - nivell: 200
+    multiplicador: 2
+    gemes: 20
+  - nivell: 400
+    multiplicador: 2
+    gemes: 30
+  - nivell: 800
+    multiplicador: 2
+    gemes: 50
   costBase: 100
-  creixementDeCost: 1.2
+  creixementDeCost: 1.21
   preusDeCompra:
   - 10
   - 1000

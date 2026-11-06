@@ -70,12 +70,14 @@ namespace IdleFrogs.UI
             if (PanellDEncarregats.Instancia != null) PanellDEncarregats.Instancia.Tancar();
             if (PanellDeBotiga.Instancia != null) PanellDeBotiga.Instancia.Tancar();
 
+            if (arrel != null && !arrel.activeSelf) GestorDAudio.Sonar(So.Obrir);
             if (arrel != null) arrel.SetActive(true);
             Refrescar();
         }
 
         public void Tancar()
         {
+            if (arrel != null && arrel.activeSelf) GestorDAudio.Sonar(So.Tancar);
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -107,13 +109,14 @@ namespace IdleFrogs.UI
             if (gestor.EstaDesbloquejat(pais))
             {
                 if (gestor.PaisActual == pais) Tancar();   // ja hi ets
-                else gestor.Viatjar(pais);
+                else { GestorDAudio.Sonar(So.Acceptar); gestor.Viatjar(pais); }
                 return;
             }
 
             if (!gestor.EsElSeguent(pais))
             {
                 PaisSO seguent = gestor.Seguent;
+                GestorDAudio.Sonar(So.Error);
                 Missatge(Textos.F("mapa.abans", seguent != null ? seguent.NomVisible : Textos.T("mapa.anterior")));
                 return;
             }
@@ -147,9 +150,11 @@ namespace IdleFrogs.UI
 
             if (!gestor.Comprar(pais))
             {
+                GestorDAudio.Sonar(So.Error);
                 Missatge(Falten(pais));
                 return;
             }
+            GestorDAudio.Sonar(So.Desbloquejar);
             Refrescar();
         }
 

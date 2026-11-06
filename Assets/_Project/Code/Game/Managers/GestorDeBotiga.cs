@@ -17,9 +17,9 @@ namespace IdleFrogs.Game
         [SerializeField] private CatalegDeBotiga cataleg;
         [Header("Pagar amb gemes el que falta")]
         [Tooltip("Gemes que costa una hora d'ingressos quan falten monedes (igual que a la botiga)")]
-        [Min(1)] [SerializeField] private float gemesPerHoraDIngressos = 60f;
+        [Min(1)] [SerializeField] private float gemesPerHoraDIngressos = 120f;
         [Tooltip("El mínim: el que falta, per poc que sigui, no costa menys")]
-        [Min(1)] [SerializeField] private int minimDeGemes = 5;
+        [Min(1)] [SerializeField] private int minimDeGemes = 10;
         [Tooltip("Per sobre d'això no s'ofereix pagar amb gemes: només \"Et falten X\"")]
         [Min(1)] [SerializeField] private int maximDeGemes = 100000;
 

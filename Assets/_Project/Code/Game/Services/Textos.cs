@@ -122,6 +122,7 @@ namespace IdleFrogs.Game
             ["millora.max"]           = new[] { "MAX",                      "MÁX",                        "MÀX" },
             ["millora.nivell"]        = new[] { "Level {0}/{1}",            "Nivel {0}/{1}",              "Nivell {0}/{1}" },
             ["millora.boost"]         = new[] { "Boost at lvl {0}",         "Mejora al nivel {0}",        "Millora al nivell {0}" },
+            ["millora.recompensa"]    = new[] { "Reward at lvl {0}",        "Recompensa al nivel {0}",    "Recompensa al nivell {0}" },
             ["millora.tots_boosts"]   = new[] { "All boosts reached",       "Todas las mejoras logradas", "Totes les millores assolides" },
 
             // ---- Encarregats ----
@@ -228,6 +229,8 @@ namespace IdleFrogs.Game
             ["rec.perm.anuncis"] = new[] { "Rewards without ads", "Recompensas sin anuncios", "Recompenses sense anuncis" },
             ["rec.perm.offline"] = new[] { "x2 offline earnings", "x2 ganancias offline", "x2 guanys offline" },
             ["rec.pase"] = new[] { "{0}{1} every day for {2} days", "{0}{1} cada día durante {2} días", "{0}{1} cada dia durant {2} dies" },
+            ["config.musica"]         = new[] { "Music",                    "Música",                     "Música" },
+            ["config.efectes"]        = new[] { "Sound effects",            "Efectos de sonido",          "Efectes de so" },
             ["config.restaurar"] = new[] { "Restore purchases", "Restaurar compras", "Restaurar compres" },
             ["config.restaurats"] = new[] { "Purchases restored: {0}", "Compras restauradas: {0}", "Compres restaurades: {0}" },
 

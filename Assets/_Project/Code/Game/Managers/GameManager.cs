@@ -61,6 +61,16 @@ namespace IdleFrogs.Game
         // La guia inicial viu a la UI, que no podem referenciar; el seu
         // progrés sí que el guardem nosaltres.
         public int PasDeLaGuia { get; set; }
+        // Quants passos té la guia (el posa GuiaInicial). Sense guia a
+        // l'escena és 0, i llavors es dona per acabada.
+        public int PassosDeLaGuia { get; set; }
+        public bool GuiaAcabada => PasDeLaGuia >= PassosDeLaGuia;
+
+        // El segon pantà no es ven fins que s'acaba la guia: ara ja es pot.
+        public void AvisarQueLaGuiaSHaAcabat()
+        {
+            if (llistaDePantans != null) llistaDePantans.ActualitzarEstats();
+        }
 
         private float _temporitzadorTick;
         private float _temporitzadorSegon;

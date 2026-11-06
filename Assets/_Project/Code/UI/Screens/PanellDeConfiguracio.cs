@@ -20,6 +20,12 @@ namespace IdleFrogs.UI
         [Header("Idioma")]
         [SerializeField] private TMP_Dropdown desplegableDIdioma;
 
+        [Header("So")]
+        [Tooltip("Opcional: de 0 a 1")]
+        [SerializeField] private Slider volumMusica;
+        [Tooltip("Opcional: de 0 a 1")]
+        [SerializeField] private Slider volumEfectes;
+
         [Header("Compres")]
         [Tooltip("Restaurar compres: torna els permanents (x2, sense anuncis...) d'aquest compte")]
         [SerializeField] private Button botoRestaurar;
@@ -40,6 +46,10 @@ namespace IdleFrogs.UI
             }
 
             if (botoRestaurar != null) botoRestaurar.onClick.AddListener(Restaurar);
+            if (volumMusica != null)
+                volumMusica.onValueChanged.AddListener(v => { if (GestorDAudio.Instancia != null) GestorDAudio.Instancia.CanviarVolumDeLaMusica(v); });
+            if (volumEfectes != null)
+                volumEfectes.onValueChanged.AddListener(v => { if (GestorDAudio.Instancia != null) GestorDAudio.Instancia.CanviarVolumDelsEfectes(v); });
 
             if (arrel != null) arrel.SetActive(false);
         }
@@ -63,13 +73,20 @@ namespace IdleFrogs.UI
             if (PanellDelMapa.Instancia != null) PanellDelMapa.Instancia.Tancar();
             if (PanellDeBotiga.Instancia != null) PanellDeBotiga.Instancia.Tancar();
             if (textRestaurar != null) textRestaurar.text = string.Empty;
+            if (GestorDAudio.Instancia != null)
+            {
+                if (volumMusica != null) volumMusica.SetValueWithoutNotify(GestorDAudio.Instancia.VolumMusica);
+                if (volumEfectes != null) volumEfectes.SetValueWithoutNotify(GestorDAudio.Instancia.VolumEfectes);
+            }
 
             if (desplegableDIdioma != null) desplegableDIdioma.SetValueWithoutNotify((int)Textos.Actual);
+            if (arrel != null && !arrel.activeSelf) GestorDAudio.Sonar(So.Obrir);
             if (arrel != null) arrel.SetActive(true);
         }
 
         public void Tancar()
         {
+            if (arrel != null && arrel.activeSelf) GestorDAudio.Sonar(So.Tancar);
             if (arrel != null) arrel.SetActive(false);
         }
     }

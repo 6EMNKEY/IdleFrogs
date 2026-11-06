@@ -40,6 +40,10 @@ namespace IdleFrogs.Game
                  "l'objecte de decoració de l'escena. Buit: el perfil que tingui aquell objecte")]
         public PerfilDeDecoracio decoracio;
 
+        [Header("Música")]
+        [Tooltip("Buit: la de per defecte del GestorDAudio")]
+        public AudioClip musica;
+
         [Header("Moneda")]
         [Tooltip("El nom del sprite de la moneda dins del Sprite Asset de TextMeshPro")]
         public string spriteDeMoneda = "moneda";

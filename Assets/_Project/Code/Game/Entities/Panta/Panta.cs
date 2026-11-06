@@ -67,6 +67,8 @@ namespace IdleFrogs.Game
         // Les barreres de davant l'abarateixen (vegeu TramsDePantans.FactorDePreu).
         private double _factorDePreu = 1;
 
+        public int Index => _index;
+
         public void AssignarIndex(int index) => AssignarIndex(index, index, 1);
 
         public void AssignarIndex(int index, int posicio, double factorDePreu)

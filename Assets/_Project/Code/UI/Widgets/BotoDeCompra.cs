@@ -59,7 +59,10 @@ namespace IdleFrogs.UI
         {
             if (!enabled || _panta == null) return;
             CompraAmbGemes.Intentar(_panta.PreuDeCompra, Textos.T("conf.comprar.titol"),
-                preu => Textos.F("conf.comprar.text", _panta.NomVisible, preu), () => _panta.Comprar());
+                preu => Textos.F("conf.comprar.text", _panta.NomVisible, preu),
+                () => GestorDAudio.Sonar(_panta.Comprar() ? So.Comprar : So.Error),
+                // El segon pantà s'ha de guanyar jugant: no es pot pagar amb gemes.
+                ambGemes: _panta.Index != 1);
         }
 
         private void RefrescarPerDoblers(double _) => Refrescar();

@@ -216,6 +216,9 @@ namespace IdleFrogs.UI
                     objectiu = () => Fill<SiluetaDEncarregat>(PrimerPanta)
                 },
             };
+
+            // El GameManager ho ha de saber per dir quan s'ha acabat la guia.
+            if (GameManager.Instancia != null) GameManager.Instancia.PassosDeLaGuia = _passos.Length;
         }
 
         // Amaga el pas d'ara. Quan el joc passi al següent, la guia torna.
@@ -264,6 +267,7 @@ namespace IdleFrogs.UI
                 if (nou >= _passos.Length)
                 {
                     EnsenyarFinal();
+                    gm.AvisarQueLaGuiaSHaAcabat();
                     gm.SaveGameData();
                     return;
                 }

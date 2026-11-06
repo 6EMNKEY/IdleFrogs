@@ -24,18 +24,25 @@ MonoBehaviour:
   fites:
   - nivell: 10
     multiplicador: 2
+    gemes: 2
   - nivell: 25
     multiplicador: 2
+    gemes: 5
   - nivell: 50
     multiplicador: 2
+    gemes: 10
   - nivell: 100
     multiplicador: 2
+    gemes: 15
   - nivell: 200
     multiplicador: 2
+    gemes: 20
   - nivell: 400
     multiplicador: 2
+    gemes: 30
   - nivell: 800
     multiplicador: 2
+    gemes: 50
   costBase: 1250
   creixementDeCost: 1.12
   nivellMaxim: 1500

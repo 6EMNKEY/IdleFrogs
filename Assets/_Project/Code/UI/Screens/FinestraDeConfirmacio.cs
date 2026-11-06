@@ -118,6 +118,7 @@ namespace IdleFrogs.UI
 
             if (arrel != null)
             {
+                GestorDAudio.Sonar(So.Obrir);
                 arrel.SetActive(true);
                 // Damunt de tot el que hi hagi al mateix Canvas.
                 arrel.transform.SetAsLastSibling();
@@ -128,6 +129,7 @@ namespace IdleFrogs.UI
         // l'esborrem en tancar aquesta.
         private void Acceptar()
         {
+            GestorDAudio.Sonar(So.Acceptar);
             Action accio = _siAccepta;
             Tancar();
             accio?.Invoke();
@@ -135,6 +137,7 @@ namespace IdleFrogs.UI
 
         private void Cancellar()
         {
+            GestorDAudio.Sonar(So.Cancellar);
             Action accio = _siCancella;
             Tancar();
             accio?.Invoke();
