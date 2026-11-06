@@ -297,8 +297,11 @@ namespace IdleFrogs.UI
         {
             if (_unitat == null) return;
             UnitatMillorable u = _unitat;
-            CompraAmbGemes.Intentar(u.CostDeMillora(QuantitatActual()), Textos.T("conf.millorar.titol"),
-                preu => Textos.F("conf.millorar.text", u.NomVisible, preu), FerLaMillora);
+            int quantitat = QuantitatActual();
+            // Amb gemes només es paga un nivell: x10, x50... només avisen del que falta.
+            CompraAmbGemes.Intentar(u.CostDeMillora(quantitat), Textos.T("conf.millorar.titol"),
+                preu => Textos.F("conf.millorar.text", u.NomVisible, preu), FerLaMillora,
+                ambGemes: quantitat <= 1);
         }
 
         private void FerLaMillora()

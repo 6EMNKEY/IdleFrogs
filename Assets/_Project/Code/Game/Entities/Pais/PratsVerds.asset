@@ -10,13 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b1c13e3700965ff4880835af4ea598e, type: 3}
-  m_Name: Pais1
+  m_Name: PratsVerds
   m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.PaisSO
-  nomVisible: "Pa\xEDs"
+  nom:
+    angles: Blue Springs
+    castella: 
+    catala: Gorgs Blaus
+  nomVisible: Blue Springs
   esCiutatComercial: 0
   preuDeDesbloqueig: 1000000
   colorDeFons: {r: 0.549, g: 0.773, b: 0.165, a: 1}
-  decoracio: {fileID: 11400000, guid: 3cb2751285344848ac59064d5bb56a28, type: 2}
   aspecteDelsPantans: {fileID: 0}
+  decoracio: {fileID: 11400000, guid: 3cb2751285344848ac59064d5bb56a28, type: 2}
+  musica: {fileID: 0}
   spriteDeMoneda: moneda
   iconaDeMoneda: {fileID: 0}
+  tren: []
+  restaurantIEstacio: []
+  mosques: []
+  encarregats: []
+  pantans: []
+  granotes: []
+  botons: []
+  barreres: []
