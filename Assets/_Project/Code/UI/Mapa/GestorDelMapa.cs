@@ -176,7 +176,13 @@ namespace IdleFrogs.UI
                 PanellDeBotiga.Instancia.Obrir();
                 return;
             }
-            // Missions, esdeveniments i prestigi encara no existeixen.
+            if (accio == AccioDelMapa.Prestigi && GameManager.Instancia != null)
+            {
+                GestorDAudio.Sonar(So.Obrir);
+                GameManager.Instancia.AnarAlPrestigi();
+                return;
+            }
+            // Missions i esdeveniments encara no existeixen.
             GestorDAudio.Sonar(So.Toc);
             Missatge(Textos.T("mapa.aviat"));
         }

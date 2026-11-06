@@ -302,7 +302,8 @@ namespace IdleFrogs.Game
         public double DoblersDeTemps(double segons)
         {
             if (GameManager.Instancia == null) return 0;
-            return GameManager.Instancia.Mesures(senseHabilitats: true).CollDAmpolla * segons * FactorPermanent;
+            return GameManager.Instancia.Mesures(senseHabilitats: true).CollDAmpolla * segons * FactorPermanent *
+                   GameManager.Instancia.FactorDePrestigi;
         }
 
         // ---------------------------------------------------------------

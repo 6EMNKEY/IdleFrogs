@@ -26,8 +26,15 @@ namespace IdleFrogs.Game
                  "a la dreta de les mosques es giren per mirar-les")]
         [SerializeField] private bool elDibuixMiraALaDreta = true;
 
+        [Header("Prestigi")]
+        [Tooltip("Quant es mou el dibuix de les estrelles del prestigi respecte al centre de la granota, " +
+                 "en unitats del món, amb el dibuix sense girar. Quan la granota es gira, la X es gira amb ella")]
+        [SerializeField] private Vector2 desplacamentDeLesEstrelles;
+
         private LlenguaDeGranota _llengua;
         private SpriteRenderer _cos;
+        // El dibuix de les estrelles del prestigi, damunt del cos.
+        private SpriteRenderer _estrelles;
         private float _xDeLesMosques;
         private readonly Llenguada[] _pla = new Llenguada[4];
 
@@ -60,7 +67,36 @@ namespace IdleFrogs.Game
             // l'eixam i a aquestes alçades ja vola per on vol.
             Vector3 mosques = panta != null && panta.Eixam != null ? panta.Eixam.Centre : pilaDeMosques;
             _xDeLesMosques = mosques.x;
+            PosarEstrelles();
             MirarLesMosques();
+        }
+
+        // Amb prestigi, la granota porta el dibuix de les seves estrelles
+        // (el del país, si en té un per a aquella estrella).
+        private void PosarEstrelles()
+        {
+            BuscarPeces();
+            GameManager gm = GameManager.Instancia;
+            PrestigiConfigSO config = PrestigiConfigSO.Actual;
+            EstrellaDePrestigi e = gm != null && config != null ? config.Estrella(gm.Estrelles(gm.Zona)) : null;
+            Sprite dibuix = e != null ? SpritesDelPais.Substituir(e.dibuixDeLaGranota) : null;
+
+            if (dibuix == null || _cos == null)
+            {
+                if (_estrelles != null) _estrelles.enabled = false;
+                return;
+            }
+            if (_estrelles == null)
+            {
+                var go = new GameObject("EstrellesDePrestigi");
+                go.transform.SetParent(transform, false);
+                _estrelles = go.AddComponent<SpriteRenderer>();
+                _estrelles.sortingLayerID = _cos.sortingLayerID;
+                _estrelles.sortingOrder = _cos.sortingOrder + 1;
+            }
+            _estrelles.sprite = dibuix;
+            _estrelles.enabled = true;
+            GirarLesEstrelles();
         }
 
         // Al nenúfar mira les mosques, que és on llança la llengua.
@@ -72,8 +108,26 @@ namespace IdleFrogs.Game
         {
             BuscarPeces();
             if (_cos != null) _cos.flipX = elDibuixMiraALaDreta ? capALEsquerra : !capALEsquerra;
+            GirarLesEstrelles();
             if (_llengua != null) _llengua.Girar(capALEsquerra == elDibuixMiraALaDreta);
         }
+
+        // Les estrelles segueixen el gir del cos, i el desplaçament també.
+        private void GirarLesEstrelles()
+        {
+            if (_estrelles == null || _cos == null) return;
+            _estrelles.flipX = _cos.flipX;
+            _estrelles.transform.localPosition = new Vector3(
+                _cos.flipX ? -desplacamentDeLesEstrelles.x : desplacamentDeLesEstrelles.x, desplacamentDeLesEstrelles.y, 0f);
+        }
+
+#if UNITY_EDITOR
+        // Per ajustar-lo en Play i veure-ho a l'instant.
+        private void OnValidate()
+        {
+            if (Application.isPlaying) GirarLesEstrelles();
+        }
+#endif
 
         // Mentre camina mira cap on va. Si el destí és just a sobre o a sota,
         // es queda com estava.

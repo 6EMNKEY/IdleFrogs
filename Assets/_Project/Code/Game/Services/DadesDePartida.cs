@@ -56,6 +56,11 @@ namespace IdleFrogs.Game
         // L'idle del país quan se'n va sortir: el mapa ensenya el que ha
         // guanyat des d'aleshores sense haver de carregar-lo.
         public double idlePerSegon;
+
+        // El prestigi: quantes estrelles té (0-5) i el preu del seu últim
+        // pantà (el del prestigi en depèn i es pot calcular sense l'escena).
+        public int estrelles;
+        public double preuDelDarrerPanta;
     }
 
     // Camps públics i no propietats: JsonUtility només serialitza camps.

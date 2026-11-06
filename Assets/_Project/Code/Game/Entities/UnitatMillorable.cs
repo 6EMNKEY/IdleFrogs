@@ -144,8 +144,9 @@ namespace IdleFrogs.Game
 
         // Una sola línia de reducció de cost per als tres trams: pantà, tren
         // i tenda passen tots per aquí.
+        // També hi passa la dificultat del prestigi del país.
         private double CostDelSeguentNivell =>
-            CostBase * System.Math.Pow(CreixementDeCost, nivell - 1) * (1.0 - Bonus.reduccioDeCost);
+            CostBase * System.Math.Pow(CreixementDeCost, nivell - 1) * (1.0 - Bonus.reduccioDeCost) * Dificultat.Actual;
 
         public double CostDeMillora(int quantitat)
         {

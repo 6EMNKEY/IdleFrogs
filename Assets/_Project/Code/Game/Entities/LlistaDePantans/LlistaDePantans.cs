@@ -103,6 +103,10 @@ namespace IdleFrogs.Game
         [Min(0.01f)] [SerializeField] private float saltDePreuDespresDeBarrera = 1.5f;
 
         public int Quantitat => pantans != null ? pantans.Length : 0;
+
+        // El del prestigi en depèn.
+        public double PreuDelDarrerPanta =>
+            Quantitat > 0 && pantans[Quantitat - 1] != null ? pantans[Quantitat - 1].PreuDeCompra : 0;
         public int QuantitatDeBarreres => barreres != null ? barreres.Length : 0;
         public Panta Obtenir(int index) => pantans[index];
         public Barrera ObtenirBarrera(int index) => barreres[index];

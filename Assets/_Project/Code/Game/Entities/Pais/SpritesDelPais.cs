@@ -34,6 +34,15 @@ namespace IdleFrogs.Game
             return _canvis.TryGetValue(original, out Sprite s) ? s : original;
         }
 
+        // El d'un país concret, encara que no sigui on ets (el panell del prestigi).
+        public static Sprite DelPais(Sprite original, PaisSO pais)
+        {
+            if (original == null || pais == null) return original;
+            foreach (CanviDeSprite c in pais.CanvisDeSprites())
+                if (c != null && c.original == original && c.perAquestPais != null) return c.perAquestPais;
+            return original;
+        }
+
         public static int QuantsCanvis
         {
             get { Preparar(); return _canvis.Count; }

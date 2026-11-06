@@ -183,9 +183,10 @@ namespace IdleFrogs.Game
             if (cobrat <= 0) return;
 
             TotalVenut += cobrat;
-            // Els multiplicadors de la botiga (x2, x5, el permanent) es
-            // noten aquí: el que arriba a la cartera.
+            // Els multiplicadors de la botiga (x2, x5, el permanent) i el del
+            // prestigi del país es noten aquí: el que arriba a la cartera.
             double factor = GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorDIngressos : 1;
+            if (GameManager.Instancia != null) factor *= GameManager.Instancia.FactorDePrestigi;
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.AfegirDoblers(cobrat * factor);
         }

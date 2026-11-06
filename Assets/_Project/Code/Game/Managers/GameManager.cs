@@ -25,6 +25,7 @@ namespace IdleFrogs.Game
         [Tooltip("La dels pantans: la mateixa per a tots els països")]
         [SerializeField] private string escenaDelPais = "MainScene";
         [SerializeField] private string escenaDelMapa = "Mapa";
+        [SerializeField] private string escenaDelPrestigi = "Prestigi";
 
         [Header("Guardat")]
         [SerializeField] private float segonsEntreAutoGuardats = 30f;
@@ -280,7 +281,8 @@ namespace IdleFrogs.Game
         // Només la producció automàtica: el coll d'ampolla del que va sol, entre deu.
         // Amb el x2 permanent de la botiga, si el tens.
         public double IngresIdlePerSegon() =>
-            Mesures(nomesAutomatitzat: true).Idle * (GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorPermanent : 1);
+            Mesures(nomesAutomatitzat: true).Idle * (GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorPermanent : 1) *
+            FactorDePrestigi;
 
         private double FactorOffline => GestorDeBotiga.Instancia != null && GestorDeBotiga.Instancia.OfflineX2 ? 2 : 1;
 
@@ -521,6 +523,7 @@ namespace IdleFrogs.Game
                 z.offlinePendent = _offlinePendent;
                 z.idlePerSegon = IngresIdlePerSegon();
                 z.nivellsDePanta = Llista.ObtenirNivells();
+                z.preuDelDarrerPanta = Llista.PreuDelDarrerPanta;
                 z.capsesDePanta = Llista.ObtenirCapses();
                 z.barreres = Llista.ObtenirBarreres();
                 z.nivellDeTren = Tren != null ? Tren.Nivell : 1;
@@ -575,6 +578,94 @@ namespace IdleFrogs.Game
             ServeiDeGuardat.Guardar(_dades);
             CarregarEscena(escenaDelPais);
         }
+
+        // ---------------------------------------------------------------
+        // Prestigi
+        // ---------------------------------------------------------------
+
+        private static PrestigiConfigSO Prestigi => PrestigiConfigSO.Actual;
+
+        public int MaximDEstrelles => Prestigi != null ? Prestigi.Maxim : 0;
+
+        public int Estrelles(int z) => _dades != null && _dades.TeZona(z) ? _dades.zones[z].estrelles : 0;
+
+        // Del país on ets: el que multiplica el que guanya i el que multiplica els preus.
+        public double FactorDePrestigi => Prestigi != null ? Prestigi.FactorDIngressos(Estrelles(zona)) : 1;
+        public double FactorDeDificultat => Prestigi != null ? Prestigi.FactorDeCost(Estrelles(zona)) : 1;
+
+        // 0 = no se'n pot fer (al màxim, sense configurar o sense haver-hi
+        // jugat prou per saber el preu de l'últim pantà).
+        public double PreuDelPrestigi(int z)
+        {
+            if (Prestigi == null || !_dades.TeZona(z)) return 0;
+            EstrellaDePrestigi e = Prestigi.Estrella(Estrelles(z) + 1);
+            if (e == null) return 0;
+            return _dades.zones[z].preuDelDarrerPanta * e.preuEnDarrersPantans;
+        }
+
+        // El que té per pagar-lo: la seva cartera i el que ha guanyat i no ha recollit.
+        public double DoblersPerAlPrestigi(int z) => DoblersDeLaZona(z) + GuanysPendents(z);
+
+        public bool PucFerPrestigi(int z)
+        {
+            double preu = PreuDelPrestigi(z);
+            return preu > 0 && DoblersPerAlPrestigi(z) >= preu;
+        }
+
+        // Reinicia el país z com Idle Miner: pantans, tren, restaurant,
+        // barreres i encarregats tornen a l'inici; els doblers que sobren es
+        // queden. Es fa des de l'escena del prestigi, amb cap país carregat.
+        public bool FerPrestigi(int z)
+        {
+            if (_pais != null || !PucFerPrestigi(z)) return false;
+            double preu = PreuDelPrestigi(z);
+            RecollirDeLaZona(z);
+
+            ZonaGuardada vella = _dades.zones[z];
+            int estrelles = vella.estrelles + 1;
+            double costAbans = Prestigi.FactorDeCost(vella.estrelles);
+            double costAra = Prestigi.FactorDeCost(estrelles);
+            int pantans = vella.nivellsDePanta.Length;
+
+            double queden = DoblersDeLaZona(z) - preu;
+            // Que sempre es pugui tornar a comprar el primer pantà.
+            queden = Math.Max(queden, doblersInicials * costAra);
+
+            _dades.zones[z] = new ZonaGuardada
+            {
+                nivellsDePanta = new int[pantans],
+                capsesDePanta = new double[pantans],
+                doblers = queden,
+                marcaDeTempsUtc = DateTime.UtcNow.ToBinary(),
+                estrelles = estrelles,
+                // Fins que s'hi torni a entrar: el mateix pantà amb la dificultat nova.
+                preuDelDarrerPanta = vella.preuDelDarrerPanta / costAbans * costAra,
+            };
+            if (z == _zonaDeLaMoneda && CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.EstablirDoblers(queden);
+
+            int gemes = Prestigi.Estrella(estrelles).gemes;
+            if (gemes > 0 && CurrencyManager.Instancia != null) CurrencyManager.Instancia.AfegirGemes(gemes);
+
+            SaveGameData();
+            Debug.Log($"GameManager: prestigi de la zona {z} → {estrelles} estrelles");
+            return true;
+        }
+
+        private string _escenaDAbansDelPrestigi;
+
+        // Des del mapa o del país: obre l'escena del prestigi (al país on ets).
+        public void AnarAlPrestigi()
+        {
+            _escenaDAbansDelPrestigi = SceneManager.GetActiveScene().name;
+            SaveGameData();
+            DeixarElPais();
+            CarregarEscena(escenaDelPrestigi);
+        }
+
+        // Torna d'on venia (el mapa o el país).
+        public void SortirDelPrestigi() =>
+            CarregarEscena(string.IsNullOrEmpty(_escenaDAbansDelPrestigi) ? escenaDelMapa : _escenaDAbansDelPrestigi);
 
         private void MigrarAPaisos() => MigracioDePartida.PassarAPaisos(_dades);
 

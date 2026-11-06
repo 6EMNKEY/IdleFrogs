@@ -149,6 +149,7 @@ MonoBehaviour:
   duracioMinima: 0.2
   llenguadesPerMosca: 2
   elDibuixMiraALaDreta: 1
+  desplacamentDeLesEstrelles: {x: -0.03, y: 0.14}
 --- !u!1 &380902679330429800
 GameObject:
   m_ObjectHideFlags: 0

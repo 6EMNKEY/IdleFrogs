@@ -34,6 +34,8 @@ namespace IdleFrogs.UI
         private bool _vaComencarSobreLaUI;
         private Vector2 _inici;
         private Vector2 _anterior;
+        // El que hi havia sota el dit en prémer: creix mentre està premut.
+        private Transform _sota;
 
         private readonly List<Collider2D> _colliders = new List<Collider2D>();
         private readonly List<RaycastResult> _resultatsUI = new List<RaycastResult>();
@@ -76,6 +78,8 @@ namespace IdleFrogs.UI
                 _anterior = pos;
                 _vaComencarSobreLaUI = SobreLaUI(pos);
                 if (_camera != null) _camera.Aturar();
+                _sota = !_vaComencarSobreLaUI && QueHiHaSota(pos) is Component c ? c.transform : null;
+                PulsacioVisual.Premer(_sota);
             }
             else if (_premut && punter.press.isPressed)
             {
@@ -86,6 +90,9 @@ namespace IdleFrogs.UI
                 {
                     _arrossegant = true;
                     if (_camera != null) _camera.ComencarArrossegament();
+                    // Arrossegar no és tocar: torna a la seva mida.
+                    PulsacioVisual.Amollar(_sota);
+                    _sota = null;
                 }
 
                 if (_arrossegant && _camera != null)
@@ -99,6 +106,8 @@ namespace IdleFrogs.UI
             if (_premut && punter.press.wasReleasedThisFrame)
             {
                 _premut = false;
+                PulsacioVisual.Amollar(_sota);
+                _sota = null;
 
                 if (_arrossegant)
                 {
@@ -131,14 +140,17 @@ namespace IdleFrogs.UI
             return _resultatsUI.Count > 0;
         }
 
-        private void Tocar(Vector2 posPantalla)
+        private void Tocar(Vector2 posPantalla) => QueHiHaSota(posPantalla)?.EnTocar();
+
+        // El que es dibuixa més amunt d'entre el que es pot tocar en aquest punt.
+        private IEsPotTocar QueHiHaSota(Vector2 posPantalla)
         {
             float distancia = -cameraDelMon.transform.position.z;
             Vector3 mon = cameraDelMon.ScreenToWorldPoint(new Vector3(posPantalla.x, posPantalla.y, distancia));
 
             _colliders.Clear();
             Physics2D.OverlapPoint(mon, _filtre, _colliders);
-            if (_colliders.Count == 0) return;
+            if (_colliders.Count == 0) return null;
 
             IEsPotTocar millor = null;
             long millorOrdre = long.MinValue;
@@ -167,7 +179,7 @@ namespace IdleFrogs.UI
                 }
             }
 
-            millor?.EnTocar();
+            return millor;
         }
 
         // Ordenació igual que la de dibuix: primer la capa, després l'ordre.

@@ -102,16 +102,17 @@ namespace IdleFrogs.Game
             else EnCanviDeTemps?.Invoke();
         }
 
-        public double Preu => _preu;
+        // Amb la dificultat del prestigi del país.
+        public double Preu => _preu * Dificultat.Actual;
 
         public bool PucPagar =>
-            _preu <= 0 || (CurrencyManager.Instancia != null && CurrencyManager.Instancia.doblersActuals >= _preu);
+            Preu <= 0 || (CurrencyManager.Instancia != null && CurrencyManager.Instancia.doblersActuals >= Preu);
 
         // Pagar i començar a esperar.
         public bool Iniciar()
         {
             if (!EsPotIniciar) return false;
-            if (_preu > 0 && (CurrencyManager.Instancia == null || !CurrencyManager.Instancia.GastarDoblers(_preu)))
+            if (Preu > 0 && (CurrencyManager.Instancia == null || !CurrencyManager.Instancia.GastarDoblers(Preu)))
                 return false;
 
             iniciada = true;

@@ -1,6 +1,7 @@
 using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using IdleFrogs.Game;
 
@@ -9,8 +10,9 @@ namespace IdleFrogs.UI
     // "Offline Progress!!": el que has guanyat mentre no hi eres, idle × temps.
     //
     // Els doblers no es donen en carregar: es queden pendents (i guardats) fins
-    // que el jugador accepta. Tant ACCEPTAR com la creu cobren, i les monedes
-    // volen del total cap al comptador. El botó de l'anunci cobra el doble.
+    // que el jugador tria. Dos botons cobren el doble, un pagant gemes i
+    // l'altre veient un vídeo; la creu cobra el que hi ha, sense doblar. Les
+    // monedes volen del total cap al comptador.
     public class PanellDeProgresOffline : MonoBehaviour
     {
         [Header("Arrel del panell (el que s'amaga i es mostra)")]
@@ -26,25 +28,39 @@ namespace IdleFrogs.UI
         [Tooltip("D'on surten les monedes. Buit: del text del total")]
         [SerializeField] private RectTransform origenDeLEsclat;
 
-        [Header("Botons — tots dos cobren")]
-        [SerializeField] private Button botoAcceptar;
-        [SerializeField] private Button botoTancar;
-        [Tooltip("Opcional: \"x2\" veient un anunci. Amb \"Sense anuncis\" el x2 es dona sense anunci")]
+        [Header("x2 pagant gemes")]
+        [FormerlySerializedAs("botoAcceptar")]
+        [SerializeField] private Button botoX2Gemes;
+        [Tooltip("Opcional: el text del botó (\"x2 200 gemes\"). Buit: el primer TMP de dins del botó")]
+        [SerializeField] private TMP_Text textX2Gemes;
+        [Min(0)] [SerializeField] private int gemesPerX2 = 200;
+
+        [Header("x2 veient un vídeo (amb \"Sense anuncis\", sense vídeo)")]
         [SerializeField] private Button botoX2Anunci;
         [Tooltip("Opcional: el text del botó x2. Buit: el primer TMP de dins del botó")]
         [SerializeField] private TMP_Text textX2Anunci;
+
+        [Header("La creu: cobra sense doblar")]
+        [SerializeField] private Button botoTancar;
 
         private bool _esperantAnunci;
 
         private void Awake()
         {
-            if (botoAcceptar != null) botoAcceptar.onClick.AddListener(Cobrar);
             if (botoTancar != null) botoTancar.onClick.AddListener(Cobrar);
+            if (botoX2Gemes != null)
+            {
+                botoX2Gemes.onClick.AddListener(CobrarDobleAmbGemes);
+                if (textX2Gemes == null) textX2Gemes = botoX2Gemes.GetComponentInChildren<TMP_Text>(true);
+            }
             if (botoX2Anunci != null)
             {
                 botoX2Anunci.onClick.AddListener(CobrarDoble);
                 if (textX2Anunci == null) textX2Anunci = botoX2Anunci.GetComponentInChildren<TMP_Text>(true);
             }
+            // Aquests textos els posa el panell: un TextLocalitzat ("ACCEPT") els trepitjaria.
+            NoLocalitzar(textX2Gemes);
+            NoLocalitzar(textX2Anunci);
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -56,6 +72,8 @@ namespace IdleFrogs.UI
             if (GameManager.Instancia == null) return;
 
             GameManager.Instancia.EnProgresOffline += Ensenyar;
+            // Si compra gemes a la botiga amb el panell obert, el botó s'encén.
+            if (CurrencyManager.Instancia != null) CurrencyManager.Instancia.EnCanviDeGemes += RefrescarPerGemes;
             if (GameManager.Instancia.HiHaRecompensaOffline)
                 Ensenyar(GameManager.Instancia.RecompensaOfflinePendent);
         }
@@ -64,6 +82,7 @@ namespace IdleFrogs.UI
         {
             if (GameManager.Instancia != null)
                 GameManager.Instancia.EnProgresOffline -= Ensenyar;
+            if (CurrencyManager.Instancia != null) CurrencyManager.Instancia.EnCanviDeGemes -= RefrescarPerGemes;
         }
 
         private void Ensenyar(RecompensaOffline r)
@@ -76,11 +95,42 @@ namespace IdleFrogs.UI
             if (textTotal != null)
                 textTotal.text = $"{FormatadorDeNombres.Doblers(r.doblers)}!!{Icones.Moneda}";
 
-            if (textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
             if (arrel != null) arrel.SetActive(true);
+            RefrescarBotons();
+        }
+
+        private void RefrescarPerGemes(int _)
+        {
+            if (arrel == null || arrel.activeSelf) RefrescarBotons();
+        }
+
+        private static void NoLocalitzar(TMP_Text t)
+        {
+            TextLocalitzat loc = t != null ? t.GetComponent<TextLocalitzat>() : null;
+            if (loc != null) loc.enabled = false;
+        }
+
+        private void RefrescarBotons()
+        {
+            if (textX2Gemes != null) textX2Gemes.text = Textos.F("offline.x2_gemes", FormatadorDeNombres.Doblers(gemesPerX2) + Icones.Gema);
+            if (textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
+            CompraAmbGemes.Pintar(botoX2Gemes, CurrencyManager.Instancia != null && CurrencyManager.Instancia.gemesActuals >= gemesPerX2);
         }
 
         public void Cobrar() => Cobrar(1);
+
+        // Sense prou gemes s'obre la botiga a Gemes i el panell es queda obert.
+        private void CobrarDobleAmbGemes()
+        {
+            if (_esperantAnunci || CurrencyManager.Instancia == null) return;
+            if (!CurrencyManager.Instancia.GastarGemes(gemesPerX2))
+            {
+                GestorDAudio.Sonar(So.Error);
+                if (PanellDeBotiga.Instancia != null) PanellDeBotiga.Instancia.ObrirA(SeccioDeBotiga.Gemes);
+                return;
+            }
+            Cobrar(2);
+        }
 
         private void CobrarDoble()
         {

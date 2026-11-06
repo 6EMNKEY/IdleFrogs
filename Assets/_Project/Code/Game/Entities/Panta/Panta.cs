@@ -87,7 +87,8 @@ namespace IdleFrogs.Game
 
         private double MultiplicadorDeProfunditat => config.MultiplicadorDeProfunditat(_posicio);
 
-        public double PreuDeCompra => config.PreuDeCompraAlIndex(_posicio) * _factorDePreu;
+        // Amb la dificultat del prestigi del país.
+        public double PreuDeCompra => config.PreuDeCompraAlIndex(_posicio) * _factorDePreu * Dificultat.Actual;
 
         // ---------------------------------------------------------------
         // UnitatMillorable

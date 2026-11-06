@@ -4,7 +4,7 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    public enum AccioDeBoto { Botiga, Configuracio, Mapa, TornarAlPais }
+    public enum AccioDeBoto { Botiga, Configuracio, Mapa, TornarAlPais, Prestigi }
 
     // Un botó del HUD que obre una cosa que no és de l'escena: la botiga i
     // els ajustos viuen a UIGlobal (fora de les escenes), així que el panell
@@ -33,6 +33,10 @@ namespace IdleFrogs.UI
                 case AccioDeBoto.TornarAlPais:
                     GestorDAudio.Sonar(So.Tancar);
                     if (GameManager.Instancia != null) GameManager.Instancia.TornarAlPais();
+                    break;
+                case AccioDeBoto.Prestigi:
+                    GestorDAudio.Sonar(So.Obrir);
+                    if (GameManager.Instancia != null) GameManager.Instancia.AnarAlPrestigi();
                     break;
             }
         }
