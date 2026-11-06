@@ -35,6 +35,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a3a672cfcf5ed7e16ae0b1547ebcd0a1, type: 2}
   - {fileID: 11400000, guid: e4822a6feb545dac6b0d82f112a5acb0, type: 2}
   - {fileID: 11400000, guid: 575c1b4e2ed603f84b717ccf491c9e9e, type: 2}
+  - {fileID: 11400000, guid: 23c43ca8378e04604a2f16d01072fab8, type: 2}
+  - {fileID: 11400000, guid: 1c53e7dd32321f70e98c8439fefb0144, type: 2}
+  - {fileID: 11400000, guid: 75d8b3190606f2d1fbf4f5828a642ba5, type: 2}
+  - {fileID: 11400000, guid: 24e325af11651842ca38c799f3530c30, type: 2}
   mesInicial:
   - recompenses:
     - tipus: 0
@@ -50,6 +54,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -65,6 +70,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -80,6 +86,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -95,6 +102,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -110,6 +118,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -125,6 +134,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 4
@@ -140,6 +150,7 @@ MonoBehaviour:
       - 3
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -155,6 +166,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -170,6 +182,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -185,6 +198,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -200,6 +214,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -215,6 +230,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -230,6 +246,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 3
@@ -245,6 +262,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -260,6 +278,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -275,6 +294,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -290,6 +310,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -305,6 +326,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -320,6 +342,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -335,6 +358,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -350,6 +374,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -365,6 +390,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -380,6 +406,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -395,6 +422,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -410,6 +438,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -425,6 +454,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 4
@@ -440,6 +470,7 @@ MonoBehaviour:
       - 3
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -455,6 +486,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -470,6 +502,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 3
@@ -485,6 +518,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   cicle:
   - recompenses:
@@ -501,6 +535,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -516,6 +551,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -531,6 +567,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 1
@@ -546,6 +583,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -561,6 +599,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 2
@@ -576,6 +615,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
   - recompenses:
     - tipus: 0
@@ -591,6 +631,7 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1
     - tipus: 4
       quantitat: 0
@@ -605,4 +646,5 @@ MonoBehaviour:
       - 0.5
       efectePermanent: 0
       dies: 30
+      paisDelsPunts: 0
       pes: 1

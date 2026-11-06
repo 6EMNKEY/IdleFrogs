@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a61e44ac8fe5e188cf7df175ee1730, type: 3}
+  m_Name: Arena
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.ArenaConfigSO
+  rareses:
+  - raresa: 0
+    color: {r: 0.55, g: 0.55, b: 0.55, a: 1}
+    vidaDelBoss: 14400
+    regeneracio: 0.2
+    punts: 1
+    probabilitatDelBoss: 35
+    danyBase: 1
+    creixementDelDany: 1.06
+    nivellMaxim: 100
+    costBase: 3.6e+24
+    creixementDelCost: 3.067
+    nivellDeCanvi: 30
+    creixementDespres: 1.0423
+    probabilitatComu: 45
+    probabilitatPremium: 20
+  - raresa: 1
+    color: {r: 0.3, g: 0.7, b: 0.3, a: 1}
+    vidaDelBoss: 158000
+    regeneracio: 1.6
+    punts: 3
+    probabilitatDelBoss: 28
+    danyBase: 1.6
+    creixementDelDany: 1.06
+    nivellMaxim: 100
+    costBase: 5.4e+24
+    creixementDelCost: 3.067
+    nivellDeCanvi: 30
+    creixementDespres: 1.0423
+    probabilitatComu: 30
+    probabilitatPremium: 30
+  - raresa: 2
+    color: {r: 0.25, g: 0.5, b: 0.9, a: 1}
+    vidaDelBoss: 1740000
+    regeneracio: 12.6
+    punts: 6
+    probabilitatDelBoss: 20
+    danyBase: 2.6
+    creixementDelDany: 1.06
+    nivellMaxim: 100
+    costBase: 8.1e+24
+    creixementDelCost: 3.067
+    nivellDeCanvi: 30
+    creixementDespres: 1.0423
+    probabilitatComu: 17
+    probabilitatPremium: 25
+  - raresa: 3
+    color: {r: 0.6, g: 0.3, b: 0.85, a: 1}
+    vidaDelBoss: 19100000
+    regeneracio: 100
+    punts: 10
+    probabilitatDelBoss: 11
+    danyBase: 4.2
+    creixementDelDany: 1.06
+    nivellMaxim: 100
+    costBase: 1.22e+25
+    creixementDelCost: 3.067
+    nivellDeCanvi: 30
+    creixementDespres: 1.0423
+    probabilitatComu: 8
+    probabilitatPremium: 15
+  - raresa: 4
+    color: {r: 0.95, g: 0.55, b: 0.1, a: 1}
+    vidaDelBoss: 133000000
+    regeneracio: 400
+    punts: 15
+    probabilitatDelBoss: 5
+    danyBase: 7
+    creixementDelDany: 1.06
+    nivellMaxim: 100
+    costBase: 1.8e+25
+    creixementDelCost: 3.067
+    nivellDeCanvi: 30
+    creixementDespres: 1.0423
+    probabilitatComu: 0
+    probabilitatPremium: 8
+  - raresa: 5
+    color: {r: 0.9, g: 0.15, b: 0.2, a: 1}
+    vidaDelBoss: 169000000
+    regeneracio: 1500
+    punts: 25
+    probabilitatDelBoss: 1
+    danyBase: 12
+    creixementDelDany: 1.06
+    nivellMaxim: 100
+    costBase: 2.7e+25
+    creixementDelCost: 3.067
+    nivellDeCanvi: 30
+    creixementDespres: 1.0423
+    probabilitatComu: 0
+    probabilitatPremium: 2
+  pantaQueDesbloqueja: 15
+  ticketsDeRegal: 10
+  horesDelCicle: 24
+  refrescosGratisAlDia: 1
+  gemesPerRefresc: 50
+  lluitadors:
+  - {fileID: 11400000, guid: 17a943c38077d26d385d0b6266b53b59, type: 2}
+  - {fileID: 11400000, guid: 3791e965c96cf4a2cb34877ad307d55b, type: 2}
+  - {fileID: 11400000, guid: 2d90c768d5f18cf34a07f484d5174537, type: 2}
+  - {fileID: 11400000, guid: 83512ad03c8c7a179b091ffa4d16a795, type: 2}
+  - {fileID: 11400000, guid: 21a37e6699ff5e6c695b82ad73c458c5, type: 2}
+  - {fileID: 11400000, guid: 50066a7cd3083714da3cf7308be65820, type: 2}
+  - {fileID: 11400000, guid: 180f3d5f8e0de5697959d67d9c4dcce3, type: 2}
+  - {fileID: 11400000, guid: 7ea09e4d717f7bf48aa1a5e58ecd7076, type: 2}
+  - {fileID: 11400000, guid: 9ea54de6a111c1786938efbd4d7bc317, type: 2}
+  - {fileID: 11400000, guid: 90075c9e218c3553f9921e6d1f782916, type: 2}
+  - {fileID: 11400000, guid: b408da9ee4b52b285a298cc1e5b66613, type: 2}
+  - {fileID: 11400000, guid: 2440e5ced92973954a9a15cf35fc06ec, type: 2}
+  bosses:
+  - {fileID: 11400000, guid: a843c8514dacc2a8fbe23ea5c2abc929, type: 2}
+  - {fileID: 11400000, guid: 0b37a116823c48ec49ff17d0240bb9df, type: 2}
+  - {fileID: 11400000, guid: eca3a3f6127faf271b4ec0e8e699d014, type: 2}
+  - {fileID: 11400000, guid: fef03a95bd3f5fc509b841e98f15cd16, type: 2}
+  - {fileID: 11400000, guid: 8489f4b097c8752f49efc86a33070f74, type: 2}
+  - {fileID: 11400000, guid: 47f785b4e1067142a9cafd9b532aa339, type: 2}

@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7caf62c616440a4bbb3285455332091d, type: 3}
+  m_Name: ticket_premium
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.ProducteDeBotiga
+  id: ticket_premium
+  nom:
+    angles: Premium ticket
+    castella: "Ticket pr\xE9mium"
+    catala: "Ticket pr\xE8mium"
+  icona: {fileID: 0}
+  etiqueta:
+    angles: 
+    castella: 
+    catala: 
+  informacio: 0
+  seccio: 4
+  mida: 0
+  pagament: 2
+  preuEnGemes: 200
+  idDeCompra: 
+  preuDeMostra: 
+  recompenses:
+  - tipus: 8
+    quantitat: 1
+    multiplicador: 2
+    minuts: 240
+    minutsMaxims: 0
+    raresa: 2
+    probabilitats:
+    - 70
+    - 25
+    - 4.5
+    - 0.5
+    efectePermanent: 0
+    dies: 30
+    paisDelsPunts: 0
+    pes: 1
+  unaAlAtzar: 0
+  doblePrimeraCompra: 0
+  dobleAmbAnunci: 0
+  limit: 0
+  limitAlDia: 0
+  horesEntreUsos: 0
+  horesDOferta: 0

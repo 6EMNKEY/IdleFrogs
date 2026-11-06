@@ -34,6 +34,8 @@ Transform:
   - {fileID: 4855888360941606307}
   - {fileID: 8862449595873478585}
   - {fileID: 9054066489033796597}
+  - {fileID: 3449268156236136504}
+  - {fileID: 5724386778517198053}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3053236183515182812
@@ -213,6 +215,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9332970ac12d4efd7b40cac9fb9124c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+--- !u!1 &3443775031295971223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3449268156236136504}
+  - component: {fileID: 669975290656567667}
+  m_Layer: 0
+  m_Name: GestorDeLArena
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3449268156236136504
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3443775031295971223}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2377875390904548028}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &669975290656567667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3443775031295971223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c86c535a31c6f3111a42d30b4a4af7fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.GestorDeLArena
 --- !u!1 &4013789941857148471
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,6 +311,50 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9449d9d7a3ba1b8499ccc7704f3ba4ce, type: 2}
   - {fileID: 11400000, guid: 8ed44ed7511d9c8b198d23950151e50e, type: 2}
   - {fileID: 11400000, guid: eff8a8fb360ad39458d0606808e70e69, type: 2}
+--- !u!1 &5662346768090701388
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5724386778517198053}
+  - component: {fileID: 4690908493523472634}
+  m_Layer: 0
+  m_Name: GestorDeRecerca
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5724386778517198053
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5662346768090701388}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2377875390904548028}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4690908493523472634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5662346768090701388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1661574a809a0ce4d9297871d4e4f854, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.GestorDeRecerca
 --- !u!1 &6037167260633633694
 GameObject:
   m_ObjectHideFlags: 0
@@ -312,6 +402,9 @@ MonoBehaviour:
   intervalDeTick: 0.1
   escenaDelPais: MainScene
   escenaDelMapa: Mapa
+  escenaDelPrestigi: Prestigi
+  escenaDeLaRecerca: Recerca
+  escenaDeLArena: Arena
   segonsEntreAutoGuardats: 30
   zona: 0
   doblersInicials: 10
@@ -365,3 +458,4 @@ MonoBehaviour:
   gemesPerHoraDIngressos: 120
   minimDeGemes: 10
   maximDeGemes: 100000
+  minutsMaximsPerAnunci: 30

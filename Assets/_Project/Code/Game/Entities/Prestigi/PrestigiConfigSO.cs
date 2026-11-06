@@ -72,5 +72,9 @@ namespace IdleFrogs.Game
                 return _carregat;
             }
         }
+
+        // Sense Domain Reload, l'estàtic sobreviu entre Plays: es torna a buscar a cada Play.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void Reiniciar() { _buscat = false; _carregat = null; }
     }
 }

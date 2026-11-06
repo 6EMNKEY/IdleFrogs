@@ -1,0 +1,1211 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb064baff5b6006cb52b443e246becc, type: 3}
+  m_Name: Recerca
+  m_EditorClassIdentifier: IdleFrogs.Game::IdleFrogs.Game.ArbreDeRecercaSO
+  nodes:
+  - id: p0_produccio
+    nom:
+      angles: Hungry frogs (Blue Springs)
+      castella: Ranas glotonas (Blue Springs)
+      catala: Granotes golafres (Blue Springs)
+    descripcio:
+      angles: "Swamp production: {0} \u2192 {1}"
+      castella: "Producci\xF3n de los pantanos: {0} \u2192 {1}"
+      catala: "Producci\xF3 dels pantans: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1500, y: -1000}
+    prerequisits: []
+    nivellMaxim: 5
+    cost:
+    - pais: 0
+      costBase: 2
+      creixement: 1.5
+    efecte: 1
+    pais: 0
+    valorPerNivell: 0.1
+  - id: p0_tren
+    nom:
+      angles: Fast track (Blue Springs)
+      castella: "V\xEDa r\xE1pida (Blue Springs)"
+      catala: "Via r\xE0pida (Blue Springs)"
+    descripcio:
+      angles: "Train speed: {0} \u2192 {1}"
+      castella: "Velocidad del tren: {0} \u2192 {1}"
+      catala: "Velocitat del tren: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1630, y: -820}
+    prerequisits:
+    - p0_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 0
+      costBase: 3
+      creixement: 1.5
+    efecte: 2
+    pais: 0
+    valorPerNivell: 0.05
+  - id: p0_restaurant
+    nom:
+      angles: Big kitchen (Blue Springs)
+      castella: Cocina grande (Blue Springs)
+      catala: Cuina gran (Blue Springs)
+    descripcio:
+      angles: "Restaurant capacity: {0} \u2192 {1}"
+      castella: "Capacidad del restaurante: {0} \u2192 {1}"
+      catala: "Capacitat del restaurant: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1370, y: -820}
+    prerequisits:
+    - p0_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 0
+      costBase: 4
+      creixement: 1.5
+    efecte: 3
+    pais: 0
+    valorPerNivell: 0.1
+  - id: p0_regateig
+    nom:
+      angles: Haggling (Blue Springs)
+      castella: Regateo (Blue Springs)
+      catala: Regateig (Blue Springs)
+    descripcio:
+      angles: "Upgrade costs: {0} \u2192 {1}"
+      castella: "Coste de las mejoras: {0} \u2192 {1}"
+      catala: "Cost de les millores: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1630, y: -640}
+    prerequisits:
+    - p0_tren
+    nivellMaxim: 5
+    cost:
+    - pais: 0
+      costBase: 6
+      creixement: 1.5
+    efecte: 4
+    pais: 0
+    valorPerNivell: -0.03
+  - id: p0_entrenament
+    nom:
+      angles: Training (Blue Springs)
+      castella: Entrenamiento (Blue Springs)
+      catala: Entrenament (Blue Springs)
+    descripcio:
+      angles: "Fighter damage: {0} \u2192 {1}"
+      castella: "Da\xF1o de los luchadores: {0} \u2192 {1}"
+      catala: "Dany dels lluitadors: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1370, y: -640}
+    prerequisits:
+    - p0_restaurant
+    nivellMaxim: 5
+    cost:
+    - pais: 0
+      costBase: 8
+      creixement: 1.5
+    efecte: 5
+    pais: 0
+    valorPerNivell: 0.1
+  - id: p0_boti
+    nom:
+      angles: Loot (Blue Springs)
+      castella: "Bot\xEDn (Blue Springs)"
+      catala: "Bot\xED (Blue Springs)"
+    descripcio:
+      angles: "Boss research points: {0} \u2192 {1}"
+      castella: "Puntos de los bosses: {0} \u2192 {1}"
+      catala: "Punts dels bosses: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1500, y: -460}
+    prerequisits:
+    - p0_regateig
+    - p0_entrenament
+    nivellMaxim: 3
+    cost:
+    - pais: 0
+      costBase: 12
+      creixement: 1.5
+    efecte: 6
+    pais: 0
+    valorPerNivell: 0.1
+  - id: p1_produccio
+    nom:
+      angles: Hungry frogs (Deep Swamp)
+      castella: Ranas glotonas (Deep Swamp)
+      catala: Granotes golafres (Deep Swamp)
+    descripcio:
+      angles: "Swamp production: {0} \u2192 {1}"
+      castella: "Producci\xF3n de los pantanos: {0} \u2192 {1}"
+      catala: "Producci\xF3 dels pantans: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -900, y: -1000}
+    prerequisits: []
+    nivellMaxim: 5
+    cost:
+    - pais: 1
+      costBase: 2
+      creixement: 1.5
+    efecte: 1
+    pais: 1
+    valorPerNivell: 0.1
+  - id: p1_tren
+    nom:
+      angles: Fast track (Deep Swamp)
+      castella: "V\xEDa r\xE1pida (Deep Swamp)"
+      catala: "Via r\xE0pida (Deep Swamp)"
+    descripcio:
+      angles: "Train speed: {0} \u2192 {1}"
+      castella: "Velocidad del tren: {0} \u2192 {1}"
+      catala: "Velocitat del tren: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1030, y: -820}
+    prerequisits:
+    - p1_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 1
+      costBase: 3
+      creixement: 1.5
+    efecte: 2
+    pais: 1
+    valorPerNivell: 0.05
+  - id: p1_restaurant
+    nom:
+      angles: Big kitchen (Deep Swamp)
+      castella: Cocina grande (Deep Swamp)
+      catala: Cuina gran (Deep Swamp)
+    descripcio:
+      angles: "Restaurant capacity: {0} \u2192 {1}"
+      castella: "Capacidad del restaurante: {0} \u2192 {1}"
+      catala: "Capacitat del restaurant: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -770, y: -820}
+    prerequisits:
+    - p1_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 1
+      costBase: 4
+      creixement: 1.5
+    efecte: 3
+    pais: 1
+    valorPerNivell: 0.1
+  - id: p1_regateig
+    nom:
+      angles: Haggling (Deep Swamp)
+      castella: Regateo (Deep Swamp)
+      catala: Regateig (Deep Swamp)
+    descripcio:
+      angles: "Upgrade costs: {0} \u2192 {1}"
+      castella: "Coste de las mejoras: {0} \u2192 {1}"
+      catala: "Cost de les millores: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1030, y: -640}
+    prerequisits:
+    - p1_tren
+    nivellMaxim: 5
+    cost:
+    - pais: 1
+      costBase: 6
+      creixement: 1.5
+    efecte: 4
+    pais: 1
+    valorPerNivell: -0.03
+  - id: p1_entrenament
+    nom:
+      angles: Training (Deep Swamp)
+      castella: Entrenamiento (Deep Swamp)
+      catala: Entrenament (Deep Swamp)
+    descripcio:
+      angles: "Fighter damage: {0} \u2192 {1}"
+      castella: "Da\xF1o de los luchadores: {0} \u2192 {1}"
+      catala: "Dany dels lluitadors: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -770, y: -640}
+    prerequisits:
+    - p1_restaurant
+    nivellMaxim: 5
+    cost:
+    - pais: 1
+      costBase: 8
+      creixement: 1.5
+    efecte: 5
+    pais: 1
+    valorPerNivell: 0.1
+  - id: p1_boti
+    nom:
+      angles: Loot (Deep Swamp)
+      castella: "Bot\xEDn (Deep Swamp)"
+      catala: "Bot\xED (Deep Swamp)"
+    descripcio:
+      angles: "Boss research points: {0} \u2192 {1}"
+      castella: "Puntos de los bosses: {0} \u2192 {1}"
+      catala: "Punts dels bosses: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -900, y: -460}
+    prerequisits:
+    - p1_regateig
+    - p1_entrenament
+    nivellMaxim: 3
+    cost:
+    - pais: 1
+      costBase: 12
+      creixement: 1.5
+    efecte: 6
+    pais: 1
+    valorPerNivell: 0.1
+  - id: p2_produccio
+    nom:
+      angles: Hungry frogs (Lapis Lazuli Caves)
+      castella: Ranas glotonas (Lapis Lazuli Caves)
+      catala: Granotes golafres (Lapis Lazuli Caves)
+    descripcio:
+      angles: "Swamp production: {0} \u2192 {1}"
+      castella: "Producci\xF3n de los pantanos: {0} \u2192 {1}"
+      catala: "Producci\xF3 dels pantans: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -300, y: -1000}
+    prerequisits: []
+    nivellMaxim: 5
+    cost:
+    - pais: 2
+      costBase: 2
+      creixement: 1.5
+    efecte: 1
+    pais: 2
+    valorPerNivell: 0.1
+  - id: p2_tren
+    nom:
+      angles: Fast track (Lapis Lazuli Caves)
+      castella: "V\xEDa r\xE1pida (Lapis Lazuli Caves)"
+      catala: "Via r\xE0pida (Lapis Lazuli Caves)"
+    descripcio:
+      angles: "Train speed: {0} \u2192 {1}"
+      castella: "Velocidad del tren: {0} \u2192 {1}"
+      catala: "Velocitat del tren: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -430, y: -820}
+    prerequisits:
+    - p2_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 2
+      costBase: 3
+      creixement: 1.5
+    efecte: 2
+    pais: 2
+    valorPerNivell: 0.05
+  - id: p2_restaurant
+    nom:
+      angles: Big kitchen (Lapis Lazuli Caves)
+      castella: Cocina grande (Lapis Lazuli Caves)
+      catala: Cuina gran (Lapis Lazuli Caves)
+    descripcio:
+      angles: "Restaurant capacity: {0} \u2192 {1}"
+      castella: "Capacidad del restaurante: {0} \u2192 {1}"
+      catala: "Capacitat del restaurant: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -170, y: -820}
+    prerequisits:
+    - p2_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 2
+      costBase: 4
+      creixement: 1.5
+    efecte: 3
+    pais: 2
+    valorPerNivell: 0.1
+  - id: p2_regateig
+    nom:
+      angles: Haggling (Lapis Lazuli Caves)
+      castella: Regateo (Lapis Lazuli Caves)
+      catala: Regateig (Lapis Lazuli Caves)
+    descripcio:
+      angles: "Upgrade costs: {0} \u2192 {1}"
+      castella: "Coste de las mejoras: {0} \u2192 {1}"
+      catala: "Cost de les millores: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -430, y: -640}
+    prerequisits:
+    - p2_tren
+    nivellMaxim: 5
+    cost:
+    - pais: 2
+      costBase: 6
+      creixement: 1.5
+    efecte: 4
+    pais: 2
+    valorPerNivell: -0.03
+  - id: p2_entrenament
+    nom:
+      angles: Training (Lapis Lazuli Caves)
+      castella: Entrenamiento (Lapis Lazuli Caves)
+      catala: Entrenament (Lapis Lazuli Caves)
+    descripcio:
+      angles: "Fighter damage: {0} \u2192 {1}"
+      castella: "Da\xF1o de los luchadores: {0} \u2192 {1}"
+      catala: "Dany dels lluitadors: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -170, y: -640}
+    prerequisits:
+    - p2_restaurant
+    nivellMaxim: 5
+    cost:
+    - pais: 2
+      costBase: 8
+      creixement: 1.5
+    efecte: 5
+    pais: 2
+    valorPerNivell: 0.1
+  - id: p2_boti
+    nom:
+      angles: Loot (Lapis Lazuli Caves)
+      castella: "Bot\xEDn (Lapis Lazuli Caves)"
+      catala: "Bot\xED (Lapis Lazuli Caves)"
+    descripcio:
+      angles: "Boss research points: {0} \u2192 {1}"
+      castella: "Puntos de los bosses: {0} \u2192 {1}"
+      catala: "Punts dels bosses: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -300, y: -460}
+    prerequisits:
+    - p2_regateig
+    - p2_entrenament
+    nivellMaxim: 3
+    cost:
+    - pais: 2
+      costBase: 12
+      creixement: 1.5
+    efecte: 6
+    pais: 2
+    valorPerNivell: 0.1
+  - id: p3_produccio
+    nom:
+      angles: Hungry frogs (Sweet World)
+      castella: Ranas glotonas (Sweet World)
+      catala: Granotes golafres (Sweet World)
+    descripcio:
+      angles: "Swamp production: {0} \u2192 {1}"
+      castella: "Producci\xF3n de los pantanos: {0} \u2192 {1}"
+      catala: "Producci\xF3 dels pantans: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 300, y: -1000}
+    prerequisits: []
+    nivellMaxim: 5
+    cost:
+    - pais: 3
+      costBase: 2
+      creixement: 1.5
+    efecte: 1
+    pais: 3
+    valorPerNivell: 0.1
+  - id: p3_tren
+    nom:
+      angles: Fast track (Sweet World)
+      castella: "V\xEDa r\xE1pida (Sweet World)"
+      catala: "Via r\xE0pida (Sweet World)"
+    descripcio:
+      angles: "Train speed: {0} \u2192 {1}"
+      castella: "Velocidad del tren: {0} \u2192 {1}"
+      catala: "Velocitat del tren: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 170, y: -820}
+    prerequisits:
+    - p3_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 3
+      costBase: 3
+      creixement: 1.5
+    efecte: 2
+    pais: 3
+    valorPerNivell: 0.05
+  - id: p3_restaurant
+    nom:
+      angles: Big kitchen (Sweet World)
+      castella: Cocina grande (Sweet World)
+      catala: Cuina gran (Sweet World)
+    descripcio:
+      angles: "Restaurant capacity: {0} \u2192 {1}"
+      castella: "Capacidad del restaurante: {0} \u2192 {1}"
+      catala: "Capacitat del restaurant: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 430, y: -820}
+    prerequisits:
+    - p3_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 3
+      costBase: 4
+      creixement: 1.5
+    efecte: 3
+    pais: 3
+    valorPerNivell: 0.1
+  - id: p3_regateig
+    nom:
+      angles: Haggling (Sweet World)
+      castella: Regateo (Sweet World)
+      catala: Regateig (Sweet World)
+    descripcio:
+      angles: "Upgrade costs: {0} \u2192 {1}"
+      castella: "Coste de las mejoras: {0} \u2192 {1}"
+      catala: "Cost de les millores: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 170, y: -640}
+    prerequisits:
+    - p3_tren
+    nivellMaxim: 5
+    cost:
+    - pais: 3
+      costBase: 6
+      creixement: 1.5
+    efecte: 4
+    pais: 3
+    valorPerNivell: -0.03
+  - id: p3_entrenament
+    nom:
+      angles: Training (Sweet World)
+      castella: Entrenamiento (Sweet World)
+      catala: Entrenament (Sweet World)
+    descripcio:
+      angles: "Fighter damage: {0} \u2192 {1}"
+      castella: "Da\xF1o de los luchadores: {0} \u2192 {1}"
+      catala: "Dany dels lluitadors: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 430, y: -640}
+    prerequisits:
+    - p3_restaurant
+    nivellMaxim: 5
+    cost:
+    - pais: 3
+      costBase: 8
+      creixement: 1.5
+    efecte: 5
+    pais: 3
+    valorPerNivell: 0.1
+  - id: p3_boti
+    nom:
+      angles: Loot (Sweet World)
+      castella: "Bot\xEDn (Sweet World)"
+      catala: "Bot\xED (Sweet World)"
+    descripcio:
+      angles: "Boss research points: {0} \u2192 {1}"
+      castella: "Puntos de los bosses: {0} \u2192 {1}"
+      catala: "Punts dels bosses: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 300, y: -460}
+    prerequisits:
+    - p3_regateig
+    - p3_entrenament
+    nivellMaxim: 3
+    cost:
+    - pais: 3
+      costBase: 12
+      creixement: 1.5
+    efecte: 6
+    pais: 3
+    valorPerNivell: 0.1
+  - id: p4_produccio
+    nom:
+      angles: Hungry frogs (Golden World)
+      castella: Ranas glotonas (Golden World)
+      catala: Granotes golafres (Golden World)
+    descripcio:
+      angles: "Swamp production: {0} \u2192 {1}"
+      castella: "Producci\xF3n de los pantanos: {0} \u2192 {1}"
+      catala: "Producci\xF3 dels pantans: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 900, y: -1000}
+    prerequisits: []
+    nivellMaxim: 5
+    cost:
+    - pais: 4
+      costBase: 2
+      creixement: 1.5
+    efecte: 1
+    pais: 4
+    valorPerNivell: 0.1
+  - id: p4_tren
+    nom:
+      angles: Fast track (Golden World)
+      castella: "V\xEDa r\xE1pida (Golden World)"
+      catala: "Via r\xE0pida (Golden World)"
+    descripcio:
+      angles: "Train speed: {0} \u2192 {1}"
+      castella: "Velocidad del tren: {0} \u2192 {1}"
+      catala: "Velocitat del tren: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 770, y: -820}
+    prerequisits:
+    - p4_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 4
+      costBase: 3
+      creixement: 1.5
+    efecte: 2
+    pais: 4
+    valorPerNivell: 0.05
+  - id: p4_restaurant
+    nom:
+      angles: Big kitchen (Golden World)
+      castella: Cocina grande (Golden World)
+      catala: Cuina gran (Golden World)
+    descripcio:
+      angles: "Restaurant capacity: {0} \u2192 {1}"
+      castella: "Capacidad del restaurante: {0} \u2192 {1}"
+      catala: "Capacitat del restaurant: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1030, y: -820}
+    prerequisits:
+    - p4_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 4
+      costBase: 4
+      creixement: 1.5
+    efecte: 3
+    pais: 4
+    valorPerNivell: 0.1
+  - id: p4_regateig
+    nom:
+      angles: Haggling (Golden World)
+      castella: Regateo (Golden World)
+      catala: Regateig (Golden World)
+    descripcio:
+      angles: "Upgrade costs: {0} \u2192 {1}"
+      castella: "Coste de las mejoras: {0} \u2192 {1}"
+      catala: "Cost de les millores: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 770, y: -640}
+    prerequisits:
+    - p4_tren
+    nivellMaxim: 5
+    cost:
+    - pais: 4
+      costBase: 6
+      creixement: 1.5
+    efecte: 4
+    pais: 4
+    valorPerNivell: -0.03
+  - id: p4_entrenament
+    nom:
+      angles: Training (Golden World)
+      castella: Entrenamiento (Golden World)
+      catala: Entrenament (Golden World)
+    descripcio:
+      angles: "Fighter damage: {0} \u2192 {1}"
+      castella: "Da\xF1o de los luchadores: {0} \u2192 {1}"
+      catala: "Dany dels lluitadors: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1030, y: -640}
+    prerequisits:
+    - p4_restaurant
+    nivellMaxim: 5
+    cost:
+    - pais: 4
+      costBase: 8
+      creixement: 1.5
+    efecte: 5
+    pais: 4
+    valorPerNivell: 0.1
+  - id: p4_boti
+    nom:
+      angles: Loot (Golden World)
+      castella: "Bot\xEDn (Golden World)"
+      catala: "Bot\xED (Golden World)"
+    descripcio:
+      angles: "Boss research points: {0} \u2192 {1}"
+      castella: "Puntos de los bosses: {0} \u2192 {1}"
+      catala: "Punts dels bosses: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 900, y: -460}
+    prerequisits:
+    - p4_regateig
+    - p4_entrenament
+    nivellMaxim: 3
+    cost:
+    - pais: 4
+      costBase: 12
+      creixement: 1.5
+    efecte: 6
+    pais: 4
+    valorPerNivell: 0.1
+  - id: p5_produccio
+    nom:
+      angles: Hungry frogs (Land of Fire)
+      castella: Ranas glotonas (Land of Fire)
+      catala: Granotes golafres (Land of Fire)
+    descripcio:
+      angles: "Swamp production: {0} \u2192 {1}"
+      castella: "Producci\xF3n de los pantanos: {0} \u2192 {1}"
+      catala: "Producci\xF3 dels pantans: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1500, y: -1000}
+    prerequisits: []
+    nivellMaxim: 5
+    cost:
+    - pais: 5
+      costBase: 2
+      creixement: 1.5
+    efecte: 1
+    pais: 5
+    valorPerNivell: 0.1
+  - id: p5_tren
+    nom:
+      angles: Fast track (Land of Fire)
+      castella: "V\xEDa r\xE1pida (Land of Fire)"
+      catala: "Via r\xE0pida (Land of Fire)"
+    descripcio:
+      angles: "Train speed: {0} \u2192 {1}"
+      castella: "Velocidad del tren: {0} \u2192 {1}"
+      catala: "Velocitat del tren: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1370, y: -820}
+    prerequisits:
+    - p5_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 5
+      costBase: 3
+      creixement: 1.5
+    efecte: 2
+    pais: 5
+    valorPerNivell: 0.05
+  - id: p5_restaurant
+    nom:
+      angles: Big kitchen (Land of Fire)
+      castella: Cocina grande (Land of Fire)
+      catala: Cuina gran (Land of Fire)
+    descripcio:
+      angles: "Restaurant capacity: {0} \u2192 {1}"
+      castella: "Capacidad del restaurante: {0} \u2192 {1}"
+      catala: "Capacitat del restaurant: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1630, y: -820}
+    prerequisits:
+    - p5_produccio
+    nivellMaxim: 5
+    cost:
+    - pais: 5
+      costBase: 4
+      creixement: 1.5
+    efecte: 3
+    pais: 5
+    valorPerNivell: 0.1
+  - id: p5_regateig
+    nom:
+      angles: Haggling (Land of Fire)
+      castella: Regateo (Land of Fire)
+      catala: Regateig (Land of Fire)
+    descripcio:
+      angles: "Upgrade costs: {0} \u2192 {1}"
+      castella: "Coste de las mejoras: {0} \u2192 {1}"
+      catala: "Cost de les millores: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1370, y: -640}
+    prerequisits:
+    - p5_tren
+    nivellMaxim: 5
+    cost:
+    - pais: 5
+      costBase: 6
+      creixement: 1.5
+    efecte: 4
+    pais: 5
+    valorPerNivell: -0.03
+  - id: p5_entrenament
+    nom:
+      angles: Training (Land of Fire)
+      castella: Entrenamiento (Land of Fire)
+      catala: Entrenament (Land of Fire)
+    descripcio:
+      angles: "Fighter damage: {0} \u2192 {1}"
+      castella: "Da\xF1o de los luchadores: {0} \u2192 {1}"
+      catala: "Dany dels lluitadors: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1630, y: -640}
+    prerequisits:
+    - p5_restaurant
+    nivellMaxim: 5
+    cost:
+    - pais: 5
+      costBase: 8
+      creixement: 1.5
+    efecte: 5
+    pais: 5
+    valorPerNivell: 0.1
+  - id: p5_boti
+    nom:
+      angles: Loot (Land of Fire)
+      castella: "Bot\xEDn (Land of Fire)"
+      catala: "Bot\xED (Land of Fire)"
+    descripcio:
+      angles: "Boss research points: {0} \u2192 {1}"
+      castella: "Puntos de los bosses: {0} \u2192 {1}"
+      catala: "Punts dels bosses: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1500, y: -460}
+    prerequisits:
+    - p5_regateig
+    - p5_entrenament
+    nivellMaxim: 3
+    cost:
+    - pais: 5
+      costBase: 12
+      creixement: 1.5
+    efecte: 6
+    pais: 5
+    valorPerNivell: 0.1
+  - id: anunci_barrera
+    nom:
+      angles: Barrier videos
+      castella: "V\xEDdeos de barrera"
+      catala: "V\xEDdeos de barrera"
+    descripcio:
+      angles: "Extra time per video: {0} \u2192 {1}"
+      castella: "Tiempo extra por v\xEDdeo: {0} \u2192 {1}"
+      catala: "Temps de m\xE9s per v\xEDdeo: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1500, y: -200}
+    prerequisits:
+    - p0_regateig
+    nivellMaxim: 3
+    cost:
+    - pais: 0
+      costBase: 10
+      creixement: 1.6
+    - pais: 1
+      costBase: 10
+      creixement: 1.6
+    efecte: 12
+    pais: -1
+    valorPerNivell: 10
+  - id: anunci_mosca
+    nom:
+      angles: Golden fly
+      castella: Mosca dorada
+      catala: Mosca daurada
+    descripcio:
+      angles: "Golden fly reward: {0} \u2192 {1}"
+      castella: "Recompensa de la mosca: {0} \u2192 {1}"
+      catala: "Recompensa de la mosca: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -900, y: -200}
+    prerequisits:
+    - p1_regateig
+    nivellMaxim: 3
+    cost:
+    - pais: 1
+      costBase: 10
+      creixement: 1.6
+    - pais: 2
+      costBase: 10
+      creixement: 1.6
+    efecte: 13
+    pais: -1
+    valorPerNivell: 0.2
+  - id: anunci_offline
+    nom:
+      angles: Offline video
+      castella: "V\xEDdeo offline"
+      catala: "V\xEDdeo offline"
+    descripcio:
+      angles: "Offline video multiplier: {0} \u2192 {1}"
+      castella: "Multiplicador del v\xEDdeo offline: {0} \u2192 {1}"
+      catala: "Multiplicador del v\xEDdeo offline: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -300, y: -200}
+    prerequisits:
+    - p2_regateig
+    nivellMaxim: 2
+    cost:
+    - pais: 2
+      costBase: 10
+      creixement: 1.6
+    - pais: 3
+      costBase: 10
+      creixement: 1.6
+    efecte: 14
+    pais: -1
+    valorPerNivell: 0.5
+  - id: anunci_etfalten
+    nom:
+      angles: Quick cash
+      castella: "Dinero r\xE1pido"
+      catala: "Diners r\xE0pids"
+    descripcio:
+      angles: "\"You need X\" by video, up to: {0} \u2192 {1}"
+      castella: "\xABTe faltan X\xBB con v\xEDdeo, hasta: {0} \u2192 {1}"
+      catala: "\xABEt falten X\xBB amb v\xEDdeo, fins a: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 300, y: -200}
+    prerequisits:
+    - p3_regateig
+    nivellMaxim: 3
+    cost:
+    - pais: 3
+      costBase: 10
+      creixement: 1.6
+    - pais: 4
+      costBase: 10
+      creixement: 1.6
+    efecte: 15
+    pais: -1
+    valorPerNivell: 15
+  - id: anunci_regal
+    nom:
+      angles: Gift videos
+      castella: "V\xEDdeos de regalo"
+      catala: "V\xEDdeos de regal"
+    descripcio:
+      angles: "Calendar and gift video: {0} \u2192 {1}"
+      castella: "V\xEDdeo del calendario y del regalo: {0} \u2192 {1}"
+      catala: "V\xEDdeo del calendari i del regal: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 900, y: -200}
+    prerequisits:
+    - p4_regateig
+    nivellMaxim: 2
+    cost:
+    - pais: 4
+      costBase: 10
+      creixement: 1.6
+    - pais: 5
+      costBase: 10
+      creixement: 1.6
+    efecte: 16
+    pais: -1
+    valorPerNivell: 0.5
+  - id: anunci_potenciador
+    nom:
+      angles: Longer boosts
+      castella: Potenciadores largos
+      catala: Potenciadors llargs
+    descripcio:
+      angles: "Video boost duration: {0} \u2192 {1}"
+      castella: "Duraci\xF3n del potenciador por v\xEDdeo: {0} \u2192 {1}"
+      catala: "Durada del potenciador per v\xEDdeo: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1500, y: -200}
+    prerequisits:
+    - p5_regateig
+    nivellMaxim: 3
+    cost:
+    - pais: 5
+      costBase: 10
+      creixement: 1.6
+    - pais: 0
+      costBase: 10
+      creixement: 1.6
+    efecte: 17
+    pais: -1
+    valorPerNivell: 10
+  - id: g_ingressos
+    nom:
+      angles: Golden age
+      castella: Edad de oro
+      catala: Edat d'or
+    descripcio:
+      angles: "Income in every country: {0} \u2192 {1}"
+      castella: "Ingresos en todos los pa\xEDses: {0} \u2192 {1}"
+      catala: "Ingressos a tots els pa\xEFsos: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -900, y: 150}
+    prerequisits:
+    - p0_boti
+    - p1_boti
+    nivellMaxim: 10
+    cost:
+    - pais: 0
+      costBase: 5
+      creixement: 1.3
+    - pais: 1
+      costBase: 5
+      creixement: 1.3
+    efecte: 0
+    pais: -1
+    valorPerNivell: 0.1
+  - id: g_offline
+    nom:
+      angles: Night shift
+      castella: Turno de noche
+      catala: Torn de nit
+    descripcio:
+      angles: "Offline income: {0} \u2192 {1}"
+      castella: "Ingresos offline: {0} \u2192 {1}"
+      catala: "Ingressos offline: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1200, y: 450}
+    prerequisits:
+    - g_ingressos
+    nivellMaxim: 5
+    cost:
+    - pais: 0
+      costBase: 8
+      creixement: 1.5
+    - pais: 1
+      costBase: 8
+      creixement: 1.5
+    - pais: 2
+      costBase: 8
+      creixement: 1.5
+    efecte: 7
+    pais: -1
+    valorPerNivell: 0.1
+  - id: g_habilitats
+    nom:
+      angles: Bossy bosses
+      castella: Jefes mandones
+      catala: Caps manaires
+    descripcio:
+      angles: "Manager ability duration: {0} \u2192 {1}"
+      castella: "Duraci\xF3n de las habilidades: {0} \u2192 {1}"
+      catala: "Durada de les habilitats: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -600, y: 450}
+    prerequisits:
+    - g_ingressos
+    nivellMaxim: 5
+    cost:
+    - pais: 1
+      costBase: 8
+      creixement: 1.5
+    - pais: 2
+      costBase: 8
+      creixement: 1.5
+    - pais: 3
+      costBase: 8
+      creixement: 1.5
+    efecte: 8
+    pais: -1
+    valorPerNivell: 0.1
+  - id: g_recarrega
+    nom:
+      angles: Coffee break
+      castella: "Pausa del caf\xE9"
+      catala: "Pausa del caf\xE8"
+    descripcio:
+      angles: "Ability recharge time: {0} \u2192 {1}"
+      castella: "Recarga de las habilidades: {0} \u2192 {1}"
+      catala: "Rec\xE0rrega de les habilitats: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -600, y: 750}
+    prerequisits:
+    - g_habilitats
+    nivellMaxim: 5
+    cost:
+    - pais: 2
+      costBase: 13
+      creixement: 1.5
+    - pais: 3
+      costBase: 13
+      creixement: 1.5
+    - pais: 4
+      costBase: 13
+      creixement: 1.5
+    efecte: 9
+    pais: -1
+    valorPerNivell: -0.05
+  - id: g_barreres
+    nom:
+      angles: Demolition
+      castella: "Demolici\xF3n"
+      catala: "Demolici\xF3"
+    descripcio:
+      angles: "Barrier time: {0} \u2192 {1}"
+      castella: "Tiempo de las barreras: {0} \u2192 {1}"
+      catala: "Temps de les barreres: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -1200, y: 750}
+    prerequisits:
+    - g_offline
+    nivellMaxim: 5
+    cost:
+    - pais: 3
+      costBase: 13
+      creixement: 1.5
+    - pais: 4
+      costBase: 13
+      creixement: 1.5
+    - pais: 5
+      costBase: 13
+      creixement: 1.5
+    efecte: 10
+    pais: -1
+    valorPerNivell: -0.05
+  - id: g_fites
+    nom:
+      angles: Milestone hunter
+      castella: Cazahitos
+      catala: "Ca\xE7ador de fites"
+    descripcio:
+      angles: "Milestone gems: {0} \u2192 {1}"
+      castella: "Gemas de los hitos: {0} \u2192 {1}"
+      catala: "Gemes de les fites: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: -900, y: 1000}
+    prerequisits:
+    - g_barreres
+    - g_recarrega
+    nivellMaxim: 3
+    cost:
+    - pais: 0
+      costBase: 20
+      creixement: 1.6
+    - pais: 3
+      costBase: 20
+      creixement: 1.6
+    - pais: 5
+      costBase: 20
+      creixement: 1.6
+    efecte: 11
+    pais: -1
+    valorPerNivell: 0.1
+  - id: g_dany
+    nom:
+      angles: War drums
+      castella: Tambores de guerra
+      catala: Tambors de guerra
+    descripcio:
+      angles: "Damage of every fighter: {0} \u2192 {1}"
+      castella: "Da\xF1o de todos los luchadores: {0} \u2192 {1}"
+      catala: "Dany de tots els lluitadors: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 900, y: 150}
+    prerequisits:
+    - p2_boti
+    - p3_boti
+    nivellMaxim: 10
+    cost:
+    - pais: 2
+      costBase: 5
+      creixement: 1.3
+    - pais: 3
+      costBase: 5
+      creixement: 1.3
+    efecte: 5
+    pais: -1
+    valorPerNivell: 0.05
+  - id: g_bosses
+    nom:
+      angles: Trophy room
+      castella: Sala de trofeos
+      catala: Sala de trofeus
+    descripcio:
+      angles: "Research points from bosses: {0} \u2192 {1}"
+      castella: "Puntos de los bosses: {0} \u2192 {1}"
+      catala: "Punts dels bosses: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 900, y: 450}
+    prerequisits:
+    - g_dany
+    nivellMaxim: 5
+    cost:
+    - pais: 2
+      costBase: 10
+      creixement: 1.5
+    - pais: 3
+      costBase: 10
+      creixement: 1.5
+    - pais: 4
+      costBase: 10
+      creixement: 1.5
+    - pais: 5
+      costBase: 10
+      creixement: 1.5
+    efecte: 6
+    pais: -1
+    valorPerNivell: 0.1
+  - id: g_refrescos
+    nom:
+      angles: Fresh water
+      castella: Agua fresca
+      catala: Aigua fresca
+    descripcio:
+      angles: "Free arena refreshes per day: {0} \u2192 {1}"
+      castella: "Refrescos gratis al d\xEDa: {0} \u2192 {1}"
+      catala: "Refrescos gratis al dia: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 600, y: 750}
+    prerequisits:
+    - g_bosses
+    nivellMaxim: 2
+    cost:
+    - pais: 0
+      costBase: 27
+      creixement: 2
+    - pais: 1
+      costBase: 27
+      creixement: 2
+    - pais: 2
+      costBase: 27
+      creixement: 2
+    - pais: 3
+      costBase: 27
+      creixement: 2
+    - pais: 4
+      costBase: 27
+      creixement: 2
+    - pais: 5
+      costBase: 27
+      creixement: 2
+    efecte: 18
+    pais: -1
+    valorPerNivell: 1
+  - id: g_sort
+    nom:
+      angles: Lucky charm
+      castella: Amuleto
+      catala: Amulet
+    descripcio:
+      angles: "Luck in summons: {0} \u2192 {1}"
+      castella: "Suerte en las invocaciones: {0} \u2192 {1}"
+      catala: "Sort a les invocacions: {0} \u2192 {1}"
+    icona: {fileID: 0}
+    posicio: {x: 1200, y: 750}
+    prerequisits:
+    - g_bosses
+    nivellMaxim: 3
+    cost:
+    - pais: 0
+      costBase: 33
+      creixement: 1.8
+    - pais: 1
+      costBase: 33
+      creixement: 1.8
+    - pais: 2
+      costBase: 33
+      creixement: 1.8
+    - pais: 3
+      costBase: 33
+      creixement: 1.8
+    - pais: 4
+      costBase: 33
+      creixement: 1.8
+    - pais: 5
+      costBase: 33
+      creixement: 1.8
+    efecte: 19
+    pais: -1
+    valorPerNivell: 0.2
+  colorsDelsPunts:
+  - {r: 0.35, g: 0.75, b: 0.25, a: 1}
+  - {r: 0.2, g: 0.5, b: 0.9, a: 1}
+  - {r: 0.55, g: 0.3, b: 0.85, a: 1}
+  - {r: 0.95, g: 0.8, b: 0.2, a: 1}
+  - {r: 0.95, g: 0.45, b: 0.7, a: 1}
+  - {r: 0.9, g: 0.3, b: 0.15, a: 1}
+  iconaDeLaLupa: {fileID: 0}

@@ -22,6 +22,7 @@ MonoBehaviour:
     angles: 
     castella: 
     catala: 
+  informacio: 0
   seccio: 0
   mida: 1
   pagament: 3
@@ -42,6 +43,7 @@ MonoBehaviour:
     - 0.5
     efectePermanent: 0
     dies: 30
+    paisDelsPunts: 0
     pes: 1
   - tipus: 3
     quantitat: 0
@@ -56,6 +58,7 @@ MonoBehaviour:
     - 0.5
     efectePermanent: 0
     dies: 30
+    paisDelsPunts: 0
     pes: 1
   - tipus: 2
     quantitat: 0
@@ -70,6 +73,7 @@ MonoBehaviour:
     - 0.5
     efectePermanent: 0
     dies: 30
+    paisDelsPunts: 0
     pes: 1
   - tipus: 1
     quantitat: 240
@@ -84,9 +88,11 @@ MonoBehaviour:
     - 0.5
     efectePermanent: 0
     dies: 30
+    paisDelsPunts: 0
     pes: 1
   unaAlAtzar: 0
   doblePrimeraCompra: 0
+  dobleAmbAnunci: 0
   limit: 1
   limitAlDia: 0
   horesEntreUsos: 0
