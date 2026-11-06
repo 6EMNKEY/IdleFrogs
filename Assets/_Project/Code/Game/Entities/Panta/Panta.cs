@@ -149,17 +149,19 @@ namespace IdleFrogs.Game
         // (3,3 → 3,4 → 4 → 4,1) en comptes de pujar llisa.
         //
         // Màxim amb 1 perquè una base petita no doni 0 i parteixi la divisió.
+        // La recerca de producció fa més grans la capacitat i la velocitat de
+        // recollir: cada viatge porta més i tarda el mateix.
         public double CapacitatAlNivell(int n) =>
             System.Math.Max(1, System.Math.Floor(
                 config.capacitatBase * MultiplicadorDeProfunditat
                 * System.Math.Pow(config.creixementDeCapacitat, n - 1)
-                * Fites.Acumulat(config.fites, n)));
+                * Fites.Acumulat(config.fites, n))) * Recerca.Factor(TipusDEfecteDeRecerca.ProduccioDePantans);
 
         public double VelocitatDeRecoleccioAlNivell(int n) =>
             System.Math.Max(1, System.Math.Floor(
                 config.velocitatDeRecoleccioBase * MultiplicadorDeProfunditat
                 * System.Math.Pow(config.creixementDeVelocitatDeRecoleccio, n - 1)
-                * Fites.Acumulat(config.fites, n)));
+                * Fites.Acumulat(config.fites, n))) * Recerca.Factor(TipusDEfecteDeRecerca.ProduccioDePantans);
 
         // Derivat: la granota recull fins a omplir-se.
         public float TempsFinsPleAlNivell(int n)

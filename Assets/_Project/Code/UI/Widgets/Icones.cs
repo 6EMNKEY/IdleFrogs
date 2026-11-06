@@ -22,5 +22,13 @@ namespace IdleFrogs.UI
         // La moneda premium. Va en un Sprite Asset propi (gema.asset) penjat
         // dels Fallback Sprite Assets de moneda.asset, que és el per defecte.
         public const string Gema = "<space=0.12em><sprite name=\"gema\">";
+
+        // La lupa dels punts de recerca, tenyida del color del text (el del
+        // país): un sol sprite "lupa" al Sprite Asset serveix per a tots.
+        public const string Lupa = "<space=0.12em><sprite name=\"lupa\" tint=1>";
+
+        // "12🔍" del color del país.
+        public static string Punts(double punts, UnityEngine.Color color) =>
+            $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGB(color)}>{IdleFrogs.Game.FormatadorDeNombres.Doblers(punts)}{Lupa}</color>";
     }
 }

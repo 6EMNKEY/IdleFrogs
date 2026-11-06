@@ -159,7 +159,8 @@ namespace IdleFrogs.UI
         {
             if (botoX2Anunci == null) return;
             if (botoX2Anunci.gameObject.activeSelf != visible) botoX2Anunci.gameObject.SetActive(visible);
-            if (visible && textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
+            if (visible && textX2Anunci != null) textX2Anunci.text = Textos.F("anunci.xn",
+                FormatadorDeNombres.Factor(GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorDelVideoDeRegal : 2));
         }
 
         private void ComprarDoble()

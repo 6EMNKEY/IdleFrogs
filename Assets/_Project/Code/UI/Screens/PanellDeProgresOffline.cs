@@ -113,7 +113,8 @@ namespace IdleFrogs.UI
         private void RefrescarBotons()
         {
             if (textX2Gemes != null) textX2Gemes.text = Textos.F("offline.x2_gemes", FormatadorDeNombres.Doblers(gemesPerX2) + Icones.Gema);
-            if (textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
+            if (textX2Anunci != null)
+                textX2Anunci.text = Textos.F("anunci.xn", FormatadorDeNombres.Factor(2 + Recerca.Suma(TipusDEfecteDeRecerca.AnunciOffline)));
             CompraAmbGemes.Pintar(botoX2Gemes, CurrencyManager.Instancia != null && CurrencyManager.Instancia.gemesActuals >= gemesPerX2);
         }
 
@@ -139,7 +140,8 @@ namespace IdleFrogs.UI
             GestorDeBotiga.Instancia.VeureAnunci(vist =>
             {
                 _esperantAnunci = false;
-                if (vist) Cobrar(2);
+                // El x2 del vídeo, més el que hi sumi la recerca d'anuncis.
+                if (vist) Cobrar(2 + Recerca.Suma(TipusDEfecteDeRecerca.AnunciOffline));
                 else GestorDAudio.Sonar(So.Error);
             });
         }

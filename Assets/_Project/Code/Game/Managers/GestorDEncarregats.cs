@@ -422,11 +422,11 @@ namespace IdleFrogs.Game
             if (!e.assignat || !e.HabilitatLlesta) return false;
 
             System.DateTime ara = System.DateTime.UtcNow;
-            e.fiDeLHabilitat = ara.AddSeconds(e.definicio.segonsDeDuracio);
+            e.fiDeLHabilitat = ara.AddSeconds(e.definicio.segonsDeDuracio * Recerca.Factor(TipusDEfecteDeRecerca.DuracioDHabilitats));
             // La recàrrega compta des de l'activació, no des que s'apaga:
             // és el que fa que 1 min de durada amb 5 de recàrrega sigui un
             // 20% d'ús i no un 1/6.
-            e.fiDeRecarrega = ara.AddSeconds(e.definicio.segonsDeRecarrega);
+            e.fiDeRecarrega = ara.AddSeconds(e.definicio.segonsDeRecarrega * Recerca.Factor(TipusDEfecteDeRecerca.RecarregaDHabilitats));
             e.caducitatAvisada = false;
 
             Recalcular(e.ranura);

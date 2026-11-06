@@ -80,7 +80,7 @@ namespace IdleFrogs.Game
         public double PerClientAlNivell(int n) =>
             System.Math.Max(1, System.Math.Floor(
                 config.capacitatBase * System.Math.Pow(config.creixementDeCapacitat, n - 1)
-                * Fites.Acumulat(config.fites, n)));
+                * Fites.Acumulat(config.fites, n))) * Recerca.Factor(TipusDEfecteDeRecerca.CapacitatDelRestaurant);
 
         public float VelocitatAlNivell(int n) =>
             Mathf.Min(config.velocitatMaxima,
@@ -186,7 +186,7 @@ namespace IdleFrogs.Game
             // Els multiplicadors de la botiga (x2, x5, el permanent) i el del
             // prestigi del país es noten aquí: el que arriba a la cartera.
             double factor = GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorDIngressos : 1;
-            if (GameManager.Instancia != null) factor *= GameManager.Instancia.FactorDePrestigi;
+            if (GameManager.Instancia != null) factor *= GameManager.Instancia.FactorDelPais;
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.AfegirDoblers(cobrat * factor);
         }

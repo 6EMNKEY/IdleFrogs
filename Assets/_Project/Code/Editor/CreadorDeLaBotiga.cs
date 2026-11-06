@@ -25,6 +25,9 @@ namespace IdleFrogs.EditorTools
         private static Recompensa Permanent(EfectePermanent e) => new Recompensa { tipus = TipusDeRecompensa.Permanent, efectePermanent = e };
         private static Recompensa Pase(double gemesAlDia, int dies) => new Recompensa { tipus = TipusDeRecompensa.PaseMensual, quantitat = gemesAlDia, dies = dies };
 
+        private static Recompensa Tickets(bool premium, double n) =>
+            new Recompensa { tipus = premium ? TipusDeRecompensa.TicketPremium : TipusDeRecompensa.TicketComu, quantitat = n };
+
         private static TextTraduit T(string en, string es, string ca) => new TextTraduit { angles = en, castella = es, catala = ca };
 
         [MenuItem("IdleFrogs/Crear la botiga")]
@@ -106,6 +109,12 @@ namespace IdleFrogs.EditorTools
             G(P("cofre", T("Manager chest", "Cofre de encargado", "Cofre d'encarregat"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Cofre(70, 25, 4.5f, 0.5f)), 150);
             G(P("cofre_gran", T("Big chest", "Cofre grande", "Cofre gran"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Cofre(0, 75, 22, 3)), 500);
             G(P("cofre_epic", T("Epic chest", "Cofre épico", "Cofre èpic"), SeccioDeBotiga.Millores, MidaDeTargeta.Gran, TipusDePagament.Gemes, Cofre(0, 0, 85, 15)), 1500);
+
+            // ---- Tickets de l'arena ----
+            G(P("ticket_comu", T("Common ticket", "Ticket común", "Ticket comú"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Tickets(false, 1)), 50);
+            G(P("ticket_comu_10", T("10 common tickets", "10 tickets comunes", "10 tickets comuns"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Tickets(false, 10)), 450);
+            G(P("ticket_premium", T("Premium ticket", "Ticket prémium", "Ticket prèmium"), SeccioDeBotiga.Millores, MidaDeTargeta.Petita, TipusDePagament.Gemes, Tickets(true, 1)), 200);
+            Real(P("ticket_premium_10", T("10 premium tickets", "10 tickets prémium", "10 tickets prèmium"), SeccioDeBotiga.Ofertes, MidaDeTargeta.Gran, TipusDePagament.DinerReal, Tickets(true, 10)), "4,99 €");
 
             foreach (ProducteDeBotiga p in productes) EditorUtility.SetDirty(p);
 

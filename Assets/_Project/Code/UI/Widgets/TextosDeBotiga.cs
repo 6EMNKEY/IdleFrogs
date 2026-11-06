@@ -31,6 +31,13 @@ namespace IdleFrogs.UI
                     });
                 case TipusDeRecompensa.PaseMensual:
                     return Textos.F("rec.pase", FormatadorDeNombres.Doblers(r.quantitat), Icones.Gema, r.dies);
+                case TipusDeRecompensa.TicketComu:
+                    return Textos.F("rec.ticket_comu", FormatadorDeNombres.Doblers(r.quantitat));
+                case TipusDeRecompensa.TicketPremium:
+                    return Textos.F("rec.ticket_premium", FormatadorDeNombres.Doblers(r.quantitat));
+                case TipusDeRecompensa.PuntsDeRecerca:
+                    ArbreDeRecercaSO arbre = ArbreDeRecercaSO.Actual;
+                    return Icones.Punts(r.quantitat, arbre != null ? arbre.ColorDe(r.paisDelsPunts) : UnityEngine.Color.white);
             }
             return string.Empty;
         }

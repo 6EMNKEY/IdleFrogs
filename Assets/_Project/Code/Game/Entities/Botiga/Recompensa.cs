@@ -11,7 +11,10 @@ namespace IdleFrogs.Game
         Encarregat,         // un de la raresa, d'un lloc a l'atzar
         Cofre,              // un encarregat amb la raresa tirada amb 'probabilitats'
         Permanent,          // efectePermanent, per sempre
-        PaseMensual         // quantitat = gemes cada dia durant 'dies'
+        PaseMensual,        // quantitat = gemes cada dia durant 'dies'
+        TicketComu,         // quantitat = tickets comuns de l'arena (D–A)
+        TicketPremium,      // quantitat = tickets prèmium de l'arena (D–SSS)
+        PuntsDeRecerca      // quantitat = punts del color de 'paisDelsPunts'
     }
 
     public enum EfectePermanent { X2Ingressos, SenseAnuncis, OfflineX2 }
@@ -41,6 +44,10 @@ namespace IdleFrogs.Game
         [Header("Permanent i pase")]
         public EfectePermanent efectePermanent;
         [Min(1)] public int dies = 30;
+
+        [Header("Punts de recerca")]
+        [Tooltip("La zona del país (el color) dels punts: 0 = el primer")]
+        [Min(0)] public int paisDelsPunts;
 
         [Header("Regal a l'atzar")]
         [Tooltip("Pes quan el producte en dona una a l'atzar")]

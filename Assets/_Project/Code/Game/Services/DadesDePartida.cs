@@ -95,6 +95,11 @@ namespace IdleFrogs.Game
         // Les partides d'abans no en tenen i comencen de zero.
         public DadesDeBotiga botiga;
 
+        // L'arena (lluitadors, bosses, tickets) i la recerca (punts i nivells).
+        // Fora de les zones: el prestigi no els toca.
+        public DadesDArena arena;
+        public DadesDeRecerca recerca;
+
         // La zona on era el jugador l'últim cop, per tornar-hi en obrir.
         public int zonaActual;
         public ZonaGuardada[] zones;

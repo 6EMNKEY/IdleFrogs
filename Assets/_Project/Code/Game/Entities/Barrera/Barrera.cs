@@ -45,7 +45,8 @@ namespace IdleFrogs.Game
 
         public bool EstaIniciada => iniciada;
         public bool EstaOberta => oberta;
-        public double SegonsTotals => segonsTotals;
+        // Amb la recerca de barreres (temps més curt).
+        public double SegonsTotals => segonsTotals * Recerca.Factor(TipusDEfecteDeRecerca.TempsDeBarreres);
 
         // Només es pot tocar quan ja has comprat tots els pantans que hi ha
         // davant. Ho decideix LlistaDePantans, igual que l'estat dels pantans.
@@ -66,14 +67,14 @@ namespace IdleFrogs.Game
             get
             {
                 if (oberta) return 0;
-                if (!iniciada) return segonsTotals;
+                if (!iniciada) return SegonsTotals;
                 double queden = (_venciment - DateTime.UtcNow).TotalSeconds;
                 return queden < 0 ? 0 : queden;
             }
         }
 
         public double Progres =>
-            segonsTotals <= 0 ? 1.0 : 1.0 - (SegonsRestants / segonsTotals);
+            SegonsTotals <= 0 ? 1.0 : 1.0 - (SegonsRestants / SegonsTotals);
 
         public event Action EnCanviDeTemps;
 
@@ -116,7 +117,7 @@ namespace IdleFrogs.Game
                 return false;
 
             iniciada = true;
-            _venciment = DateTime.UtcNow.AddSeconds(segonsTotals);
+            _venciment = DateTime.UtcNow.AddSeconds(SegonsTotals);
             EnCanviDeTemps?.Invoke();
             return true;
         }
@@ -131,7 +132,7 @@ namespace IdleFrogs.Game
         }
 
         // Els anuncis: mentre compta, cadascun treu minutsPerAnunci, fins a anuncisMaxims.
-        public double SegonsPerAnunci => minutsPerAnunci * 60.0;
+        public double SegonsPerAnunci => (minutsPerAnunci + Recerca.Suma(TipusDEfecteDeRecerca.AnunciBarrera)) * 60.0;
         public int AnuncisRestants => Math.Max(0, anuncisMaxims - _anuncisFets);
         public bool EsPotReduirAmbAnunci => iniciada && !oberta && AnuncisRestants > 0;
 

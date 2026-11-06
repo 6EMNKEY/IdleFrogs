@@ -325,6 +325,29 @@ namespace IdleFrogs.EditorTools
             Assignar(p, "textGuanys", TextMon("TextGuanys", guanys.transform, Vector3.zero, 3f, "+0"));
         }
 
+        // A l'escena del mapa oberta: les illes de la recerca i de l'arena, si no hi són.
+        [MenuItem("IdleFrogs/Mapa/3. Afegir les illes de recerca i arena")]
+        public static void AfegirIlles()
+        {
+            if (Object.FindFirstObjectByType<GestorDelMapa>(FindObjectsInactive.Include) == null)
+            {
+                EditorUtility.DisplayDialog("Mapa", "Obre l'escena Mapa primer.", "D'acord");
+                return;
+            }
+            GameObject llocs = BuscarPerNom("Llocs") ?? new GameObject("Llocs");
+            var fets = new List<string>();
+            foreach ((AccioDelMapa accio, Vector3 on) in new[] { (AccioDelMapa.Recerca, new Vector3(-4, -8, 0)), (AccioDelMapa.Arena, new Vector3(4, -8, 0)) })
+            {
+                bool hiEs = Object.FindObjectsByType<PuntDelMapa>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+                    .Any(p => p.Accio == accio);
+                if (hiEs) continue;
+                CrearLloc(accio, on, llocs.transform);
+                fets.Add(accio.ToString());
+            }
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+            EditorUtility.DisplayDialog("Mapa", fets.Count > 0 ? $"Afegides: {string.Join(", ", fets)}. Posa-les al seu lloc i desa." : "Ja hi eren.", "D'acord");
+        }
+
         private static void CrearLloc(AccioDelMapa accio, Vector3 posicio, Transform pare)
         {
             var go = new GameObject(accio.ToString());

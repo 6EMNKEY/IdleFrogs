@@ -26,6 +26,8 @@ namespace IdleFrogs.Game
         [SerializeField] private string escenaDelPais = "MainScene";
         [SerializeField] private string escenaDelMapa = "Mapa";
         [SerializeField] private string escenaDelPrestigi = "Prestigi";
+        [SerializeField] private string escenaDeLaRecerca = "Recerca";
+        [SerializeField] private string escenaDeLArena = "Arena";
 
         [Header("Guardat")]
         [SerializeField] private float segonsEntreAutoGuardats = 30f;
@@ -282,9 +284,10 @@ namespace IdleFrogs.Game
         // Amb el x2 permanent de la botiga, si el tens.
         public double IngresIdlePerSegon() =>
             Mesures(nomesAutomatitzat: true).Idle * (GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorPermanent : 1) *
-            FactorDePrestigi;
+            FactorDelPais;
 
-        private double FactorOffline => GestorDeBotiga.Instancia != null && GestorDeBotiga.Instancia.OfflineX2 ? 2 : 1;
+        private double FactorOffline => (GestorDeBotiga.Instancia != null && GestorDeBotiga.Instancia.OfflineX2 ? 2 : 1) *
+                                        Recerca.Factor(TipusDEfecteDeRecerca.IngressosOffline, zona);
 
         // Per provar: com si haguessis tancat el joc fa 'segons' segons.
         public void SimularTempsFora(double segons)
@@ -365,6 +368,16 @@ namespace IdleFrogs.Game
             return _dades != null && _dades.TeZona(z) ? _dades.zones[z].doblers : 0;
         }
 
+        // Pagar amb la moneda d'un país, encara que no hi siguis (millorar lluitadors).
+        public bool GastarDoblersDeLaZona(int z, double quantitat)
+        {
+            if (quantitat <= 0) return true;
+            if (z == _zonaDeLaMoneda && CurrencyManager.Instancia != null) return CurrencyManager.Instancia.GastarDoblers(quantitat);
+            if (_dades == null || !_dades.TeZona(z) || _dades.zones[z].doblers < quantitat) return false;
+            _dades.zones[z].doblers -= quantitat;
+            return true;
+        }
+
         // ---------------------------------------------------------------
         // Carregar i desar
         // ---------------------------------------------------------------
@@ -398,6 +411,9 @@ namespace IdleFrogs.Game
                     ? (DateTime.UtcNow - DateTime.FromBinary(_dades.marcaDeTempsUtc)).TotalSeconds : 0;
                 GestorDeBotiga.Instancia.Carregar(_dades.botiga, fora);
             }
+            // La recerca abans que l'arena: posar-la al dia pot donar punts.
+            if (GestorDeRecerca.Instancia != null) GestorDeRecerca.Instancia.Carregar(_dades.recerca);
+            if (GestorDeLArena.Instancia != null) GestorDeLArena.Instancia.Carregar(_dades.arena);
 
             // Els doblers del país on ets ja des del principi: el mapa (comprar
             // el país següent) els fa servir encara que no hi entris.
@@ -477,6 +493,8 @@ namespace IdleFrogs.Game
             _dades.paisosDesbloquejats = 1;
             PasDeLaGuia = 0;
             if (GestorDeBotiga.Instancia != null) GestorDeBotiga.Instancia.Carregar(null, 0);
+            if (GestorDeRecerca.Instancia != null) GestorDeRecerca.Instancia.Carregar(null);
+            if (GestorDeLArena.Instancia != null) GestorDeLArena.Instancia.Carregar(null);
             Debug.Log("GameManager: partida nova");
         }
 
@@ -507,6 +525,8 @@ namespace IdleFrogs.Game
             _dades.pasDeLaGuia = PasDeLaGuia;
             _dades.zonaActual = zona;
             if (GestorDeBotiga.Instancia != null) _dades.botiga = GestorDeBotiga.Instancia.Guardar();
+            if (GestorDeRecerca.Instancia != null) _dades.recerca = GestorDeRecerca.Instancia.Guardar();
+            if (GestorDeLArena.Instancia != null) _dades.arena = GestorDeLArena.Instancia.Guardar();
 
             // Els doblers del país on ets, també des del mapa (s'hi pot comprar
             // el país següent o recollir-hi guanys).
@@ -591,6 +611,8 @@ namespace IdleFrogs.Game
 
         // Del país on ets: el que multiplica el que guanya i el que multiplica els preus.
         public double FactorDePrestigi => Prestigi != null ? Prestigi.FactorDIngressos(Estrelles(zona)) : 1;
+        // El prestigi i la recerca d'ingressos: el que multiplica tot el que guanya el país.
+        public double FactorDelPais => FactorDePrestigi * Recerca.Factor(TipusDEfecteDeRecerca.Ingressos, zona);
         public double FactorDeDificultat => Prestigi != null ? Prestigi.FactorDeCost(Estrelles(zona)) : 1;
 
         // 0 = no se'n pot fer (al màxim, sense configurar o sense haver-hi
@@ -652,20 +674,28 @@ namespace IdleFrogs.Game
             return true;
         }
 
-        private string _escenaDAbansDelPrestigi;
+        private string _escenaDAbans;
 
-        // Des del mapa o del país: obre l'escena del prestigi (al país on ets).
-        public void AnarAlPrestigi()
+        // Des del mapa o del país: les escenes que s'obren "per sobre" (prestigi,
+        // recerca, arena). La X torna d'on venies.
+        public void AnarAEscena(string nom)
         {
-            _escenaDAbansDelPrestigi = SceneManager.GetActiveScene().name;
+            string activa = SceneManager.GetActiveScene().name;
+            // D'una d'aquestes a una altra, es torna on eres abans de la primera.
+            if (activa != escenaDelPrestigi && activa != escenaDeLaRecerca && activa != escenaDeLArena)
+                _escenaDAbans = activa;
             SaveGameData();
             DeixarElPais();
-            CarregarEscena(escenaDelPrestigi);
+            CarregarEscena(nom);
         }
 
-        // Torna d'on venia (el mapa o el país).
-        public void SortirDelPrestigi() =>
-            CarregarEscena(string.IsNullOrEmpty(_escenaDAbansDelPrestigi) ? escenaDelMapa : _escenaDAbansDelPrestigi);
+        public void TornarDeLEscena() =>
+            CarregarEscena(string.IsNullOrEmpty(_escenaDAbans) ? escenaDelMapa : _escenaDAbans);
+
+        public void AnarAlPrestigi() => AnarAEscena(escenaDelPrestigi);
+        public void AnarALaRecerca() => AnarAEscena(escenaDeLaRecerca);
+        public void AnarALArena() => AnarAEscena(escenaDeLArena);
+        public void SortirDelPrestigi() => TornarDeLEscena();
 
         private void MigrarAPaisos() => MigracioDePartida.PassarAPaisos(_dades);
 

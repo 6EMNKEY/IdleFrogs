@@ -55,7 +55,8 @@ namespace IdleFrogs.UI
             if (boto != null) boto.interactable = pot;
             if (textBoto != null) textBoto.text = Textos.T(pot ? "botiga.recollir" : "botiga.dema");
             if (botoX2Anunci != null && botoX2Anunci.gameObject.activeSelf != pot) botoX2Anunci.gameObject.SetActive(pot);
-            if (textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
+            if (textX2Anunci != null) textX2Anunci.text = Textos.F("anunci.xn",
+                FormatadorDeNombres.Factor(GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorDelVideoDeRegal : 2));
         }
 
         private void RecollirDoble()

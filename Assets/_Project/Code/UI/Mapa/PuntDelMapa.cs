@@ -4,7 +4,7 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    public enum AccioDelMapa { Botiga, Missions, Esdeveniments, Prestigi }
+    public enum AccioDelMapa { Botiga, Missions, Esdeveniments, Prestigi, Recerca, Arena }
 
     // Un lloc del mapa que obre alguna cosa: la ciutat comercial (la botiga),
     // el cartell de les missions diàries, els esdeveniments, el prestigi...
@@ -35,6 +35,8 @@ namespace IdleFrogs.UI
                 AccioDelMapa.Botiga => "mapa.ciutat",
                 AccioDelMapa.Missions => "mapa.missions",
                 AccioDelMapa.Esdeveniments => "mapa.esdeveniments",
+                AccioDelMapa.Recerca => "mapa.recerca",
+                AccioDelMapa.Arena => "mapa.arena",
                 _ => "mapa.prestigi"
             });
 

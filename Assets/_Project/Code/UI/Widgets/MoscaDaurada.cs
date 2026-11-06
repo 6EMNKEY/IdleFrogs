@@ -124,7 +124,7 @@ namespace IdleFrogs.UI
             if (g == null) return;
 
             int hores = Random.Range(horesMinimes, Mathf.Max(horesMinimes, horesMaximes) + 1);
-            double doblers = g.DoblersDeTemps(hores * 3600.0);
+            double doblers = g.DoblersDeTemps(hores * 3600.0) * Recerca.Factor(TipusDEfecteDeRecerca.AnunciMosca);
             if (!(doblers > 0)) return;
 
             GestorDAudio.Sonar(So.Toc);

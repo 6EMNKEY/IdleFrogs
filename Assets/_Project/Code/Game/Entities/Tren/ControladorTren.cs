@@ -47,7 +47,9 @@ namespace IdleFrogs.Game
                 config.capacitatBase * System.Math.Pow(config.creixementDeCapacitat, n - 1)
                 * Fites.Acumulat(config.fites, n)));
 
-        public float VelocitatAlNivell(int n) => config.VelocitatAlNivell(n);
+        // La recerca va per sobre del màxim de la config.
+        public float VelocitatAlNivell(int n) =>
+            config.VelocitatAlNivell(n) * (float)Recerca.Factor(TipusDEfecteDeRecerca.VelocitatDelTren);
 
         public double RitmeDeCarregaAlNivell(int n) =>
             System.Math.Max(1, System.Math.Floor(

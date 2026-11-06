@@ -176,10 +176,12 @@ namespace IdleFrogs.UI
                 PanellDeBotiga.Instancia.Obrir();
                 return;
             }
-            if (accio == AccioDelMapa.Prestigi && GameManager.Instancia != null)
+            if (GameManager.Instancia != null && (accio == AccioDelMapa.Prestigi || accio == AccioDelMapa.Recerca || accio == AccioDelMapa.Arena))
             {
                 GestorDAudio.Sonar(So.Obrir);
-                GameManager.Instancia.AnarAlPrestigi();
+                if (accio == AccioDelMapa.Prestigi) GameManager.Instancia.AnarAlPrestigi();
+                else if (accio == AccioDelMapa.Recerca) GameManager.Instancia.AnarALaRecerca();
+                else GameManager.Instancia.AnarALArena();
                 return;
             }
             // Missions i esdeveniments encara no existeixen.

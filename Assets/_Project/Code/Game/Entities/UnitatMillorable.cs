@@ -146,7 +146,8 @@ namespace IdleFrogs.Game
         // i tenda passen tots per aquí.
         // També hi passa la dificultat del prestigi del país.
         private double CostDelSeguentNivell =>
-            CostBase * System.Math.Pow(CreixementDeCost, nivell - 1) * (1.0 - Bonus.reduccioDeCost) * Dificultat.Actual;
+            CostBase * System.Math.Pow(CreixementDeCost, nivell - 1) * (1.0 - Bonus.reduccioDeCost) * Dificultat.Actual *
+            Recerca.Factor(TipusDEfecteDeRecerca.CostDeMillores);
 
         public double CostDeMillora(int quantitat)
         {
@@ -190,6 +191,7 @@ namespace IdleFrogs.Game
             int gemes = Fites.GemesEntre(FitesDeMillora, nivell, nivell + quantitat);
 
             nivell += quantitat;
+            if (gemes > 0) gemes = (int)System.Math.Round(gemes * Recerca.Factor(TipusDEfecteDeRecerca.GemesDeFites));
             if (gemes > 0) CurrencyManager.Instancia.AfegirGemes(gemes);
             DespresDeCanviDeNivell();
             EnCanviDeNivell?.Invoke();

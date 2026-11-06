@@ -240,7 +240,9 @@ namespace IdleFrogs.Game
             }
             else donades.AddRange(p.recompenses);
 
-            foreach (Recompensa r in donades) Donar(r, doble || (primera && p.doblePrimeraCompra));
+            // El vídeo del regal dobla (o més, amb la recerca); la primera compra d'un pack, x2.
+            double factor = doble ? FactorDelVideoDeRegal : primera && p.doblePrimeraCompra ? 2 : 1;
+            foreach (Recompensa r in donades) Donar(r, factor, p.pagament == TipusDePagament.Anunci);
 
             Desar();
             return donades;
@@ -250,10 +252,15 @@ namespace IdleFrogs.Game
         // doble: el doble de gemes, de temps d'ingressos, de minuts de
         // multiplicador (fins al seu màxim) o dos encarregats. Els permanents
         // i el pase, un cop.
-        public void Donar(Recompensa r, bool doble = false)
+        public void Donar(Recompensa r, bool doble = false) => Donar(r, doble ? 2 : 1, false);
+
+        // factor: quantes vegades (x2, x2,5 amb la recerca). deVideo: si ve
+        // d'un anunci, els potenciadors duren els minuts de la recerca de més.
+        public void Donar(Recompensa r, double factor, bool deVideo)
         {
             if (r == null) return;
-            int f = doble ? 2 : 1;
+            double f = Math.Max(1, factor);
+            int vegades = Math.Max(1, (int)Math.Floor(f));
             switch (r.tipus)
             {
                 case TipusDeRecompensa.Gemes:
@@ -267,15 +274,16 @@ namespace IdleFrogs.Game
                     break;
 
                 case TipusDeRecompensa.Multiplicador:
-                    _multiplicadors.Afegir(r.multiplicador, r.minuts * 60 * f, r.minutsMaxims * 60);
+                    double minuts = r.minuts * f + (deVideo ? Recerca.Suma(TipusDEfecteDeRecerca.AnunciPotenciador) : 0);
+                    _multiplicadors.Afegir(r.multiplicador, minuts * 60, r.minutsMaxims * 60);
                     break;
 
                 case TipusDeRecompensa.Encarregat:
-                    for (int i = 0; i < f; i++) GestorDEncarregats.Instancia?.Regalar(r.raresa);
+                    for (int i = 0; i < vegades; i++) GestorDEncarregats.Instancia?.Regalar(r.raresa);
                     break;
 
                 case TipusDeRecompensa.Cofre:
-                    for (int i = 0; i < f; i++) GestorDEncarregats.Instancia?.Regalar(r.TirarRaresa(UnityEngine.Random.value));
+                    for (int i = 0; i < vegades; i++) GestorDEncarregats.Instancia?.Regalar(r.TirarRaresa(UnityEngine.Random.value));
                     break;
 
                 case TipusDeRecompensa.Permanent:
@@ -291,6 +299,16 @@ namespace IdleFrogs.Game
                     _dades.paseFiTicks = fi.AddDays(r.dies).Ticks;
                     _dades.paseGemesPerDia = r.quantitat;
                     break;
+
+                case TipusDeRecompensa.TicketComu:
+                case TipusDeRecompensa.TicketPremium:
+                    GestorDeLArena.Instancia?.AfegirTickets(r.tipus == TipusDeRecompensa.TicketPremium,
+                                                             (int)Math.Round(r.quantitat * f));
+                    break;
+
+                case TipusDeRecompensa.PuntsDeRecerca:
+                    GestorDeRecerca.Instancia?.AfegirPunts(r.paisDelsPunts, Math.Round(r.quantitat * f));
+                    break;
             }
             EnCanvi?.Invoke();
         }
@@ -303,7 +321,7 @@ namespace IdleFrogs.Game
         {
             if (GameManager.Instancia == null) return 0;
             return GameManager.Instancia.Mesures(senseHabilitats: true).CollDAmpolla * segons * FactorPermanent *
-                   GameManager.Instancia.FactorDePrestigi;
+                   GameManager.Instancia.FactorDelPais;
         }
 
         // ---------------------------------------------------------------
@@ -319,12 +337,15 @@ namespace IdleFrogs.Game
             Anuncis.Mostrar(enAcabar);
         }
 
+        // El vídeo del calendari i del regal: x2, més la recerca d'anuncis.
+        public double FactorDelVideoDeRegal => 2 + Recerca.Suma(TipusDEfecteDeRecerca.AnunciRegal);
+
         // "Et falten X": si són pocs minuts d'ingressos, es poden aconseguir
         // amb un anunci. Sense ritme (país acabat d'obrir) no.
         public bool EsPotAconseguirAmbAnunci(double doblers)
         {
             if (!(doblers > 0) || minutsMaximsPerAnunci <= 0) return false;
-            double maxim = DoblersDeTemps(minutsMaximsPerAnunci * 60);
+            double maxim = DoblersDeTemps((minutsMaximsPerAnunci + Recerca.Suma(TipusDEfecteDeRecerca.AnunciEtFalten)) * 60);
             return maxim > 0 && doblers <= maxim;
         }
 
@@ -371,7 +392,7 @@ namespace IdleFrogs.Game
 
             DiaDelCalendari dia = DiaDelCalendari;
             foreach (Recompensa r in dia.recompenses)
-                if (r != null) { Donar(r, doble); donades.Add(r); }
+                if (r != null) { Donar(r, doble ? FactorDelVideoDeRegal : 1, false); donades.Add(r); }
 
             _dades.diesDelCalendariRecollits++;
             _dades.ultimDiaDelCalendari = Avui;
