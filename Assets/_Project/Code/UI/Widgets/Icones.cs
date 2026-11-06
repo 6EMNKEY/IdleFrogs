@@ -11,6 +11,11 @@ namespace IdleFrogs.UI
         // Va darrere del número, amb un espai fi entremig.
         public static string Moneda => $"<space=0.12em><sprite name=\"{SpriteDeLaMoneda}\">";
 
+        // La d'un país concret (al mapa n'hi ha de tots). Sense país, la d'ara.
+        public static string MonedaDe(IdleFrogs.Game.PaisSO pais) =>
+            pais != null && !string.IsNullOrEmpty(pais.spriteDeMoneda)
+                ? $"<space=0.12em><sprite name=\"{pais.spriteDeMoneda}\">" : Moneda;
+
         // Cada país té la seva moneda: el posa AspecteDelPais en arrencar.
         public static string SpriteDeLaMoneda = "moneda";
 

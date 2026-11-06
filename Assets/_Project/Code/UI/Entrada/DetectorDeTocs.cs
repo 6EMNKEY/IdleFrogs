@@ -21,12 +21,14 @@ namespace IdleFrogs.UI
     public class DetectorDeTocs : MonoBehaviour
     {
         [SerializeField] private Camera cameraDelMon;
-        [Tooltip("Opcional. Sense, els arrossegaments no fan res.")]
-        [SerializeField] private ControladorDeCamera controladorDeCamera;
+        [Tooltip("Opcional: la càmera que s'arrossega (ControladorDeCamera als pantans, " +
+                 "ControladorDeCameraDelMapa al mapa). Sense, els arrossegaments no fan res.")]
+        [SerializeField] private MonoBehaviour controladorDeCamera;
 
         [Tooltip("Quants mil·límetres de pantalla s'ha de moure el dit perquè deixi de ser un toc")]
         [SerializeField] private float millimetresPerArrossegar = 3f;
 
+        private ICameraArrossegable _camera;
         private bool _premut;
         private bool _arrossegant;
         private bool _vaComencarSobreLaUI;
@@ -42,8 +44,9 @@ namespace IdleFrogs.UI
         private void Awake()
         {
             if (cameraDelMon == null) cameraDelMon = Camera.main;
-            if (controladorDeCamera == null && cameraDelMon != null)
-                controladorDeCamera = cameraDelMon.GetComponent<ControladorDeCamera>();
+            _camera = controladorDeCamera as ICameraArrossegable;
+            if (_camera == null && cameraDelMon != null)
+                _camera = cameraDelMon.GetComponent<ICameraArrossegable>();
 
             _filtre = ContactFilter2D.noFilter;   // inclou triggers: els botons poden ser-ho
         }
@@ -72,7 +75,7 @@ namespace IdleFrogs.UI
                 _inici = pos;
                 _anterior = pos;
                 _vaComencarSobreLaUI = SobreLaUI(pos);
-                if (controladorDeCamera != null) controladorDeCamera.Aturar();
+                if (_camera != null) _camera.Aturar();
             }
             else if (_premut && punter.press.isPressed)
             {
@@ -82,11 +85,11 @@ namespace IdleFrogs.UI
                     (pos - _inici).sqrMagnitude > LlindarEnPixels * LlindarEnPixels)
                 {
                     _arrossegant = true;
-                    if (controladorDeCamera != null) controladorDeCamera.ComencarArrossegament();
+                    if (_camera != null) _camera.ComencarArrossegament();
                 }
 
-                if (_arrossegant && controladorDeCamera != null)
-                    controladorDeCamera.Arrossegar(pos - _anterior);
+                if (_arrossegant && _camera != null)
+                    _camera.Arrossegar(pos - _anterior);
 
                 _anterior = pos;
             }
@@ -99,9 +102,10 @@ namespace IdleFrogs.UI
 
                 if (_arrossegant)
                 {
-                    if (controladorDeCamera != null) controladorDeCamera.Amollar();
+                    if (_camera != null) _camera.Amollar();
                 }
-                else if (!_vaComencarSobreLaUI)
+                // Un pessic per fer zoom tampoc és un toc.
+                else if (!_vaComencarSobreLaUI && (_camera == null || !_camera.HaFetZoom))
                 {
                     Tocar(pos);
                 }

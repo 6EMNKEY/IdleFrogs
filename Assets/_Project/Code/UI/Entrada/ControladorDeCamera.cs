@@ -11,7 +11,7 @@ namespace IdleFrogs.UI
     //
     // Va a la mateixa càmera (ha de ser ortogràfica).
     [RequireComponent(typeof(Camera))]
-    public class ControladorDeCamera : MonoBehaviour
+    public class ControladorDeCamera : MonoBehaviour, ICameraArrossegable
     {
         [Header("Límits del món")]
         [Tooltip("La vora esquerra de la càmera no passarà d'aquí. Buit = on comença la càmera.")]
@@ -50,6 +50,9 @@ namespace IdleFrogs.UI
             Screen.height > 0 ? 2f * _camera.orthographicSize / Screen.height : 0f;
 
         public void Aturar() => _velocitat = 0f;
+
+        // Aquesta càmera no fa zoom.
+        public bool HaFetZoom => false;
 
         public void ComencarArrossegament()
         {

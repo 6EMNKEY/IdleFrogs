@@ -152,6 +152,14 @@ namespace IdleFrogs.Game
             ["eix.cost.curt"]         = new[] { "cost",                     "coste",                      "cost" },
 
             // ---- Mapa ----
+            ["mapa.ciutat"]           = new[] { "Market town",              "Ciudad comercial",           "Ciutat comercial" },
+            ["mapa.missions"]         = new[] { "Daily missions",           "Misiones diarias",           "Missions diàries" },
+            ["mapa.esdeveniments"]    = new[] { "Events",                   "Eventos",                    "Esdeveniments" },
+            ["mapa.prestigi"]         = new[] { "Prestige",                 "Prestigio",                  "Prestigi" },
+            ["mapa.aviat"]            = new[] { "Coming soon",              "Próximamente",               "Aviat" },
+            ["mapa.recollir"]         = new[] { "Collect",                  "Recoger",                    "Recollir" },
+            ["mapa.recollit"]         = new[] { "Collected {0}",            "Has recogido {0}",           "Has recollit {0}" },
+            ["mapa.tornar"]           = new[] { "Back",                     "Volver",                     "Tornar" },
             ["mapa.abans"]            = new[] { "Unlock {0} first",         "Desbloquea {0} antes",       "Desbloqueja {0} abans" },
             ["mapa.anterior"]         = new[] { "the previous one",         "el anterior",                "l'anterior" },
             ["mapa.falten"]           = new[] { "You need {0} more",        "Te faltan {0}",              "Et falten {0}" },

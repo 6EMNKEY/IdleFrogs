@@ -11,6 +11,8 @@ namespace IdleFrogs.UI
     // i restaurar les compres, que Apple exigeix.
     public class PanellDeConfiguracio : MonoBehaviour
     {
+        public static PanellDeConfiguracio Instancia { get; private set; }
+
         [Header("Obrir i tancar")]
         [SerializeField] private GameObject arrel;
         [Tooltip("El botó de configuració del HUD")]
@@ -34,6 +36,13 @@ namespace IdleFrogs.UI
 
         private void Awake()
         {
+            if (Instancia != null && Instancia != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instancia = this;
+
             if (botoObrir != null) botoObrir.onClick.AddListener(Obrir);
             if (botoTancar != null) botoTancar.onClick.AddListener(Tancar);
 
@@ -70,7 +79,6 @@ namespace IdleFrogs.UI
             // Un panell alhora.
             if (PanellDeMillora.Instancia != null) PanellDeMillora.Instancia.Tancar();
             if (PanellDEncarregats.Instancia != null) PanellDEncarregats.Instancia.Tancar();
-            if (PanellDelMapa.Instancia != null) PanellDelMapa.Instancia.Tancar();
             if (PanellDeBotiga.Instancia != null) PanellDeBotiga.Instancia.Tancar();
             if (textRestaurar != null) textRestaurar.text = string.Empty;
             if (GestorDAudio.Instancia != null)

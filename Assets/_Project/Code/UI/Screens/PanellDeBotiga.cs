@@ -116,7 +116,6 @@ namespace IdleFrogs.UI
         {
             if (PanellDeMillora.Instancia != null) PanellDeMillora.Instancia.Tancar();
             if (PanellDEncarregats.Instancia != null) PanellDEncarregats.Instancia.Tancar();
-            if (PanellDelMapa.Instancia != null) PanellDelMapa.Instancia.Tancar();
 
             if (arrel != null && !arrel.activeSelf) GestorDAudio.Sonar(So.Obrir);
             if (arrel != null) arrel.SetActive(true);

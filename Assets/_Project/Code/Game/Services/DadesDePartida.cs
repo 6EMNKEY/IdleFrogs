@@ -52,6 +52,9 @@ namespace IdleFrogs.Game
         public double doblers;
         public long marcaDeTempsUtc;
         public RecompensaOffline offlinePendent;
+        // L'idle del país quan se'n va sortir: el mapa ensenya el que ha
+        // guanyat des d'aleshores sense haver de carregar-lo.
+        public double idlePerSegon;
     }
 
     // Camps públics i no propietats: JsonUtility només serialitza camps.

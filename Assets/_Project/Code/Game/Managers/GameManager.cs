@@ -4,23 +4,27 @@ using UnityEngine.SceneManagement;
 
 namespace IdleFrogs.Game
 {
-    // Abans que la resta: en despertar-se llegeix la partida per saber en quin
-    // país som, i l'aspecte del país ho necessita en el seu Awake.
+    // La partida sencera: llegeix i desa el fitxer, porta els globals (gemes,
+    // guia, botiga, països oberts) i sap en quin país som. Viu fora de les
+    // escenes (Resources/Sistemes, l'instancia Arrencada) i sobreviu als canvis
+    // d'escena: país → mapa → país.
+    //
+    // El que és de cada país (pantans, tren, estació, restaurant) viu a la
+    // seva escena i ens ho dona EscenaDelPais en arrencar. Sense país carregat
+    // (al mapa) la partida continua: els països produeixen com a offline.
     [DefaultExecutionOrder(-200)]
     public class GameManager : MonoBehaviour
     {
-
         public static GameManager Instancia { get; private set; }
 
         [Header("Interval de ticks")]
         [Tooltip("La frequencia de la logica del joc funciona amb segons (0.1 = 10 ticks / segon)")]
         [SerializeField] private float intervalDeTick = 0.1f;
 
-        [Header("Referencies")]
-        [SerializeField] private LlistaDePantans llistaDePantans;
-        [SerializeField] private ControladorTren tren;
-        [SerializeField] private Estacio estacio;
-        [SerializeField] private Tenda tenda;
+        [Header("Escenes")]
+        [Tooltip("La dels pantans: la mateixa per a tots els països")]
+        [SerializeField] private string escenaDelPais = "MainScene";
+        [SerializeField] private string escenaDelMapa = "Mapa";
 
         [Header("Guardat")]
         [SerializeField] private float segonsEntreAutoGuardats = 30f;
@@ -40,23 +44,20 @@ namespace IdleFrogs.Game
         [Tooltip("Per sota d'això no s'ensenya el panell: els doblers es donen directament")]
         [SerializeField] private float segonsMinimsPerAvisar = 60f;
 
-        // Events per a que altres managers es suscriguin
-
         public event Action EnTickDeJoc;
         public event Action EnTickDeSegon;
 
         // La recompensa offline queda pendent fins que el jugador l'accepta al
         // panell, i es guarda amb la partida: si tanca l'app abans, no la perd.
-        // El panell la mira al seu Start i, per si arriba més tard (tornar de
-        // segon pla), també se l'avisa per l'event.
         public event Action<RecompensaOffline> EnProgresOffline;
         private RecompensaOffline _offlinePendent;
 
         public bool HiHaRecompensaOffline => _offlinePendent.HiHaRecompensa;
         public RecompensaOffline RecompensaOfflinePendent => _offlinePendent;
 
-        // Quan és true, tot el que depèn de la partida carregada ja és a lloc.
+        // El país de l'escena està carregat i en marxa (al mapa és false).
         public bool PartidaCarregada { get; private set; }
+        public bool HiHaPais => _pais != null;
 
         // La guia inicial viu a la UI, que no podem referenciar; el seu
         // progrés sí que el guardem nosaltres.
@@ -69,35 +70,42 @@ namespace IdleFrogs.Game
         // El segon pantà no es ven fins que s'acaba la guia: ara ja es pot.
         public void AvisarQueLaGuiaSHaAcabat()
         {
-            if (llistaDePantans != null) llistaDePantans.ActualitzarEstats();
+            if (Llista != null) Llista.ActualitzarEstats();
         }
 
         private float _temporitzadorTick;
         private float _temporitzadorSegon;
         private float _comptadorDAutoGuardat;
 
-        private bool _reiniciant;
-
         // Tot el que hi ha guardat, amb totes les zones. Es manté en memòria
         // perquè en guardar només se substitueixi la zona d'aquesta escena.
         private DadesDePartida _dades;
+        private bool _globalsCarregats;
+        // De quina zona són els doblers que té ara el CurrencyManager (-1 = de cap).
+        private int _zonaDeLaMoneda = -1;
+
+        // L'escena del país, quan n'hi ha.
+        private EscenaDelPais _pais;
+        private LlistaDePantans Llista => _pais != null ? _pais.Llista : null;
+        private ControladorTren Tren => _pais != null ? _pais.Tren : null;
+        private Estacio Estacio => _pais != null ? _pais.Estacio : null;
+        private Tenda Tenda => _pais != null ? _pais.Tenda : null;
 
         public int Zona => zona;
         private DateTime _marcaCarregada = DateTime.MinValue;
         private DateTime _momentDePausa;
         private bool _enPausa;
 
-
         private void Awake()
         {
-            // Asegurar que GameManager sigui un singleton
             if (Instancia != null && Instancia != this)
             {
                 Destroy(gameObject);
                 return;
             }
             Instancia = this;
-            DontDestroyOnLoad(gameObject);
+            // Si som l'arrel (Sistemes ho és), sobrevivim als canvis d'escena.
+            if (transform.parent == null) DontDestroyOnLoad(gameObject);
 
             // El país on eres: tot el que en depèn (aspecte, moneda) el vol saber aviat.
             _dades = ServeiDeGuardat.Carregar();
@@ -105,49 +113,17 @@ namespace IdleFrogs.Game
                 zona = Mathf.Clamp(_dades.zonaActual, 0, Mathf.Max(0, _dades.paisosDesbloquejats - 1));
         }
 
-        // Start i no Awake: aquí ja s'han executat tots els Awake, o sigui
-        // que CurrencyManager.Instancia existeix. I com que som nosaltres
-        // els qui cridem InicialitzarPantans(), les granotes es reparteixen
-        // sempre DESPRÉS d'haver carregat els nivells guardats.
-        private void Start()
+        private void OnDestroy()
         {
-            CarregarPartida();
-
-            if (llistaDePantans != null)
-                llistaDePantans.InicialitzarPantans();
-            else
-                Debug.LogError("GameManager: falta la referència a LlistaDePantans");
-
-            if (tenda != null) tenda.InicialitzarTenda();
-            else Debug.LogError("GameManager: falta la referència a Tenda");
-
-            // Les unitats ja existeixen i els nivells ja s'han carregat, així
-            // que aquí és on els bonus i l'automatisme arriben als trams.
-            if (GestorDEncarregats.Instancia != null)
-                GestorDEncarregats.Instancia.RegistrarUnitats(llistaDePantans, tren, tenda);
-
-            // L'últim: l'idle depèn dels nivells i dels bonus dels encarregats,
-            // que acaba de posar RegistrarUnitats.
-            if (_marcaCarregada != DateTime.MinValue)
-                AplicarProgresOffline(_marcaCarregada);
-
-            PartidaCarregada = true;
-
-            // Guardem ja: si l'app es tanqués abans del primer autoguardat, la
-            // partida guardada encara tindria la marca de temps vella, i el
-            // proper cop es tornaria a comptar el mateix temps fora (i a cobrar
-            // la càrrega de la granota transportista) per segona vegada.
-            SaveGameData();
-            Debug.Log("GameManager: Inicialització completa");
+            if (Instancia == this) Instancia = null;
         }
+
+        // Start i no Awake: aquí ja s'han executat tots els Awake (CurrencyManager,
+        // GestorDeBotiga...). Si el país arrenca abans, ell mateix ho demana.
+        private void Start() => CarregarGlobals();
 
         void Update()
         {
-            CorrerBuclePrincipal();
-        }
-        private void CorrerBuclePrincipal()
-        {
-            // Tick de Joc
             _temporitzadorTick += Time.deltaTime;
             if (_temporitzadorTick >= intervalDeTick)
             {
@@ -155,7 +131,6 @@ namespace IdleFrogs.Game
                 EnTickDeJoc?.Invoke();
             }
 
-            // Tic de Segon
             _temporitzadorSegon += Time.deltaTime;
             if (_temporitzadorSegon >= 1.0f)
             {
@@ -163,22 +138,67 @@ namespace IdleFrogs.Game
                 EnTickDeSegon?.Invoke();
             }
 
-            // Autoguardat
             _comptadorDAutoGuardat += Time.deltaTime;
             if (_comptadorDAutoGuardat >= segonsEntreAutoGuardats)
             {
                 _comptadorDAutoGuardat = 0f;
                 SaveGameData();
             }
-
         }
 
-        #region Progrés offline
+        // ---------------------------------------------------------------
+        // El país de l'escena
+        // ---------------------------------------------------------------
+
+        // La crida EscenaDelPais al seu Start. Com que som nosaltres els qui
+        // cridem InicialitzarPantans(), les granotes es reparteixen sempre
+        // DESPRÉS d'haver carregat els nivells guardats.
+        public void EntrarAlPais(EscenaDelPais pais)
+        {
+            _pais = pais;
+            CarregarGlobals();
+            CarregarZona();
+
+            if (Llista != null) Llista.InicialitzarPantans();
+            else Debug.LogError("GameManager: EscenaDelPais no té LlistaDePantans");
+
+            if (Tenda != null) Tenda.InicialitzarTenda();
+            else Debug.LogError("GameManager: EscenaDelPais no té Tenda");
+
+            // Les unitats ja existeixen i els nivells ja s'han carregat, així
+            // que aquí és on els bonus i l'automatisme arriben als trams.
+            if (GestorDEncarregats.Instancia != null)
+                GestorDEncarregats.Instancia.RegistrarUnitats(Llista, Tren, Tenda);
+
+            // L'últim: l'idle depèn dels nivells i dels bonus dels encarregats.
+            if (_marcaCarregada != DateTime.MinValue)
+                AplicarProgresOffline(_marcaCarregada);
+
+            PartidaCarregada = true;
+
+            // Guardem ja: si l'app es tanqués abans del primer autoguardat, la
+            // partida guardada encara tindria la marca de temps vella, i el
+            // proper cop es tornaria a comptar el mateix temps fora.
+            SaveGameData();
+            Debug.Log($"GameManager: país carregat (zona {zona})");
+        }
+
+        // L'escena del país es descarrega: ja no hi ha unitats a qui preguntar.
+        public void SortirDelPais(EscenaDelPais pais)
+        {
+            if (_pais != pais) return;
+            _pais = null;
+            PartidaCarregada = false;
+            _marcaCarregada = DateTime.MinValue;
+        }
+
+        // ---------------------------------------------------------------
+        // Progrés offline
+        // ---------------------------------------------------------------
 
         // Al mòbil el joc no sempre es tanca: sovint només passa a segon pla
-        // i en tornar continua on era. Les corrutines no han avançat (Unity
-        // estava suspès), així que aquest temps també s'ha de donar com a
-        // offline, igual que si l'haguessis tancat del tot.
+        // i en tornar continua on era. Aquest temps també es dona com a
+        // offline. Al mapa no cal: el temps es compta en tornar al país.
         private void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus)
@@ -192,7 +212,7 @@ namespace IdleFrogs.Game
                 _enPausa = false;
                 if (!PartidaCarregada) return;
                 AplicarProgresOffline(_momentDePausa);
-                SaveGameData();   // mateix motiu que al final de Start
+                SaveGameData();
             }
         }
 
@@ -209,7 +229,7 @@ namespace IdleFrogs.Game
 
         // Les tres capacitats de la cadena: el que podrien fer treballant sense
         // parar. Els pantans només compten si són comprats i a l'abast del tren
-        // (no darrere d'una barrera).
+        // (no darrere d'una barrera). Sense país carregat, tot és 0.
         //
         // Amb 'nomesAutomatitzat' compta només el que va sol: un pantà sense
         // encarregat no suma, i un tren o un restaurant sense encarregat valen 0.
@@ -221,11 +241,11 @@ namespace IdleFrogs.Game
             if (!senseHabilitats) return MesurarAra(nomesAutomatitzat);
 
             var unitats = new System.Collections.Generic.List<UnitatMillorable>();
-            if (llistaDePantans != null)
-                for (int i = 0; i < llistaDePantans.Quantitat; i++)
-                    if (llistaDePantans.Obtenir(i) != null) unitats.Add(llistaDePantans.Obtenir(i));
-            if (tren != null) unitats.Add(tren);
-            if (tenda != null) unitats.Add(tenda);
+            if (Llista != null)
+                for (int i = 0; i < Llista.Quantitat; i++)
+                    if (Llista.Obtenir(i) != null) unitats.Add(Llista.Obtenir(i));
+            if (Tren != null) unitats.Add(Tren);
+            if (Tenda != null) unitats.Add(Tenda);
 
             var abans = new Bonificacions[unitats.Count];
             for (int i = 0; i < unitats.Count; i++) abans[i] = unitats[i].CanviarBonusEnSilenci(unitats[i].BonusPassiu);
@@ -239,20 +259,20 @@ namespace IdleFrogs.Game
         private MesuresDeLaCadena MesurarAra(bool nomesAutomatitzat)
         {
             double pantans = 0;
-            if (llistaDePantans != null)
+            if (Llista != null)
             {
-                int maxim = Mathf.Min(llistaDePantans.IndexMaximAccessible(), llistaDePantans.Quantitat - 1);
+                int maxim = Mathf.Min(Llista.IndexMaximAccessible(), Llista.Quantitat - 1);
                 for (int i = 0; i <= maxim; i++)
                 {
-                    Panta p = llistaDePantans.Obtenir(i);
+                    Panta p = Llista.Obtenir(i);
                     if (p == null || !p.EstaComprat) continue;
                     if (nomesAutomatitzat && !p.EstaAutomatitzada) continue;
                     pantans += p.ProduccioReal;
                 }
             }
 
-            double cabalTren = tren != null && (!nomesAutomatitzat || tren.EstaAutomatitzada) ? tren.CabalReal : 0;
-            double cabalTenda = tenda != null && (!nomesAutomatitzat || tenda.EstaAutomatitzada) ? tenda.CabalReal : 0;
+            double cabalTren = Tren != null && (!nomesAutomatitzat || Tren.EstaAutomatitzada) ? Tren.CabalReal : 0;
+            double cabalTenda = Tenda != null && (!nomesAutomatitzat || Tenda.EstaAutomatitzada) ? Tenda.CabalReal : 0;
             return new MesuresDeLaCadena(pantans, cabalTren, cabalTenda);
         }
 
@@ -261,25 +281,26 @@ namespace IdleFrogs.Game
         public double IngresIdlePerSegon() =>
             Mesures(nomesAutomatitzat: true).Idle * (GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.FactorPermanent : 1);
 
-        // Idle × temps fora, amb el tope d'hores. No es dona: queda pendent
-        // fins que el jugador l'accepta al panell. Una absència curta es dona
-        // directament, sense panell.
+        private double FactorOffline => GestorDeBotiga.Instancia != null && GestorDeBotiga.Instancia.OfflineX2 ? 2 : 1;
+
         // Per provar: com si haguessis tancat el joc fa 'segons' segons.
         public void SimularTempsFora(double segons)
         {
-            if (segons <= 0) return;
+            if (segons <= 0 || !PartidaCarregada) return;
             AplicarProgresOffline(DateTime.UtcNow.AddSeconds(-segons));
             SaveGameData();
         }
 
+        // Idle × temps fora, amb el tope d'hores. No es dona: queda pendent
+        // fins que el jugador l'accepta al panell. Una absència curta es dona
+        // directament, sense panell.
         private void AplicarProgresOffline(DateTime desDe)
         {
+            if (_pais == null) return;
             double segons = (DateTime.UtcNow - desDe).TotalSeconds;
             if (segons <= 1) return;
 
-            // L'offline x2 de la botiga dobla el que es guanya fora.
-            double offlineX2 = GestorDeBotiga.Instancia != null && GestorDeBotiga.Instancia.OfflineX2 ? 2 : 1;
-            RecompensaOffline r = RecompensaOffline.Calcular(segons, horesMaximesOffline * 3600.0, IngresIdlePerSegon() * offlineX2);
+            RecompensaOffline r = RecompensaOffline.Calcular(segons, horesMaximesOffline * 3600.0, IngresIdlePerSegon() * FactorOffline);
             if (!r.HiHaRecompensa) return;
 
             Debug.Log($"GameManager: offline {FormatadorDeNombres.Temps(r.segonsComptats)} × " +
@@ -295,28 +316,76 @@ namespace IdleFrogs.Game
             EnProgresOffline?.Invoke(_offlinePendent);
         }
 
-        #endregion
+        // ---------------------------------------------------------------
+        // Guanys dels països des del mapa
+        // ---------------------------------------------------------------
 
-        #region Application Lifecycle & Saving
+        // El que un país ha guanyat des de l'últim cop que s'hi va guardar:
+        // el pendent de l'offline més el seu idle (guardat en sortir-ne) pel
+        // temps que fa, amb el mateix tope que l'offline. En la seva moneda.
+        public double GuanysPendents(int z)
+        {
+            if (_dades == null || !_dades.TeZona(z)) return 0;
+            // El país que està obert produeix de debò: no hi ha res pendent.
+            if (z == zona && _pais != null) return 0;
+
+            ZonaGuardada d = _dades.zones[z];
+            double total = d.offlinePendent.doblers;
+            if (d.marcaDeTempsUtc != 0 && d.idlePerSegon > 0)
+            {
+                double segons = (DateTime.UtcNow - DateTime.FromBinary(d.marcaDeTempsUtc)).TotalSeconds;
+                total += RecompensaOffline.Calcular(segons, horesMaximesOffline * 3600.0, d.idlePerSegon * FactorOffline).doblers;
+            }
+            return total;
+        }
+
+        // Ho passa a la cartera d'aquell país i torna a comptar des d'ara.
+        // Torna el que s'ha recollit.
+        public double RecollirDeLaZona(int z)
+        {
+            double guanys = GuanysPendents(z);
+            if (guanys <= 0) return 0;
+
+            ZonaGuardada d = _dades.zones[z];
+            if (z == _zonaDeLaMoneda && CurrencyManager.Instancia != null) CurrencyManager.Instancia.AfegirDoblers(guanys);
+            else d.doblers += guanys;
+            d.offlinePendent = default;
+            d.marcaDeTempsUtc = DateTime.UtcNow.ToBinary();
+
+            SaveGameData();
+            return guanys;
+        }
+
+        public double DoblersDeLaZona(int z)
+        {
+            if (z == _zonaDeLaMoneda && CurrencyManager.Instancia != null) return CurrencyManager.Instancia.doblersActuals;
+            return _dades != null && _dades.TeZona(z) ? _dades.zones[z].doblers : 0;
+        }
+
+        // ---------------------------------------------------------------
+        // Carregar i desar
+        // ---------------------------------------------------------------
 
         private void OnApplicationQuit()
         {
             SaveGameData();
         }
 
-        private void CarregarPartida()
+        // Els globals, un sol cop per sessió (o després de reiniciar).
+        private void CarregarGlobals()
         {
+            if (_globalsCarregats) return;
+            _globalsCarregats = true;
+
             if (_dades == null)
             {
                 _dades = new DadesDePartida();
                 IniciarPartidaNova();
-                IniciarZonaNova();
                 return;
             }
 
             MigrarAPaisos();
 
-            // Globals
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.EstablirGemes(_dades.gemes);
             PasDeLaGuia = _dades.pasDeLaGuia;
@@ -327,61 +396,72 @@ namespace IdleFrogs.Game
                 GestorDeBotiga.Instancia.Carregar(_dades.botiga, fora);
             }
 
-            // La zona d'aquesta escena. Si encara no s'hi ha jugat mai, comença
-            // de zero encara que la partida en tingui d'altres.
-            if (_dades.TeZona(zona))
+            // Els doblers del país on ets ja des del principi: el mapa (comprar
+            // el país següent) els fa servir encara que no hi entris.
+            if (_dades.TeZona(zona) && CurrencyManager.Instancia != null)
             {
-                ZonaGuardada z = _dades.zones[zona];
-                AplicarZona(z);
-
-                // Els doblers, el que quedava per cobrar i el rellotge són del país.
-                if (CurrencyManager.Instancia != null)
-                    CurrencyManager.Instancia.EstablirDoblers(z.doblers);
-                _offlinePendent = z.offlinePendent;
-
-                // Només hi ha offline a donar si la zona ja existia: una zona
-                // nova no té encarregats que hagin treballat. Compta tant el
-                // temps amb el joc tancat com el que has estat en un altre país.
-                if (z.marcaDeTempsUtc != 0)
-                    _marcaCarregada = DateTime.FromBinary(z.marcaDeTempsUtc);
-            }
-            else
-            {
-                IniciarZonaNova();
+                CurrencyManager.Instancia.EstablirDoblers(_dades.zones[zona].doblers);
+                _zonaDeLaMoneda = zona;
             }
 
             Debug.Log($"GameManager: partida carregada (zona {zona})");
         }
 
+        // La zona d'aquesta escena. Si encara no s'hi ha jugat mai, comença
+        // de zero encara que la partida en tingui d'altres.
+        private void CarregarZona()
+        {
+            _marcaCarregada = DateTime.MinValue;
+            _offlinePendent = default;
+
+            if (!_dades.TeZona(zona))
+            {
+                IniciarZonaNova();
+                return;
+            }
+
+            ZonaGuardada z = _dades.zones[zona];
+            AplicarZona(z);
+
+            // Els doblers, el que quedava per cobrar i el rellotge són del país.
+            if (CurrencyManager.Instancia != null)
+                CurrencyManager.Instancia.EstablirDoblers(z.doblers);
+            _zonaDeLaMoneda = zona;
+            _offlinePendent = z.offlinePendent;
+
+            // Només hi ha offline a donar si la zona ja existia: compta tant el
+            // temps amb el joc tancat com el que has estat en un altre país o al mapa.
+            if (z.marcaDeTempsUtc != 0)
+                _marcaCarregada = DateTime.FromBinary(z.marcaDeTempsUtc);
+        }
+
         private void AplicarZona(ZonaGuardada z)
         {
-            if (llistaDePantans != null)
+            if (Llista != null)
             {
                 // Les barreres primer: decideixen quins pantans es poden
                 // comprar, i ActualitzarEstats() ho llegeix després.
-                llistaDePantans.AplicarBarreres(z.barreres);
-                llistaDePantans.AplicarNivells(z.nivellsDePanta);
-                llistaDePantans.AplicarCapses(z.capsesDePanta);
+                Llista.AplicarBarreres(z.barreres);
+                Llista.AplicarNivells(z.nivellsDePanta);
+                Llista.AplicarCapses(z.capsesDePanta);
             }
 
-            if (tren != null)
+            if (Tren != null)
             {
-                tren.AplicarNivell(z.nivellDeTren);
-                tren.AplicarCarrega(z.carregaDeTren);
+                Tren.AplicarNivell(z.nivellDeTren);
+                Tren.AplicarCarrega(z.carregaDeTren);
             }
 
-            if (estacio != null) estacio.AplicarDoblers(z.doblersALEstacio);
+            if (Estacio != null) Estacio.AplicarDoblers(z.doblersALEstacio);
 
             // Abans que res que en depengui: les assignacions decideixen
             // quins trams van sols.
             if (GestorDEncarregats.Instancia != null)
                 GestorDEncarregats.Instancia.Carregar(z.encarregats, z.encarregatsCompratsPerTipus);
 
-            if (tenda != null) tenda.AplicarNivell(z.nivellDeTenda);
+            if (Tenda != null) Tenda.AplicarNivell(z.nivellDeTenda);
 
-            // El que la granota duia a mitja entrega es cobra directament:
-            // anava cap a la cartera igualment i així no es perd res ni cal
-            // recrear-li l'estat de la corrutina.
+            // El que la granota duia a mitja entrega es cobra directament.
             if (z.carregaDelTransportista > 0 && CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.AfegirDoblers(z.carregaDelTransportista);
         }
@@ -406,51 +486,58 @@ namespace IdleFrogs.Game
             // el primer pantà.
             if (CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.EstablirDoblers(doblersInicials);
+            _zonaDeLaMoneda = zona;
             _offlinePendent = default;
 
-            if (llistaDePantans != null)
-                llistaDePantans.AplicarNivells(new int[llistaDePantans.Quantitat]);
+            if (Llista != null)
+                Llista.AplicarNivells(new int[Llista.Quantitat]);
         }
 
         public void SaveGameData()
         {
-            // Mentre es reinicia no s'ha de tornar a escriure la partida vella.
-            if (_reiniciant || llistaDePantans == null) return;
-            if (_dades == null) _dades = new DadesDePartida();
+            if (_dades == null || !_globalsCarregats) return;
 
-            // Es reescriu només la zona d'aquesta escena: les altres es
-            // queden tal com es van carregar.
+            DateTime ara = DateTime.UtcNow;
             _dades.versio = DadesDePartida.VersioActual;
-            _dades.marcaDeTempsUtc = DateTime.UtcNow.ToBinary();
+            _dades.marcaDeTempsUtc = ara.ToBinary();
             _dades.gemes = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.gemesActuals : 0;
             _dades.pasDeLaGuia = PasDeLaGuia;
             _dades.zonaActual = zona;
             if (GestorDeBotiga.Instancia != null) _dades.botiga = GestorDeBotiga.Instancia.Guardar();
 
-            ZonaGuardada z = _dades.Zona(zona);
-            z.doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0;
-            z.marcaDeTempsUtc = _dades.marcaDeTempsUtc;
-            z.offlinePendent = _offlinePendent;
-            z.nivellsDePanta = llistaDePantans.ObtenirNivells();
-            z.capsesDePanta = llistaDePantans.ObtenirCapses();
-            z.barreres = llistaDePantans.ObtenirBarreres();
-            z.nivellDeTren = tren != null ? tren.Nivell : 1;
-            z.carregaDeTren = tren != null ? tren.CarregaActual : 0;
-            z.doblersALEstacio = estacio != null ? estacio.DoblersEmmagatzemats : 0;
-            z.nivellDeTenda = tenda != null ? tenda.Nivell : 1;
-            // Ja no hi ha transportista: el camp queda per a les partides d'abans,
-            // que en carregar-se encara cobren el que portava.
-            z.carregaDelTransportista = 0;
-            z.encarregats = GestorDEncarregats.Instancia != null ? GestorDEncarregats.Instancia.Guardar() : null;
-            z.encarregatsCompratsPerTipus = GestorDEncarregats.Instancia != null
-                ? GestorDEncarregats.Instancia.GuardarComprats() : null;
+            // Els doblers del país on ets, també des del mapa (s'hi pot comprar
+            // el país següent o recollir-hi guanys).
+            if (_zonaDeLaMoneda >= 0 && CurrencyManager.Instancia != null && _dades.TeZona(_zonaDeLaMoneda))
+                _dades.zones[_zonaDeLaMoneda].doblers = CurrencyManager.Instancia.doblersActuals;
+
+            // La resta de la zona només amb el país carregat. Al mapa no es toca
+            // la marca de temps: el temps al mapa es cobra com a offline.
+            if (PartidaCarregada && _pais != null)
+            {
+                ZonaGuardada z = _dades.Zona(zona);
+                z.doblers = CurrencyManager.Instancia != null ? CurrencyManager.Instancia.doblersActuals : 0;
+                z.marcaDeTempsUtc = _dades.marcaDeTempsUtc;
+                z.offlinePendent = _offlinePendent;
+                z.idlePerSegon = IngresIdlePerSegon();
+                z.nivellsDePanta = Llista.ObtenirNivells();
+                z.capsesDePanta = Llista.ObtenirCapses();
+                z.barreres = Llista.ObtenirBarreres();
+                z.nivellDeTren = Tren != null ? Tren.Nivell : 1;
+                z.carregaDeTren = Tren != null ? Tren.CarregaActual : 0;
+                z.doblersALEstacio = Estacio != null ? Estacio.DoblersEmmagatzemats : 0;
+                z.nivellDeTenda = Tenda != null ? Tenda.Nivell : 1;
+                z.carregaDelTransportista = 0;
+                z.encarregats = GestorDEncarregats.Instancia != null ? GestorDEncarregats.Instancia.Guardar() : null;
+                z.encarregatsCompratsPerTipus = GestorDEncarregats.Instancia != null
+                    ? GestorDEncarregats.Instancia.GuardarComprats() : null;
+            }
 
             ServeiDeGuardat.Guardar(_dades);
         }
 
-        #endregion
-
-        #region Països
+        // ---------------------------------------------------------------
+        // Països i escenes
+        // ---------------------------------------------------------------
 
         public int PaisosDesbloquejats => _dades != null ? Mathf.Max(1, _dades.paisosDesbloquejats) : 1;
 
@@ -461,60 +548,75 @@ namespace IdleFrogs.Game
             SaveGameData();
         }
 
-        // Guarda aquest país i torna a carregar l'escena amb l'altre. En
-        // tornar-hi més tard, el temps que hi has faltat es cobra com a offline.
+        // Desa el país i obre l'escena del mapa.
+        public void AnarAlMapa()
+        {
+            SaveGameData();
+            DeixarElPais();
+            CarregarEscena(escenaDelMapa);
+        }
+
+        // Del mapa al país on eres.
+        public void TornarAlPais() => CarregarEscena(escenaDelPais);
+
+        // Desa aquest país i obre l'escena del país amb l'altre. En tornar-hi
+        // més tard, el temps que hi has faltat es cobra com a offline.
         public void CanviarDeZona(int n)
         {
-            if (_reiniciant || n == zona || n < 0 || n >= PaisosDesbloquejats) return;
+            if (n < 0 || n >= PaisosDesbloquejats) return;
+            if (n == zona && _pais != null) return;
             SaveGameData();
+            DeixarElPais();
+            zona = n;
             _dades.zonaActual = n;
+            // La moneda del país nou es carrega en entrar-hi.
+            _zonaDeLaMoneda = -1;
             ServeiDeGuardat.Guardar(_dades);
-            _reiniciant = true;
-            RecarregarLEscena();
+            CarregarEscena(escenaDelPais);
         }
 
         private void MigrarAPaisos() => MigracioDePartida.PassarAPaisos(_dades);
 
-        #endregion
-
-        #region Reiniciar
-
-        // Esborra la partida i torna a carregar l'escena com si fos el primer cop.
+        // Esborra la partida i torna a començar al primer país.
         public void ReiniciarPartida()
         {
-            if (_reiniciant) return;
-            _reiniciant = true;
-
             ServeiDeGuardat.Esborrar();
-            RecarregarLEscena();
+            DeixarElPais();
+            _dades = null;
+            _globalsCarregats = false;
+            _zonaDeLaMoneda = -1;
+            zona = 0;
+            CarregarGlobals();
+            CarregarEscena(escenaDelPais);
         }
 
-        private void RecarregarLEscena()
+        // Fins que l'escena vella es descarrega (al final del frame) els seus
+        // objectes encara existeixen: que cap desat no hi llegeixi res.
+        private void DeixarElPais()
         {
-            // Som DontDestroyOnLoad: si no ens destruïm, sobreviuríem a la
-            // recàrrega amb referències als pantans de l'escena vella, ja
-            // destruïts, i la nova escena esborraria el seu GameManager en
-            // veure que ja n'hi ha un. Ens apartem perquè el nou ocupi el lloc.
-            Instancia = null;
-            Destroy(gameObject);
+            _pais = null;
+            PartidaCarregada = false;
+            _marcaCarregada = DateTime.MinValue;
+        }
 
-            Scene escena = SceneManager.GetActiveScene();
-            if (escena.buildIndex >= 0)
+        private static void CarregarEscena(string nom)
+        {
+            if (Application.CanStreamedLevelBeLoaded(nom))
             {
-                SceneManager.LoadScene(escena.buildIndex);
+                SceneManager.LoadScene(nom);
                 return;
             }
-
 #if UNITY_EDITOR
-            // L'escena no és a la llista d'escenes del build. A l'editor la
-            // podem carregar igualment; en una build no.
-            UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode(
-                escena.path, new LoadSceneParameters(LoadSceneMode.Single));
-#else
-            Debug.LogError("GameManager: l'escena no és a la llista d'escenes del build i no es pot recarregar");
+            // A l'editor, encara que no sigui a la llista d'escenes del build.
+            foreach (string guid in UnityEditor.AssetDatabase.FindAssets($"{nom} t:Scene"))
+            {
+                string ruta = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                if (System.IO.Path.GetFileNameWithoutExtension(ruta) != nom) continue;
+                UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode(ruta, new LoadSceneParameters(LoadSceneMode.Single));
+                return;
+            }
 #endif
+            Debug.LogError($"GameManager: l'escena {nom} no existeix o no és a la llista d'escenes del build");
         }
-
-        #endregion
     }
 }
