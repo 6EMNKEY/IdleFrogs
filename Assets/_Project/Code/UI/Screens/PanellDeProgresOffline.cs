@@ -10,7 +10,7 @@ namespace IdleFrogs.UI
     //
     // Els doblers no es donen en carregar: es queden pendents (i guardats) fins
     // que el jugador accepta. Tant ACCEPTAR com la creu cobren, i les monedes
-    // volen del total cap al comptador.
+    // volen del total cap al comptador. El botó de l'anunci cobra el doble.
     public class PanellDeProgresOffline : MonoBehaviour
     {
         [Header("Arrel del panell (el que s'amaga i es mostra)")]
@@ -29,11 +29,22 @@ namespace IdleFrogs.UI
         [Header("Botons — tots dos cobren")]
         [SerializeField] private Button botoAcceptar;
         [SerializeField] private Button botoTancar;
+        [Tooltip("Opcional: \"x2\" veient un anunci. Amb \"Sense anuncis\" el x2 es dona sense anunci")]
+        [SerializeField] private Button botoX2Anunci;
+        [Tooltip("Opcional: el text del botó x2. Buit: el primer TMP de dins del botó")]
+        [SerializeField] private TMP_Text textX2Anunci;
+
+        private bool _esperantAnunci;
 
         private void Awake()
         {
             if (botoAcceptar != null) botoAcceptar.onClick.AddListener(Cobrar);
             if (botoTancar != null) botoTancar.onClick.AddListener(Cobrar);
+            if (botoX2Anunci != null)
+            {
+                botoX2Anunci.onClick.AddListener(CobrarDoble);
+                if (textX2Anunci == null) textX2Anunci = botoX2Anunci.GetComponentInChildren<TMP_Text>(true);
+            }
             if (arrel != null) arrel.SetActive(false);
         }
 
@@ -65,12 +76,28 @@ namespace IdleFrogs.UI
             if (textTotal != null)
                 textTotal.text = $"{FormatadorDeNombres.Doblers(r.doblers)}!!{Icones.Moneda}";
 
+            if (textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
             if (arrel != null) arrel.SetActive(true);
         }
 
-        public void Cobrar()
+        public void Cobrar() => Cobrar(1);
+
+        private void CobrarDoble()
+        {
+            if (_esperantAnunci || GestorDeBotiga.Instancia == null) return;
+            _esperantAnunci = true;
+            GestorDeBotiga.Instancia.VeureAnunci(vist =>
+            {
+                _esperantAnunci = false;
+                if (vist) Cobrar(2);
+                else GestorDAudio.Sonar(So.Error);
+            });
+        }
+
+        private void Cobrar(double factor)
         {
             if (arrel != null && !arrel.activeSelf) return;
+            if (_esperantAnunci) return;
 
             // On és l'origen, abans d'amagar el panell: un cop apagat ja no és
             // a la pantalla.
@@ -81,7 +108,7 @@ namespace IdleFrogs.UI
             if (arrel != null) arrel.SetActive(false);
             if (GameManager.Instancia == null) return;
 
-            double cobrat = GameManager.Instancia.CobrarRecompensaOffline();
+            double cobrat = GameManager.Instancia.CobrarRecompensaOffline(factor);
             if (cobrat > 0) GestorDAudio.Sonar(So.Recompensa);
             if (cobrat > 0 && origen != null && EfecteDeRecompensa.Instancia != null)
                 EfecteDeRecompensa.Instancia.Llancar(TipusDeMoneda.Doblers, punt, cobrat);

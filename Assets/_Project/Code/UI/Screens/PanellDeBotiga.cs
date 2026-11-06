@@ -328,6 +328,7 @@ namespace IdleFrogs.UI
 
         // Les gemes i els diners volen cap al comptador des de la targeta; la
         // resta es diu amb un missatge.
+        // doble: la primera compra d'un pack de gemes o un regal doblat per un anunci.
         public void Rebut(List<Recompensa> donades, RectTransform origen, bool primeraDoble)
         {
             if (donades == null || donades.Count == 0)
@@ -346,10 +347,12 @@ namespace IdleFrogs.UI
                     if (r.tipus == TipusDeRecompensa.Gemes)
                         efecte.LlancarDesDe(TipusDeMoneda.Gemes, origen, r.quantitat * (primeraDoble ? 2 : 1));
                     else if (r.tipus == TipusDeRecompensa.TempsDIngressos && GestorDeBotiga.Instancia != null)
-                        efecte.LlancarDesDe(TipusDeMoneda.Doblers, origen, GestorDeBotiga.Instancia.DoblersDeTemps(r.quantitat * 60));
+                        efecte.LlancarDesDe(TipusDeMoneda.Doblers, origen,
+                            GestorDeBotiga.Instancia.DoblersDeTemps(r.quantitat * 60 * (primeraDoble ? 2 : 1)));
                 }
 
-            Missatge(Textos.F("botiga.rebut", TextosDeBotiga.Descripcio(donades, " + ")));
+            string que = TextosDeBotiga.Descripcio(donades, " + ");
+            Missatge(Textos.F("botiga.rebut", primeraDoble ? $"{que} x2" : que));
             Refrescar();
         }
 

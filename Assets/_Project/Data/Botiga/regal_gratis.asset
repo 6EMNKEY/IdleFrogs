@@ -143,6 +143,7 @@ MonoBehaviour:
     pes: 2
   unaAlAtzar: 1
   doblePrimeraCompra: 0
+  dobleAmbAnunci: 1
   limit: 0
   limitAlDia: 0
   horesEntreUsos: 4

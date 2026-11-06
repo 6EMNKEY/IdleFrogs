@@ -19,6 +19,12 @@ namespace IdleFrogs.Game
         [Tooltip("Només si LlistaDePantans no en té per a aquesta barrera (Hores De Cada Barrera)")]
         [SerializeField] private double segonsTotals = 3600;
 
+        [Header("Anuncis")]
+        [Tooltip("Minuts que treu cada anunci")]
+        [Min(1)] [SerializeField] private float minutsPerAnunci = 30f;
+        [Tooltip("Quants anuncis es poden veure en aquesta barrera")]
+        [Min(0)] [SerializeField] private int anuncisMaxims = 3;
+
         [Header("Arrels visuals")]
         [Tooltip("La roca, el cartell... tot el que desapareix en obrir-se. Buit: tots els fills")]
         [SerializeField] private GameObject contingut;
@@ -26,6 +32,7 @@ namespace IdleFrogs.Game
         [SerializeField] private bool iniciada;
         [SerializeField] private bool oberta;
         private DateTime _venciment;
+        private int _anuncisFets;
 
         // El preu el posa LlistaDePantans: el del pantà que es salta.
         private double _preu;
@@ -122,6 +129,20 @@ namespace IdleFrogs.Game
             else EnCanviDeTemps?.Invoke();
         }
 
+        // Els anuncis: mentre compta, cadascun treu minutsPerAnunci, fins a anuncisMaxims.
+        public double SegonsPerAnunci => minutsPerAnunci * 60.0;
+        public int AnuncisRestants => Math.Max(0, anuncisMaxims - _anuncisFets);
+        public bool EsPotReduirAmbAnunci => iniciada && !oberta && AnuncisRestants > 0;
+
+        // Es crida quan l'anunci s'ha vist.
+        public bool ReduirAmbAnunci()
+        {
+            if (!EsPotReduirAmbAnunci) return false;
+            _anuncisFets++;
+            ReduirTemps(SegonsPerAnunci);
+            return true;
+        }
+
         // Obrir-la del tot sense esperar (premium).
         public void ObrirAlInstant()
         {
@@ -158,7 +179,8 @@ namespace IdleFrogs.Game
         {
             iniciada = iniciada,
             oberta = oberta,
-            vencimentUtc = _venciment.ToBinary()
+            vencimentUtc = _venciment.ToBinary(),
+            anuncisFets = _anuncisFets
         };
 
         public void Carregar(BarreraGuardada dades)
@@ -167,6 +189,7 @@ namespace IdleFrogs.Game
             iniciada = dades.iniciada;
             oberta = dades.oberta;
             _venciment = DateTime.FromBinary(dades.vencimentUtc);
+            _anuncisFets = dades.anuncisFets;
 
             // Pot haver vençut mentre el joc estava tancat.
             if (iniciada && !oberta && SegonsRestants <= 0) oberta = true;

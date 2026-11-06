@@ -71,7 +71,7 @@ namespace IdleFrogs.EditorTools
             // ---- Gratis ----
             var regal = P("regal_gratis", T("Free gift", "Regalo gratis", "Regal gratis"), SeccioDeBotiga.Gratis, MidaDeTargeta.Gran, TipusDePagament.Gratis,
                 Mult(2, 240, 25), Mult(5, 20, 20), Ingressos(30, 20), Gemes(1, 15), Ingressos(120, 8), Gemes(5, 5), Mult(1000, 1, 5), Gemes(20, 2));
-            regal.unaAlAtzar = true; regal.horesEntreUsos = 4;
+            regal.unaAlAtzar = true; regal.horesEntreUsos = 4; regal.dobleAmbAnunci = true;
             P("anunci_x2", T("x2 for 30 min", "x2 durante 30 min", "x2 durant 30 min"), SeccioDeBotiga.Gratis, MidaDeTargeta.Petita, TipusDePagament.Anunci,
                 Mult(2, 30, 1, 240));
             var anunciGemes = P("anunci_gemes", T("Free gems", "Gemas gratis", "Gemes gratis"), SeccioDeBotiga.Gratis, MidaDeTargeta.Petita, TipusDePagament.Anunci,

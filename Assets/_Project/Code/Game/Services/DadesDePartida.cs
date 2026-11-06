@@ -8,6 +8,7 @@ namespace IdleFrogs.Game
         public bool iniciada;
         public bool oberta;
         public long vencimentUtc;
+        public int anuncisFets;
     }
 
     [Serializable]

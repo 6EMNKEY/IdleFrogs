@@ -217,9 +217,10 @@ namespace IdleFrogs.Game
         }
 
         // La crida el panell en acceptar (o tancar). Torna el que s'ha cobrat.
-        public double CobrarRecompensaOffline()
+        // factor: 2 si ha vist l'anunci de doblar-ho.
+        public double CobrarRecompensaOffline(double factor = 1)
         {
-            double doblers = _offlinePendent.doblers;
+            double doblers = _offlinePendent.doblers * factor;
             _offlinePendent = default;
             if (doblers > 0 && CurrencyManager.Instancia != null)
                 CurrencyManager.Instancia.AfegirDoblers(doblers);

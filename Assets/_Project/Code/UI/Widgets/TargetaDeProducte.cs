@@ -27,6 +27,11 @@ namespace IdleFrogs.UI
         [SerializeField] private Button boto;
         [Tooltip("El preu, \"Gratis\", \"Veure anunci\", el compte enrere o \"Comprat\"")]
         [SerializeField] private TMP_Text preu;
+        [Tooltip("Opcional: x2 veient un anunci. Només surt als productes amb Doble Amb Anunci (el regal) " +
+                 "quan es poden recollir")]
+        [SerializeField] private Button botoX2Anunci;
+        [Tooltip("Opcional: el text del botó x2. Buit: el primer TMP de dins del botó")]
+        [SerializeField] private TMP_Text textX2Anunci;
 
         [Header("Extres")]
         [Tooltip("El cartellet de dalt (\"Popular\", \"x2 primera compra\"). S'amaga si no n'hi ha")]
@@ -46,6 +51,11 @@ namespace IdleFrogs.UI
         {
             if (boto != null) boto.onClick.AddListener(Comprar);
             if (botoInfo != null) botoInfo.onClick.AddListener(Informacio);
+            if (botoX2Anunci != null)
+            {
+                botoX2Anunci.onClick.AddListener(ComprarDoble);
+                if (textX2Anunci == null) textX2Anunci = botoX2Anunci.GetComponentInChildren<TMP_Text>(true);
+            }
         }
 
         // El panell (i) també ho fa servir.
@@ -96,6 +106,7 @@ namespace IdleFrogs.UI
             // El pase comprat: la targeta passa a ser la de recollir el del dia.
             if (EsElPase && g.PaseActiu)
             {
+                MostrarX2(false);
                 string gemes = FormatadorDeNombres.Doblers(g.GemesDelPasePerDia) + Icones.Gema;
                 Posar(preu, g.PotRecollirElPase ? Textos.F("botiga.recollir_gemes", gemes) : Textos.T("botiga.dema"));
                 if (boto != null) boto.interactable = g.PotRecollirElPase;
@@ -108,6 +119,8 @@ namespace IdleFrogs.UI
             EstatDeProducte estat = g.Estat(_producte);
             Posar(preu, TextDelPreu(g, estat));
             if (boto != null) boto.interactable = estat == EstatDeProducte.Disponible;
+            MostrarX2(_producte.dobleAmbAnunci && _producte.pagament == TipusDePagament.Gratis &&
+                      estat == EstatDeProducte.Disponible);
 
             int restants = g.Restants(_producte);
             Posar(textLimit, restants >= 0 && estat != EstatDeProducte.Esgotat ? Textos.F("botiga.queden", restants) : null);
@@ -140,6 +153,23 @@ namespace IdleFrogs.UI
                 case TipusDePagament.Gemes: return FormatadorDeNombres.Doblers(_producte.preuEnGemes) + Icones.Gema;
                 default: return g.PreuReal(_producte);
             }
+        }
+
+        private void MostrarX2(bool visible)
+        {
+            if (botoX2Anunci == null) return;
+            if (botoX2Anunci.gameObject.activeSelf != visible) botoX2Anunci.gameObject.SetActive(visible);
+            if (visible && textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
+        }
+
+        private void ComprarDoble()
+        {
+            GestorDeBotiga g = GestorDeBotiga.Instancia;
+            if (g == null || _producte == null) return;
+            g.ComprarDoblantAmbAnunci(_producte, donades =>
+            {
+                if (_panell != null) _panell.Rebut(donades, (RectTransform)transform, true);
+            });
         }
 
         private void Etiqueta(string text)

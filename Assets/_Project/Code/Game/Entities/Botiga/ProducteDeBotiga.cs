@@ -49,6 +49,8 @@ namespace IdleFrogs.Game
         public bool unaAlAtzar;
         [Tooltip("La primera compra dona el doble de gemes (packs de gemes)")]
         public bool doblePrimeraCompra;
+        [Tooltip("Només als gratis (el regal): a més de Recollir, un botó per doblar-ho veient un anunci")]
+        public bool dobleAmbAnunci;
 
         [Header("Límits")]
         [Tooltip("Quantes vegades es pot comprar en total (0 = sense límit)")]

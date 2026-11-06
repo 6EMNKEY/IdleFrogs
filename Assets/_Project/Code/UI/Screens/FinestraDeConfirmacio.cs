@@ -38,6 +38,11 @@ namespace IdleFrogs.UI
         [SerializeField] private Button botoCancellar;
         [Tooltip("Opcional: el text del botó de cancel·lar. Buit: el primer TMP de dins del botó")]
         [SerializeField] private TMP_Text textCancellar;
+        [Tooltip("Opcional: el tercer botó, \"Veure anunci\". Només surt quan la pregunta en porta " +
+                 "(\"Et falten X\" amb pocs minuts d'ingressos). Buit: no s'ofereix mai")]
+        [SerializeField] private Button botoAnunci;
+        [Tooltip("Opcional: el text del botó de l'anunci. Buit: el primer TMP de dins del botó")]
+        [SerializeField] private TMP_Text textAnunci;
         [Tooltip("Opcional: la X de la cantonada. Cancel·la")]
         [SerializeField] private Button botoTancar;
         [Tooltip("Opcional: un Button al fons fosc. Tocar fora de la finestra cancel·la")]
@@ -49,6 +54,7 @@ namespace IdleFrogs.UI
 
         private Action _siAccepta;
         private Action _siCancella;
+        private Action _siAnunci;
         private Color _colorNormal = Color.white;
 
         private void Awake()
@@ -62,10 +68,12 @@ namespace IdleFrogs.UI
 
             if (textAcceptar == null && botoAcceptar != null) textAcceptar = botoAcceptar.GetComponentInChildren<TMP_Text>(true);
             if (textCancellar == null && botoCancellar != null) textCancellar = botoCancellar.GetComponentInChildren<TMP_Text>(true);
+            if (textAnunci == null && botoAnunci != null) textAnunci = botoAnunci.GetComponentInChildren<TMP_Text>(true);
             if (botoAcceptar != null && botoAcceptar.image != null) _colorNormal = botoAcceptar.image.color;
 
             if (botoAcceptar != null) botoAcceptar.onClick.AddListener(Acceptar);
             if (botoCancellar != null) botoCancellar.onClick.AddListener(Cancellar);
+            if (botoAnunci != null) botoAnunci.onClick.AddListener(VeureAnunci);
             if (botoTancar != null) botoTancar.onClick.AddListener(Cancellar);
             if (botoDelFons != null) botoDelFons.onClick.AddListener(Cancellar);
 
@@ -77,10 +85,15 @@ namespace IdleFrogs.UI
             if (Instancia == this) Instancia = null;
         }
 
+        // Si la finestra té el botó de l'anunci (si no, no cal oferir-lo).
+        public static bool PotOferirAnunci => Instancia != null && Instancia.botoAnunci != null;
+
         // textAcceptar / textCancellar buits: "Accept" i "Cancel" de l'idioma.
+        // siAnunci: si n'hi ha, surt el botó de l'anunci, que fa això en tocar-lo.
         public static void Preguntar(string titol, string explicacio, Action siAccepta,
                                      Action siCancella = null, string textAcceptar = null,
-                                     string textCancellar = null, bool perillosa = false)
+                                     string textCancellar = null, bool perillosa = false,
+                                     Action siAnunci = null, string textAnunci = null)
         {
             if (Instancia == null)
             {
@@ -97,17 +110,22 @@ namespace IdleFrogs.UI
                 siAccepta?.Invoke();
                 return;
             }
-            Instancia.Obrir(titol, explicacio, siAccepta, siCancella, textAcceptar, textCancellar, perillosa);
+            Instancia.Obrir(titol, explicacio, siAccepta, siCancella, textAcceptar, textCancellar, perillosa,
+                            siAnunci, textAnunci);
         }
 
         private void Obrir(string titol, string explicacio, Action siAccepta, Action siCancella,
-                           string acceptar, string cancellar, bool perillosa)
+                           string acceptar, string cancellar, bool perillosa, Action siAnunci, string anunci)
         {
             // La que hi havia queda cancel·lada.
             if (EstaOberta) Cancellar();
 
             _siAccepta = siAccepta;
             _siCancella = siCancella;
+            _siAnunci = siAnunci;
+
+            if (botoAnunci != null) botoAnunci.gameObject.SetActive(siAnunci != null);
+            if (textAnunci != null) textAnunci.text = string.IsNullOrEmpty(anunci) ? Textos.T("botiga.anunci") : anunci;
 
             if (textTitol != null) textTitol.text = titol ?? string.Empty;
             if (textExplicacio != null) textExplicacio.text = explicacio ?? string.Empty;
@@ -135,6 +153,14 @@ namespace IdleFrogs.UI
             accio?.Invoke();
         }
 
+        private void VeureAnunci()
+        {
+            GestorDAudio.Sonar(So.Acceptar);
+            Action accio = _siAnunci;
+            Tancar();
+            accio?.Invoke();
+        }
+
         private void Cancellar()
         {
             GestorDAudio.Sonar(So.Cancellar);
@@ -147,6 +173,7 @@ namespace IdleFrogs.UI
         {
             _siAccepta = null;
             _siCancella = null;
+            _siAnunci = null;
             if (arrel != null) arrel.SetActive(false);
         }
     }

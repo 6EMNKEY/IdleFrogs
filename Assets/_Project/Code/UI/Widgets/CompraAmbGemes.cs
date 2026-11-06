@@ -8,7 +8,8 @@ namespace IdleFrogs.UI
     // Comprar amb monedes quan no n'hi ha prou: en comptes de no fer res,
     // surt la finestra de confirmació amb el que falta i el botó d'acceptar
     // amb les gemes que costa (al preu de la botiga: 1 h d'ingressos = 60).
-    // Si tampoc hi ha gemes, acceptar obre la botiga a Gemes.
+    // Si tampoc hi ha gemes, acceptar obre la botiga a Gemes. I si el que
+    // falta són pocs minuts d'ingressos, un tercer botó ho dona per un anunci.
     public static class CompraAmbGemes
     {
         // comprar: la compra de debò, que gasta 'preu' monedes. Es crida tal
@@ -29,12 +30,18 @@ namespace IdleFrogs.UI
             }
 
             double falta = preu - c.doblersActuals;
-            int gemes = ambGemes && GestorDeBotiga.Instancia != null ? GestorDeBotiga.Instancia.GemesPer(falta) : 0;
+            GestorDeBotiga g = GestorDeBotiga.Instancia;
+            int gemes = ambGemes && g != null ? g.GemesPer(falta) : 0;
+            // Com les gemes: on no se'n poden posar, tampoc anunci (x10, el segon pantà...).
+            Action ambAnunci = ambGemes && g != null && FinestraDeConfirmacio.PotOferirAnunci && g.EsPotAconseguirAmbAnunci(falta)
+                ? () => AconseguirAmbAnunci(preu, comprar)
+                : (Action)null;
             if (gemes <= 0)
             {
                 // No es pot pagar amb gemes (sense ritme o massa car): només s'avisa.
                 GestorDAudio.Sonar(So.Error);
-                FinestraDeConfirmacio.Preguntar(titol, Textos.F("conf.falten", FormatadorDeNombres.Doblers(falta) + Icones.Moneda), null);
+                FinestraDeConfirmacio.Preguntar(titol, Textos.F("conf.falten", FormatadorDeNombres.Doblers(falta) + Icones.Moneda), null,
+                                                siAnunci: ambAnunci);
                 return;
             }
 
@@ -43,7 +50,22 @@ namespace IdleFrogs.UI
                 titol,
                 explicacio != null ? explicacio(enGemes) : enGemes,
                 () => PagarAmbGemes(preu, gemes, comprar),
-                textAcceptar: enGemes);
+                textAcceptar: enGemes,
+                siAnunci: ambAnunci);
+        }
+
+        // Veure l'anunci dona el que falta i fa la compra.
+        private static void AconseguirAmbAnunci(double preu, Action comprar)
+        {
+            GestorDeBotiga g = GestorDeBotiga.Instancia;
+            if (g == null) return;
+            g.VeureAnunci(vist =>
+            {
+                CurrencyManager c = CurrencyManager.Instancia;
+                if (!vist || c == null) { GestorDAudio.Sonar(So.Error); return; }
+                if (c.doblersActuals < preu) c.AfegirDoblers(preu - c.doblersActuals + preu * 1e-9);
+                comprar();
+            });
         }
 
         private static void PagarAmbGemes(double preu, int gemes, Action comprar)

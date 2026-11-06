@@ -22,6 +22,10 @@ namespace IdleFrogs.Game
         [Min(1)] [SerializeField] private int minimDeGemes = 10;
         [Tooltip("Per sobre d'això no s'ofereix pagar amb gemes: només \"Et falten X\"")]
         [Min(1)] [SerializeField] private int maximDeGemes = 100000;
+        [Header("Anuncis")]
+        [Tooltip("\"Et falten X\": si el que falta són com a molt aquests minuts d'ingressos, " +
+                 "es pot aconseguir amb un anunci. 0 = mai")]
+        [Min(0)] [SerializeField] private float minutsMaximsPerAnunci = 30f;
 
         public CatalegDeBotiga Cataleg => cataleg;
 
@@ -197,8 +201,7 @@ namespace IdleFrogs.Game
                     break;
 
                 case TipusDePagament.Anunci:
-                    if (SenseAnuncis) { enAcabar?.Invoke(Lliurar(p)); break; }
-                    Anuncis.Mostrar(vist => enAcabar?.Invoke(vist ? Lliurar(p) : donades));
+                    VeureAnunci(vist => enAcabar?.Invoke(vist ? Lliurar(p) : donades));
                     break;
 
                 case TipusDePagament.DinerReal:
@@ -207,7 +210,20 @@ namespace IdleFrogs.Game
             }
         }
 
-        private List<Recompensa> Lliurar(ProducteDeBotiga p)
+        // El regal gratis, doblat per un anunci (si el producte ho permet).
+        public void ComprarDoblantAmbAnunci(ProducteDeBotiga p, Action<List<Recompensa>> enAcabar = null)
+        {
+            var donades = new List<Recompensa>();
+            if (p == null || !p.dobleAmbAnunci || p.pagament != TipusDePagament.Gratis || Estat(p) != EstatDeProducte.Disponible)
+            {
+                enAcabar?.Invoke(donades);
+                return;
+            }
+            VeureAnunci(vist =>
+                enAcabar?.Invoke(vist && Estat(p) == EstatDeProducte.Disponible ? Lliurar(p, true) : donades));
+        }
+
+        private List<Recompensa> Lliurar(ProducteDeBotiga p, bool doble = false)
         {
             CompraGuardada c = Registre(p);
             bool primera = c.vegades == 0;
@@ -224,38 +240,42 @@ namespace IdleFrogs.Game
             }
             else donades.AddRange(p.recompenses);
 
-            foreach (Recompensa r in donades) Donar(r, primera && p.doblePrimeraCompra);
+            foreach (Recompensa r in donades) Donar(r, doble || (primera && p.doblePrimeraCompra));
 
             Desar();
             return donades;
         }
 
         // Dona una recompensa, vingui d'on vingui (botiga, calendari, regal).
+        // doble: el doble de gemes, de temps d'ingressos, de minuts de
+        // multiplicador (fins al seu màxim) o dos encarregats. Els permanents
+        // i el pase, un cop.
         public void Donar(Recompensa r, bool doble = false)
         {
             if (r == null) return;
+            int f = doble ? 2 : 1;
             switch (r.tipus)
             {
                 case TipusDeRecompensa.Gemes:
                     if (CurrencyManager.Instancia != null)
-                        CurrencyManager.Instancia.AfegirGemes((int)Math.Round(r.quantitat * (doble ? 2 : 1)));
+                        CurrencyManager.Instancia.AfegirGemes((int)Math.Round(r.quantitat * f));
                     break;
 
                 case TipusDeRecompensa.TempsDIngressos:
                     if (CurrencyManager.Instancia != null)
-                        CurrencyManager.Instancia.AfegirDoblers(DoblersDeTemps(r.quantitat * 60));
+                        CurrencyManager.Instancia.AfegirDoblers(DoblersDeTemps(r.quantitat * 60 * f));
                     break;
 
                 case TipusDeRecompensa.Multiplicador:
-                    _multiplicadors.Afegir(r.multiplicador, r.minuts * 60, r.minutsMaxims * 60);
+                    _multiplicadors.Afegir(r.multiplicador, r.minuts * 60 * f, r.minutsMaxims * 60);
                     break;
 
                 case TipusDeRecompensa.Encarregat:
-                    GestorDEncarregats.Instancia?.Regalar(r.raresa);
+                    for (int i = 0; i < f; i++) GestorDEncarregats.Instancia?.Regalar(r.raresa);
                     break;
 
                 case TipusDeRecompensa.Cofre:
-                    GestorDEncarregats.Instancia?.Regalar(r.TirarRaresa(UnityEngine.Random.value));
+                    for (int i = 0; i < f; i++) GestorDEncarregats.Instancia?.Regalar(r.TirarRaresa(UnityEngine.Random.value));
                     break;
 
                 case TipusDeRecompensa.Permanent:
@@ -283,6 +303,28 @@ namespace IdleFrogs.Game
         {
             if (GameManager.Instancia == null) return 0;
             return GameManager.Instancia.Mesures(senseHabilitats: true).CollDAmpolla * segons * FactorPermanent;
+        }
+
+        // ---------------------------------------------------------------
+        // Anuncis
+        // ---------------------------------------------------------------
+
+        // Un anunci amb recompensa: enAcabar(true) si s'ha vist sencer. Amb
+        // "Sense anuncis" la recompensa es dona sense veure res.
+        public void VeureAnunci(Action<bool> enAcabar)
+        {
+            if (SenseAnuncis) { enAcabar?.Invoke(true); return; }
+            if (Anuncis == null) { enAcabar?.Invoke(false); return; }
+            Anuncis.Mostrar(enAcabar);
+        }
+
+        // "Et falten X": si són pocs minuts d'ingressos, es poden aconseguir
+        // amb un anunci. Sense ritme (país acabat d'obrir) no.
+        public bool EsPotAconseguirAmbAnunci(double doblers)
+        {
+            if (!(doblers > 0) || minutsMaximsPerAnunci <= 0) return false;
+            double maxim = DoblersDeTemps(minutsMaximsPerAnunci * 60);
+            return maxim > 0 && doblers <= maxim;
         }
 
         // Les gemes que valen uns doblers que falten: el temps que trigaries a
@@ -320,19 +362,26 @@ namespace IdleFrogs.Game
 
         public bool EsElMesInicial => cataleg != null && _dades.diesDelCalendariRecollits < cataleg.mesInicial.Count;
 
-        public List<Recompensa> RecollirElCalendari()
+        // doble: el premi d'avui x2 (després de veure un anunci).
+        public List<Recompensa> RecollirElCalendari(bool doble = false)
         {
             var donades = new List<Recompensa>();
             if (!PotRecollirElCalendari) return donades;
 
             DiaDelCalendari dia = DiaDelCalendari;
             foreach (Recompensa r in dia.recompenses)
-                if (r != null) { Donar(r); donades.Add(r); }
+                if (r != null) { Donar(r, doble); donades.Add(r); }
 
             _dades.diesDelCalendariRecollits++;
             _dades.ultimDiaDelCalendari = Avui;
             Desar();
             return donades;
+        }
+
+        public void RecollirElCalendariAmbAnunci(Action<List<Recompensa>> enAcabar)
+        {
+            if (!PotRecollirElCalendari) { enAcabar?.Invoke(new List<Recompensa>()); return; }
+            VeureAnunci(vist => enAcabar?.Invoke(vist ? RecollirElCalendari(true) : new List<Recompensa>()));
         }
 
         // ---------------------------------------------------------------

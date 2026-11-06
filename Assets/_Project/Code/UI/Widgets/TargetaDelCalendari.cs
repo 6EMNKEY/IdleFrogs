@@ -17,12 +17,21 @@ namespace IdleFrogs.UI
         [SerializeField] private Button boto;
         [Tooltip("\"Recollir\" o \"Torna demà\"")]
         [SerializeField] private TMP_Text textBoto;
+        [Tooltip("Opcional: recollir-ho x2 veient un anunci. Només es veu quan es pot recollir")]
+        [SerializeField] private Button botoX2Anunci;
+        [Tooltip("Opcional: el text del botó x2. Buit: el primer TMP de dins del botó")]
+        [SerializeField] private TMP_Text textX2Anunci;
 
         private PanellDeBotiga _panell;
 
         private void Awake()
         {
             if (boto != null) boto.onClick.AddListener(Recollir);
+            if (botoX2Anunci != null)
+            {
+                botoX2Anunci.onClick.AddListener(RecollirDoble);
+                if (textX2Anunci == null) textX2Anunci = botoX2Anunci.GetComponentInChildren<TMP_Text>(true);
+            }
         }
 
         public void Inicialitzar(PanellDeBotiga panell)
@@ -45,6 +54,18 @@ namespace IdleFrogs.UI
             bool pot = g.PotRecollirElCalendari;
             if (boto != null) boto.interactable = pot;
             if (textBoto != null) textBoto.text = Textos.T(pot ? "botiga.recollir" : "botiga.dema");
+            if (botoX2Anunci != null && botoX2Anunci.gameObject.activeSelf != pot) botoX2Anunci.gameObject.SetActive(pot);
+            if (textX2Anunci != null) textX2Anunci.text = Textos.T("anunci.x2");
+        }
+
+        private void RecollirDoble()
+        {
+            GestorDeBotiga g = GestorDeBotiga.Instancia;
+            if (g == null) return;
+            g.RecollirElCalendariAmbAnunci(donades =>
+            {
+                if (_panell != null) _panell.Rebut(donades, (RectTransform)transform, true);
+            });
         }
 
         private void Recollir()
