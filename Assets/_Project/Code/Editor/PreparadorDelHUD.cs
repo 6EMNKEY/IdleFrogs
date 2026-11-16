@@ -52,14 +52,15 @@ namespace IdleFrogs.EditorTools
                 .Any(b => new SerializedObject(b).FindProperty("accio").enumValueIndex == (int)AccioDeBoto.Configuracio);
             if (!hiEs)
             {
-                float mida = 120;
+                // Com al mapa (amb els canvas iguals, 130 es veu igual a totes les escenes).
+                float mida = 130;
                 var go = new GameObject("BotoCompte", typeof(RectTransform));
                 Undo.RegisterCreatedObjectUndo(go, "Botó del compte");
                 go.transform.SetParent(hud, false);
                 var r = (RectTransform)go.transform;
                 r.anchorMin = r.anchorMax = new Vector2(0, 1);
                 r.sizeDelta = new Vector2(mida, mida);
-                r.anchoredPosition = new Vector2(15 + mida / 2, -(15 + mida / 2));
+                r.anchoredPosition = new Vector2(20 + mida / 2, -(20 + mida / 2));
                 go.AddComponent<Image>().color = new Color(0.45f, 0.65f, 0.25f);
                 go.AddComponent<Button>();
                 var b = go.AddComponent<BotoDePanellGlobal>();

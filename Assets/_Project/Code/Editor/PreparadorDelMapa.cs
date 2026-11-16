@@ -159,7 +159,13 @@ namespace IdleFrogs.EditorTools
             c.overrideSorting = false;
             c.sortingOrder = ordre;
             CanvasScaler escalat = original.GetComponent<CanvasScaler>();
-            if (escalat != null) EditorUtility.CopySerialized(escalat, go.AddComponent<CanvasScaler>());
+            CanvasScaler nou = go.AddComponent<CanvasScaler>();
+            if (escalat != null) EditorUtility.CopySerialized(escalat, nou);
+            // Tots els canvas del joc a la mateixa mida (IgualadorDeCanvas).
+            nou.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            nou.referenceResolution = IgualadorDeCanvas.Referencia;
+            nou.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            nou.matchWidthOrHeight = IgualadorDeCanvas.Match;
             go.AddComponent<GraphicRaycaster>();
 
             panell.transform.SetParent(go.transform, false);
