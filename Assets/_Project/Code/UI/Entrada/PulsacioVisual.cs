@@ -28,6 +28,9 @@ namespace IdleFrogs.UI
             public Transform transform;
             public Vector3 original;
             public float actual = 1f;
+            // Si l'objecte ja s'anima sol (la respiració dels encarregats), se li
+            // passa el factor en lloc de tocar-li l'escala: si no, es barallarien.
+            public IEscalaDePulsacio receptor;
             public bool premut;
             public float premutDes;
             public float fiDelCop;
@@ -84,7 +87,9 @@ namespace IdleFrogs.UI
             // Si ja s'està animant, la mida de debò és la que es va guardar al principi.
             if (!_actives.TryGetValue(t, out Animacio a))
             {
-                a = new Animacio { transform = t, original = t.localScale };
+                IEscalaDePulsacio r = t.GetComponent<IEscalaDePulsacio>();
+                if (r is Behaviour b && !b.isActiveAndEnabled) r = null;
+                a = new Animacio { transform = t, original = t.localScale, receptor = r };
                 _actives.Add(t, a);
             }
             return a;
@@ -121,7 +126,7 @@ namespace IdleFrogs.UI
                 // es queda amb la mida de sempre per quan torni a sortir.
                 if (!t.gameObject.activeInHierarchy)
                 {
-                    t.localScale = a.original;
+                    Posar(a, 1f);
                     _perTreure.Add(t);
                     continue;
                 }
@@ -130,13 +135,19 @@ namespace IdleFrogs.UI
                 a.actual = Mathf.Lerp(a.actual, gran ? Escala : 1f, k);
                 if (!gran && Mathf.Abs(a.actual - 1f) < 0.002f)
                 {
-                    t.localScale = a.original;
+                    Posar(a, 1f);
                     _perTreure.Add(t);
                     continue;
                 }
-                t.localScale = a.original * a.actual;
+                Posar(a, a.actual);
             }
             foreach (Transform t in _perTreure) Treure(t);
+        }
+
+        private static void Posar(Animacio a, float factor)
+        {
+            if (a.receptor != null) a.receptor.FactorDePulsacio = factor;
+            else a.transform.localScale = a.original * factor;
         }
 
         private void Treure(Transform t)
@@ -181,5 +192,12 @@ namespace IdleFrogs.UI
             Vector2 pantalla = Vector2.Scale(arrel.rect.size, arrel.lossyScale);
             return mida.x >= pantalla.x * 0.9f && mida.y >= pantalla.y * 0.9f;
         }
+    }
+
+    // Un objecte que s'anima la seva escala sol i vol rebre la de la pulsació
+    // com un factor (1 = res) en lloc que se li toqui l'escala.
+    public interface IEscalaDePulsacio
+    {
+        float FactorDePulsacio { set; }
     }
 }

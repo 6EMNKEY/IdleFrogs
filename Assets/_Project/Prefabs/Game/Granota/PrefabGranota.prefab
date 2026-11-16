@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1587369738913854892}
   - component: {fileID: 1254090568668749697}
   - component: {fileID: 6936488878217004307}
+  - component: {fileID: 2022455392038709765}
   m_Layer: 0
   m_Name: PrefabGranota
   m_TagString: Untagged
@@ -150,6 +151,19 @@ MonoBehaviour:
   llenguadesPerMosca: 2
   elDibuixMiraALaDreta: 1
   desplacamentDeLesEstrelles: {x: -0.03, y: 0.14}
+--- !u!114 &2022455392038709765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153762088935127873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e53abfa8a449b937e8e6beb9331a5fec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IdleFrogs.UI::IdleFrogs.UI.Respiracio
+  tipus: 1
 --- !u!1 &380902679330429800
 GameObject:
   m_ObjectHideFlags: 0

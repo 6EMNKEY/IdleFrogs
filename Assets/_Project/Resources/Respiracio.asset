@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 930626d908b828022bdb7861290484f9, type: 3}
+  m_Name: Respiracio
+  m_EditorClassIdentifier: IdleFrogs.UI::IdleFrogs.UI.RespiracioConfigSO
+  encarregats:
+    activa: 1
+    estirament: 0.04
+    respiracionsPerSegon: 0.4
+    conservarElVolum: 1
+    graus: 1
+    balanceigsPerSegon: 0.25
+    variacioDelRitme: 0.15
+    comencarALAtzar: 1
+    ancorarAlsPeus: 1
+  granotes:
+    activa: 1
+    estirament: 0.03
+    respiracionsPerSegon: 0.3
+    conservarElVolum: 1
+    graus: 0
+    balanceigsPerSegon: 0.25
+    variacioDelRitme: 0.15
+    comencarALAtzar: 1
+    ancorarAlsPeus: 1

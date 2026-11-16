@@ -13729,6 +13729,7 @@ GameObject:
   - component: {fileID: 1063534518}
   - component: {fileID: 1063534517}
   - component: {fileID: 1063534516}
+  - component: {fileID: 1063534519}
   m_Layer: 0
   m_Name: Encarregat
   m_TagString: Untagged
@@ -13878,6 +13879,19 @@ MonoBehaviour:
   textDelTemps: {fileID: 0}
   clarorEnRecarregar: 0.6
   particules: {fileID: 0}
+--- !u!114 &1063534519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063534514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e53abfa8a449b937e8e6beb9331a5fec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IdleFrogs.UI::IdleFrogs.UI.RespiracioDEncarregat
+  tipus: 0
 --- !u!1 &1076035004
 GameObject:
   m_ObjectHideFlags: 0
@@ -20528,8 +20542,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 85, y: -85}
-  m_SizeDelta: {x: 130, y: 130}
+  m_AnchoredPosition: {x: 100, y: -100}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1665213824
 MonoBehaviour:
@@ -25219,6 +25233,7 @@ GameObject:
   - component: {fileID: 2032962444}
   - component: {fileID: 2032962443}
   - component: {fileID: 2032962445}
+  - component: {fileID: 2032962446}
   m_Layer: 0
   m_Name: Encarregat
   m_TagString: Untagged
@@ -25368,6 +25383,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.28, y: 1.28}
   m_EdgeRadius: 0
+--- !u!114 &2032962446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032962440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e53abfa8a449b937e8e6beb9331a5fec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: IdleFrogs.UI::IdleFrogs.UI.RespiracioDEncarregat
+  tipus: 0
 --- !u!1001 &2041804655
 PrefabInstance:
   m_ObjectHideFlags: 0
