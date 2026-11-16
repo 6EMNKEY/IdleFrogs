@@ -86,8 +86,9 @@ namespace IdleFrogs.Game
     {
         private static int ZonaActual => GameManager.Instancia != null ? GameManager.Instancia.Zona : 0;
 
+        // Amb l'arena apagada, l'arbre no fa res (encara que una partida en tingui nivells).
         public static double Suma(TipusDEfecteDeRecerca tipus, int zona) =>
-            GestorDeRecerca.Instancia != null ? GestorDeRecerca.Instancia.Suma(tipus, zona) : 0;
+            Funcionalitats.ArenaIRecerca && GestorDeRecerca.Instancia != null ? GestorDeRecerca.Instancia.Suma(tipus, zona) : 0;
 
         public static double Suma(TipusDEfecteDeRecerca tipus) => Suma(tipus, ZonaActual);
 

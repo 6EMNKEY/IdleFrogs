@@ -441,10 +441,22 @@ namespace IdleFrogs.Game
                 if (PotRecollirElCalendari || PotRecollirElPase) return true;
                 if (cataleg == null) return false;
                 foreach (ProducteDeBotiga p in cataleg.productes)
-                    if (p != null && p.pagament == TipusDePagament.Gratis && Estat(p) == EstatDeProducte.Disponible)
+                    if (EsVisible(p) && p.pagament == TipusDePagament.Gratis && Estat(p) == EstatDeProducte.Disponible)
                         return true;
                 return false;
             }
+        }
+
+        // Si surt a la botiga: amb l'arena apagada, els tickets i els punts de recerca no.
+        public static bool EsVisible(ProducteDeBotiga p)
+        {
+            if (p == null) return false;
+            if (Funcionalitats.ArenaIRecerca) return true;
+            foreach (Recompensa r in p.recompenses)
+                if (r != null && (r.tipus == TipusDeRecompensa.TicketComu || r.tipus == TipusDeRecompensa.TicketPremium ||
+                                  r.tipus == TipusDeRecompensa.PuntsDeRecerca))
+                    return false;
+            return true;
         }
 
         // Torna a donar els permanents que el compte ja tenia comprats.

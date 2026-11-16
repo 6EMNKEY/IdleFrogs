@@ -170,7 +170,7 @@ namespace IdleFrogs.UI
             {
                 var productes = new List<ProducteDeBotiga>();
                 foreach (ProducteDeBotiga p in g.Cataleg.productes)
-                    if (p != null && p.seccio == s) productes.Add(p);
+                    if (GestorDeBotiga.EsVisible(p) && p.seccio == s) productes.Add(p);
                 bool ambCalendari = s == SeccioDeBotiga.Gratis && prefabCalendari != null;
                 if (productes.Count == 0 && !ambCalendari) continue;
 

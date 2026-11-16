@@ -156,6 +156,7 @@ namespace IdleFrogs.Game
             ["mapa.missions"]         = new[] { "Daily missions",           "Misiones diarias",           "Missions diàries" },
             ["mapa.esdeveniments"]    = new[] { "Events",                   "Eventos",                    "Esdeveniments" },
             ["mapa.prestigi"]         = new[] { "Prestige",                 "Prestigio",                  "Prestigi" },
+            ["mapa.inventari"] = new[] { "Inventory", "Inventario", "Inventari" },
             ["mapa.recerca"] = new[] { "Research", "Investigación", "Recerca" },
             ["mapa.arena"] = new[] { "Arena", "Arena", "Arena" },
             ["anunci.xn"] = new[] { "x{0} Video", "x{0} Vídeo", "x{0} Vídeo" },

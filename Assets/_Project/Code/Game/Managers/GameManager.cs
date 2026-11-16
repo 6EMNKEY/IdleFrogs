@@ -693,8 +693,8 @@ namespace IdleFrogs.Game
             CarregarEscena(string.IsNullOrEmpty(_escenaDAbans) ? escenaDelMapa : _escenaDAbans);
 
         public void AnarAlPrestigi() => AnarAEscena(escenaDelPrestigi);
-        public void AnarALaRecerca() => AnarAEscena(escenaDeLaRecerca);
-        public void AnarALArena() => AnarAEscena(escenaDeLArena);
+        public void AnarALaRecerca() { if (Funcionalitats.ArenaIRecerca) AnarAEscena(escenaDeLaRecerca); }
+        public void AnarALArena() { if (Funcionalitats.ArenaIRecerca) AnarAEscena(escenaDeLArena); }
         public void SortirDelPrestigi() => TornarDeLEscena();
 
         private void MigrarAPaisos() => MigracioDePartida.PassarAPaisos(_dades);

@@ -14,7 +14,13 @@ namespace IdleFrogs.UI
     {
         [SerializeField] private AccioDeBoto accio;
 
-        private void Awake() => GetComponent<Button>().onClick.AddListener(Fer);
+        private void Awake()
+        {
+            GetComponent<Button>().onClick.AddListener(Fer);
+            // Amb l'arena apagada, els seus botons (i el de la recerca) no hi són.
+            if ((accio == AccioDeBoto.Recerca || accio == AccioDeBoto.Arena) && !Funcionalitats.ArenaIRecerca)
+                gameObject.SetActive(false);
+        }
 
         private void Fer()
         {

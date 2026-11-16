@@ -4,7 +4,7 @@ using IdleFrogs.Game;
 
 namespace IdleFrogs.UI
 {
-    public enum AccioDelMapa { Botiga, Missions, Esdeveniments, Prestigi, Recerca, Arena }
+    public enum AccioDelMapa { Botiga, Missions, Esdeveniments, Prestigi, Recerca, Arena, Inventari }
 
     // Un lloc del mapa que obre alguna cosa: la ciutat comercial (la botiga),
     // el cartell de les missions diàries, els esdeveniments, el prestigi...
@@ -21,7 +21,27 @@ namespace IdleFrogs.UI
 
         public AccioDelMapa Accio => accio;
 
-        public void Inicialitzar(GestorDelMapa mapa) => _mapa = mapa;
+        public void Inicialitzar(GestorDelMapa mapa)
+        {
+            _mapa = mapa;
+            // Les illes de la recerca i de l'arena no hi són si estan apagades.
+            if (!Disponible(accio)) gameObject.SetActive(false);
+        }
+
+        public static bool Disponible(AccioDelMapa accio) =>
+            (accio != AccioDelMapa.Recerca && accio != AccioDelMapa.Arena) || Funcionalitats.ArenaIRecerca;
+
+        // El nom de cada lloc (també el fan servir els botons fixos del mapa).
+        public static string ClauDelNom(AccioDelMapa accio) => accio switch
+        {
+            AccioDelMapa.Botiga => "mapa.ciutat",
+            AccioDelMapa.Missions => "mapa.missions",
+            AccioDelMapa.Esdeveniments => "mapa.esdeveniments",
+            AccioDelMapa.Recerca => "mapa.recerca",
+            AccioDelMapa.Arena => "mapa.arena",
+            AccioDelMapa.Inventari => "mapa.inventari",
+            _ => "mapa.prestigi"
+        };
 
         public void EnTocar()
         {
@@ -30,15 +50,7 @@ namespace IdleFrogs.UI
 
         public void Refrescar()
         {
-            if (textNom != null) textNom.text = Textos.T(accio switch
-            {
-                AccioDelMapa.Botiga => "mapa.ciutat",
-                AccioDelMapa.Missions => "mapa.missions",
-                AccioDelMapa.Esdeveniments => "mapa.esdeveniments",
-                AccioDelMapa.Recerca => "mapa.recerca",
-                AccioDelMapa.Arena => "mapa.arena",
-                _ => "mapa.prestigi"
-            });
+            if (textNom != null) textNom.text = Textos.T(ClauDelNom(accio));
 
             bool avis = accio == AccioDelMapa.Botiga && GestorDeBotiga.Instancia != null && GestorDeBotiga.Instancia.HiHaGratisPerRecollir;
             if (puntDAvis != null && puntDAvis.activeSelf != avis) puntDAvis.SetActive(avis);

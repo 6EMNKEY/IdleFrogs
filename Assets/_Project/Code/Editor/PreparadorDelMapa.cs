@@ -253,9 +253,7 @@ namespace IdleFrogs.EditorTools
             // Els llocs especials.
             var llocs = new GameObject("Llocs");
             CrearLloc(AccioDelMapa.Botiga, new Vector3(-6, -5, 0), llocs.transform);
-            CrearLloc(AccioDelMapa.Missions, new Vector3(-2, -5, 0), llocs.transform);
             CrearLloc(AccioDelMapa.Esdeveniments, new Vector3(2, -5, 0), llocs.transform);
-            CrearLloc(AccioDelMapa.Prestigi, new Vector3(6, -5, 0), llocs.transform);
 
             // HUD: tornar, gemes i missatge.
             var canvasGo = new GameObject("CanvasHUD", typeof(RectTransform));
@@ -271,6 +269,7 @@ namespace IdleFrogs.EditorTools
             TMP_Text gemes = TextUI("TextGemes", canvasGo.transform, new Vector2(1, 1), new Vector2(-180, -60), new Vector2(300, 70), "0");
             gemes.gameObject.AddComponent<TextDeGemes>();
             TMP_Text missatge = TextUI("TextMissatge", canvasGo.transform, new Vector2(0.5f, 0), new Vector2(0, 120), new Vector2(1200, 90), string.Empty);
+            CrearBotonsFixos(canvasGo.transform);
 
             var gestor = new GameObject("GestorDelMapa").AddComponent<GestorDelMapa>();
             Assignar(gestor, "cameraDelMapa", control);
@@ -323,6 +322,175 @@ namespace IdleFrogs.EditorTools
             guanys.AddComponent<BotoRecollirDelMapa>();
             Assignar(p, "arrelDeGuanys", guanys);
             Assignar(p, "textGuanys", TextMon("TextGuanys", guanys.transform, Vector3.zero, 3f, "+0"));
+        }
+
+        // A l'escena del mapa oberta: inventari i missions a baix a l'esquerra i
+        // prestigi a baix a la dreta, fixos al HUD. Els llocs de missions i
+        // prestigi que hi hagués al món s'esborren (ara són aquests botons).
+        [MenuItem("IdleFrogs/Mapa/4. Botons fixos (inventari, missions, prestigi)")]
+        public static void BotonsFixos()
+        {
+            GestorDelMapa gestor = Object.FindFirstObjectByType<GestorDelMapa>(FindObjectsInactive.Include);
+            Canvas hud = gestor != null ? HudDe(gestor) : null;
+            if (hud == null)
+            {
+                EditorUtility.DisplayDialog("Mapa", "Obre l'escena Mapa primer (cal el GestorDelMapa i el CanvasHUD).", "D'acord");
+                return;
+            }
+            var informe = new List<string>();
+            foreach (PuntDelMapa p in Object.FindObjectsByType<PuntDelMapa>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (p.Accio == AccioDelMapa.Missions || p.Accio == AccioDelMapa.Prestigi)
+                {
+                    informe.Add($"Lloc {p.Accio} esborrat del món");
+                    Undo.DestroyObjectImmediate(p.gameObject);
+                }
+            foreach (string b in CrearBotonsFixos(hud.transform)) informe.Add($"Botó {b} afegit");
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+            EditorUtility.DisplayDialog("Mapa", informe.Count > 0 ? string.Join("\n", informe) + "\n\nDesa l'escena." : "Ja hi eren.", "D'acord");
+        }
+
+        // El canvas del HUD: el del text de missatges del gestor, o el CanvasHUD.
+        private static Canvas HudDe(GestorDelMapa gestor)
+        {
+            var missatge = new SerializedObject(gestor).FindProperty("textMissatge").objectReferenceValue as Component;
+            Canvas c = missatge != null ? missatge.GetComponentInParent<Canvas>(true) : null;
+            if (c != null) return c.rootCanvas;
+            GameObject hud = BuscarPerNom("CanvasHUD");
+            return hud != null ? hud.GetComponent<Canvas>() : null;
+        }
+
+        // Els que encara no hi siguin. Torna els noms dels que ha creat.
+        private static List<string> CrearBotonsFixos(Transform hud)
+        {
+            var fets = new List<string>();
+            var existents = hud.GetComponentsInChildren<BotoDelMapa>(true)
+                .Select(b => (AccioDelMapa)new SerializedObject(b).FindProperty("accio").enumValueIndex).ToList();
+            (AccioDelMapa accio, Vector2 ancora, Vector2 pos, Vector2 mida, Color color)[] botons =
+            {
+                (AccioDelMapa.Inventari, new Vector2(0, 0), new Vector2(110, 120), new Vector2(170, 190), new Color(0.55f, 0.36f, 0.2f)),
+                (AccioDelMapa.Missions, new Vector2(0, 0), new Vector2(300, 120), new Vector2(170, 190), new Color(0.55f, 0.36f, 0.2f)),
+                (AccioDelMapa.Prestigi, new Vector2(1, 0), new Vector2(-130, 130), new Vector2(200, 210), new Color(1f, 0.8f, 0.15f)),
+            };
+            foreach (var b in botons)
+            {
+                if (existents.Contains(b.accio)) continue;
+                var go = new GameObject($"Boto{b.accio}", typeof(RectTransform));
+                Undo.RegisterCreatedObjectUndo(go, "Botó del mapa");
+                go.transform.SetParent(hud, false);
+                var r = (RectTransform)go.transform;
+                r.anchorMin = r.anchorMax = b.ancora;
+                r.anchoredPosition = b.pos;
+                r.sizeDelta = b.mida;
+                // El quadrat de mostra: hi poses la icona (la maleta, el cartell, l'estrella).
+                go.AddComponent<Image>().color = b.color;
+                go.AddComponent<Button>();
+                TMP_Text nom = TextUI("TextNom", go.transform, new Vector2(0.5f, 0), new Vector2(0, 18), new Vector2(b.mida.x + 40, 44), b.accio.ToString());
+                nom.fontSize = 32;
+                var boto = go.AddComponent<BotoDelMapa>();
+                var so = new SerializedObject(boto);
+                so.FindProperty("accio").enumValueIndex = (int)b.accio;
+                so.FindProperty("textNom").objectReferenceValue = nom;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                fets.Add(b.accio.ToString());
+            }
+            return fets;
+        }
+
+        // A l'escena del mapa oberta: el botó del compte i els ajustos (la cara de
+        // la granota) a dalt a l'esquerra, i les monedes a dalt a la dreta: les
+        // gemes i la moneda del país on ets. El text de gemes vell s'esborra.
+        [MenuItem("IdleFrogs/Mapa/5. Compte i monedes (dalt)")]
+        public static void CompteIMonedes()
+        {
+            GestorDelMapa gestor = Object.FindFirstObjectByType<GestorDelMapa>(FindObjectsInactive.Include);
+            Canvas hud = gestor != null ? HudDe(gestor) : null;
+            if (hud == null)
+            {
+                EditorUtility.DisplayDialog("Mapa", "Obre l'escena Mapa primer (cal el GestorDelMapa i el CanvasHUD).", "D'acord");
+                return;
+            }
+            var informe = new List<string>();
+            Transform t = hud.transform;
+
+            if (t.Find("BotoCompte") == null)
+            {
+                RectTransform r = Rect("BotoCompte", t, new Vector2(0, 1), new Vector2(85, -85), new Vector2(130, 130));
+                r.gameObject.AddComponent<Image>().color = new Color(0.45f, 0.65f, 0.25f);
+                r.gameObject.AddComponent<Button>();
+                var b = r.gameObject.AddComponent<BotoDePanellGlobal>();
+                var so = new SerializedObject(b);
+                so.FindProperty("accio").enumValueIndex = (int)AccioDeBoto.Configuracio;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                informe.Add("Botó del compte (obre els ajustos)");
+                // Al costat de la cara, si hi era: el botó de tornar es mou a la dreta.
+                GameObject tornar = BuscarPerNom("BotoTornar");
+                if (tornar != null && tornar.transform is RectTransform rt && rt.anchorMin == new Vector2(0, 1))
+                {
+                    Undo.RecordObject(rt, "Moure el botó de tornar");
+                    rt.anchoredPosition = new Vector2(280, rt.anchoredPosition.y);
+                }
+            }
+
+            if (t.Find("Gemes") == null)
+            {
+                TMP_Text text = Moneda("Gemes", t, new Vector2(-180, -55), new Color(0.3f, 0.85f, 0.5f), false);
+                text.gameObject.AddComponent<TextDeGemes>();
+                informe.Add("Gemes");
+            }
+            if (t.Find("MonedaDelPais") == null)
+            {
+                TMP_Text text = Moneda("MonedaDelPais", t, new Vector2(-180, -135), new Color(1f, 0.8f, 0.2f), true);
+                text.gameObject.AddComponent<TextDeDoblers>();
+                informe.Add("Moneda del país");
+            }
+
+            // El text de gemes que hi havia (ara és la píndola de dalt).
+            GameObject vell = BuscarPerNom("TextGemes");
+            if (vell != null && vell.transform.parent == t)
+            {
+                Undo.DestroyObjectImmediate(vell);
+                informe.Add("TextGemes vell esborrat");
+            }
+
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+            EditorUtility.DisplayDialog("Mapa", informe.Count > 0 ? string.Join("\n", informe) + "\n\nPosa-hi les icones i desa l'escena." : "Ja hi eren.", "D'acord");
+        }
+
+        private static RectTransform Rect(string nom, Transform pare, Vector2 ancora, Vector2 pos, Vector2 mida)
+        {
+            var go = new GameObject(nom, typeof(RectTransform));
+            Undo.RegisterCreatedObjectUndo(go, nom);
+            go.transform.SetParent(pare, false);
+            var r = (RectTransform)go.transform;
+            r.anchorMin = r.anchorMax = ancora;
+            r.anchoredPosition = pos;
+            r.sizeDelta = mida;
+            return r;
+        }
+
+        // Una píndola de moneda a dalt a la dreta: fons, icona a l'esquerra i el número.
+        private static TMP_Text Moneda(string nom, Transform hud, Vector2 pos, Color colorDeLaIcona, bool delPais)
+        {
+            RectTransform r = Rect(nom, hud, new Vector2(1, 1), pos, new Vector2(300, 70));
+            Image fons = r.gameObject.AddComponent<Image>();
+            fons.color = new Color(0.45f, 0.3f, 0.18f, 0.9f);
+            fons.raycastTarget = false;
+
+            var icona = new GameObject("Icona", typeof(RectTransform));
+            icona.transform.SetParent(r, false);
+            var ri = (RectTransform)icona.transform;
+            ri.anchorMin = ri.anchorMax = new Vector2(0, 0.5f);
+            ri.anchoredPosition = new Vector2(10, 0);
+            ri.sizeDelta = new Vector2(80, 80);
+            Image img = icona.AddComponent<Image>();
+            img.color = colorDeLaIcona;
+            img.preserveAspect = true;
+            img.raycastTarget = false;
+            if (delPais) icona.AddComponent<IconaDeLaMonedaDelPais>();
+
+            TMP_Text text = TextUI("Text", r, new Vector2(0.5f, 0.5f), new Vector2(30, 0), new Vector2(220, 60), "0");
+            text.fontSize = 40;
+            return text;
         }
 
         // A l'escena del mapa oberta: les illes de la recerca i de l'arena, si no hi són.

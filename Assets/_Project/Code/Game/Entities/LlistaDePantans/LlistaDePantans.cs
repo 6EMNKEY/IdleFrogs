@@ -218,7 +218,7 @@ namespace IdleFrogs.Game
             // Arribar al pantà que toca obre l'arena del país (un cop; el prestigi no la tanca).
             ArenaConfigSO arena = ArenaConfigSO.Actual;
             int clau = arena != null ? arena.pantaQueDesbloqueja - 1 : -1;
-            if (clau >= 0 && clau < Quantitat && pantans[clau] != null && pantans[clau].EstaComprat &&
+            if (Funcionalitats.ArenaIRecerca && clau >= 0 && clau < Quantitat && pantans[clau] != null && pantans[clau].EstaComprat &&
                 GestorDeLArena.Instancia != null && GameManager.Instancia != null && GameManager.Instancia.HiHaPais)
                 GestorDeLArena.Instancia.Desbloquejar(GameManager.Instancia.Zona);
         }

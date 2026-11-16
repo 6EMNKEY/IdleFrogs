@@ -184,7 +184,7 @@ namespace IdleFrogs.UI
                 else GameManager.Instancia.AnarALArena();
                 return;
             }
-            // Missions i esdeveniments encara no existeixen.
+            // Missions, esdeveniments i inventari encara no existeixen.
             GestorDAudio.Sonar(So.Toc);
             Missatge(Textos.T("mapa.aviat"));
         }

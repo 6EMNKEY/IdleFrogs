@@ -44,7 +44,7 @@ namespace IdleFrogs.Game
         private void Update()
         {
             _rellotge += Time.unscaledDeltaTime;
-            if (_rellotge < 1f) return;
+            if (_rellotge < 1f || !Funcionalitats.ArenaIRecerca) return;
             _rellotge = 0f;
             for (int z = 0; z < _dades.arenes.Count; z++)
                 if (_dades.arenes[z] != null && _dades.arenes[z].desbloquejada) Avancar(z);
@@ -112,7 +112,7 @@ namespace IdleFrogs.Game
         // Comprar el pantà que toca l'obre (una vegada; el prestigi no la tanca).
         public void Desbloquejar(int z)
         {
-            if (Config == null || z < 0) return;
+            if (Config == null || z < 0 || !Funcionalitats.ArenaIRecerca) return;
             ArenaGuardada a = Arena(z);
             if (a.desbloquejada) return;
 

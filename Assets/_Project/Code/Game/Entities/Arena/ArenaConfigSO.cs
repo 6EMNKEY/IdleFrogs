@@ -9,6 +9,10 @@ namespace IdleFrogs.Game
     [CreateAssetMenu(fileName = "Arena", menuName = "IdleFrogs/Arena/Config")]
     public class ArenaConfigSO : ScriptableObject
     {
+        [Tooltip("Apagat: no hi ha arena ni recerca enlloc (no s'obre al pantà 15, no surten les " +
+                 "illes del mapa ni els botons, ni els tickets a la botiga, i l'arbre no fa efecte)")]
+        public bool activa;
+
         [Tooltip("Una per raresa, de D a SSS")]
         public DadesDeRaresa[] rareses = new DadesDeRaresa[0];
 
